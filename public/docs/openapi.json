@@ -24,14 +24,20 @@
   ],
   "tags": [
     { "name": "Auth", "description": "Authentication endpoints" },
+    { "name": "Dashboard", "description": "Role-based dashboard data" },
     { "name": "Users", "description": "User management" },
     { "name": "Permissions", "description": "System permissions" },
     { "name": "Tenants", "description": "Tenant management (Super Admin only)" },
     { "name": "Cohorts", "description": "Cohort management" },
+    { "name": "Terms", "description": "Academic term management" },
     { "name": "Tracks", "description": "Track/discipline management" },
     { "name": "Application Forms", "description": "Application form templates" },
     { "name": "Courses", "description": "Course management" },
     { "name": "Modules", "description": "Module management" },
+    { "name": "Assignments", "description": "Assignment management" },
+    { "name": "Submissions", "description": "Assignment submissions" },
+    { "name": "Examinations", "description": "Examination management" },
+    { "name": "Results", "description": "Examination results" },
     { "name": "Quizzes", "description": "Quiz management" },
     { "name": "Applications", "description": "Student applications" },
     { "name": "Progress", "description": "Progress tracking" },
@@ -1916,6 +1922,810 @@
           }
         }
       }
+    },
+    "/dashboard": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get dashboard data",
+        "description": "Returns role-appropriate dashboard data for the authenticated user",
+        "operationId": "getDashboard",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Dashboard data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DashboardResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/terms": {
+      "get": {
+        "tags": ["Terms"],
+        "summary": "List all terms",
+        "operationId": "getTerms",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          { "$ref": "#/components/parameters/SortByParam" },
+          { "$ref": "#/components/parameters/OrderParam" },
+          { "$ref": "#/components/parameters/TermStatusFilterParam" },
+          { "$ref": "#/components/parameters/CohortIdFilterParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of terms",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TermsListResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      },
+      "post": {
+        "tags": ["Terms"],
+        "summary": "Create a new term",
+        "operationId": "createTerm",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateTermInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Term created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TermResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/terms/{id}": {
+      "get": {
+        "tags": ["Terms"],
+        "summary": "Get term by ID",
+        "operationId": "getTerm",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Term details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TermResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "tags": ["Terms"],
+        "summary": "Update term",
+        "operationId": "updateTerm",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateTermInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Term updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TermResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "tags": ["Terms"],
+        "summary": "Delete term",
+        "operationId": "deleteTerm",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "204": { "description": "Term deleted" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/terms/{id}/activate": {
+      "post": {
+        "tags": ["Terms"],
+        "summary": "Activate term",
+        "operationId": "activateTerm",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Term activated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TermResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/terms/{id}/complete": {
+      "post": {
+        "tags": ["Terms"],
+        "summary": "Complete term",
+        "operationId": "completeTerm",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Term completed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TermResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/cohorts/{id}/terms": {
+      "get": {
+        "tags": ["Cohorts", "Terms"],
+        "summary": "Get terms for a cohort",
+        "operationId": "getCohortTerms",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/IdParam" },
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of terms for the cohort",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TermsListResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/assignments": {
+      "get": {
+        "tags": ["Assignments"],
+        "summary": "List all assignments",
+        "operationId": "getAssignments",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          { "$ref": "#/components/parameters/SortByParam" },
+          { "$ref": "#/components/parameters/OrderParam" },
+          { "$ref": "#/components/parameters/AssignmentStatusFilterParam" },
+          { "$ref": "#/components/parameters/CourseIdFilterParam" },
+          { "$ref": "#/components/parameters/TermIdFilterParam" },
+          { "$ref": "#/components/parameters/TeacherIdFilterParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of assignments",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AssignmentsListResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      },
+      "post": {
+        "tags": ["Assignments"],
+        "summary": "Create a new assignment",
+        "operationId": "createAssignment",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateAssignmentInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Assignment created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AssignmentResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/assignments/{id}": {
+      "get": {
+        "tags": ["Assignments"],
+        "summary": "Get assignment by ID",
+        "operationId": "getAssignment",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Assignment details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AssignmentResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "tags": ["Assignments"],
+        "summary": "Update assignment",
+        "operationId": "updateAssignment",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateAssignmentInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Assignment updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AssignmentResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "tags": ["Assignments"],
+        "summary": "Delete assignment",
+        "operationId": "deleteAssignment",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "204": { "description": "Assignment deleted" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/assignments/{id}/publish": {
+      "post": {
+        "tags": ["Assignments"],
+        "summary": "Publish assignment",
+        "operationId": "publishAssignment",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Assignment published",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AssignmentResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/assignments/{id}/close": {
+      "post": {
+        "tags": ["Assignments"],
+        "summary": "Close assignment",
+        "operationId": "closeAssignment",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Assignment closed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AssignmentResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/assignments/{id}/submissions": {
+      "get": {
+        "tags": ["Assignments", "Submissions"],
+        "summary": "Get submissions for an assignment",
+        "operationId": "getAssignmentSubmissions",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/IdParam" },
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of submissions",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SubmissionsListResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/assignments/{id}/submit": {
+      "post": {
+        "tags": ["Assignments", "Submissions"],
+        "summary": "Submit assignment",
+        "operationId": "submitAssignment",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SubmitAssignmentInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Assignment submitted",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SubmissionResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/submissions/{id}": {
+      "get": {
+        "tags": ["Submissions"],
+        "summary": "Get submission by ID",
+        "operationId": "getSubmission",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Submission details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SubmissionResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/submissions/{id}/grade": {
+      "put": {
+        "tags": ["Submissions"],
+        "summary": "Grade submission",
+        "operationId": "gradeSubmission",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GradeSubmissionInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Submission graded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SubmissionResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/examinations": {
+      "get": {
+        "tags": ["Examinations"],
+        "summary": "List all examinations",
+        "operationId": "getExaminations",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          { "$ref": "#/components/parameters/SortByParam" },
+          { "$ref": "#/components/parameters/OrderParam" },
+          { "$ref": "#/components/parameters/ExamTypeFilterParam" },
+          { "$ref": "#/components/parameters/ExamStatusFilterParam" },
+          { "$ref": "#/components/parameters/CourseIdFilterParam" },
+          { "$ref": "#/components/parameters/TermIdFilterParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of examinations",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExaminationsListResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      },
+      "post": {
+        "tags": ["Examinations"],
+        "summary": "Create a new examination",
+        "operationId": "createExamination",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateExaminationInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Examination created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExaminationResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/examinations/{id}": {
+      "get": {
+        "tags": ["Examinations"],
+        "summary": "Get examination by ID",
+        "operationId": "getExamination",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Examination details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExaminationResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "tags": ["Examinations"],
+        "summary": "Update examination",
+        "operationId": "updateExamination",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateExaminationInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Examination updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExaminationResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "tags": ["Examinations"],
+        "summary": "Delete examination",
+        "operationId": "deleteExamination",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "204": { "description": "Examination deleted" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/examinations/{id}/start": {
+      "post": {
+        "tags": ["Examinations"],
+        "summary": "Start examination",
+        "operationId": "startExamination",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Examination started",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExaminationResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/examinations/{id}/complete": {
+      "post": {
+        "tags": ["Examinations"],
+        "summary": "Complete examination",
+        "operationId": "completeExamination",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Examination completed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExaminationResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/examinations/{id}/cancel": {
+      "post": {
+        "tags": ["Examinations"],
+        "summary": "Cancel examination",
+        "operationId": "cancelExamination",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Examination cancelled",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExaminationResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/examinations/{id}/results": {
+      "get": {
+        "tags": ["Examinations", "Results"],
+        "summary": "Get results for an examination",
+        "operationId": "getExaminationResults",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/IdParam" },
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of results",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExamResultsListResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "post": {
+        "tags": ["Examinations", "Results"],
+        "summary": "Record examination result",
+        "operationId": "recordExamResult",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RecordResultInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Result recorded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExamResultResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/examinations/{id}/results/bulk": {
+      "post": {
+        "tags": ["Examinations", "Results"],
+        "summary": "Bulk record examination results",
+        "operationId": "bulkRecordExamResults",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/RecordResultInput" }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Results recorded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExamResultsListResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/results/{id}": {
+      "get": {
+        "tags": ["Results"],
+        "summary": "Get result by ID",
+        "operationId": "getResult",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Result details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExamResultResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "tags": ["Results"],
+        "summary": "Update result",
+        "operationId": "updateResult",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateResultInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Result updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExamResultResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/students/{id}/submissions": {
+      "get": {
+        "tags": ["Submissions"],
+        "summary": "Get student's submissions",
+        "operationId": "getStudentSubmissions",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/IdParam" },
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of submissions",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SubmissionsListResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/students/{id}/results": {
+      "get": {
+        "tags": ["Results"],
+        "summary": "Get student's examination results",
+        "operationId": "getStudentResults",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/IdParam" },
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of results",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExamResultsListResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
     }
   },
   "components": {
@@ -1998,6 +2808,61 @@
         "in": "query",
         "description": "Filter courses by status",
         "schema": { "type": "string", "enum": ["DRAFT", "PUBLISHED", "ARCHIVED"] }
+      },
+      "TermStatusFilterParam": {
+        "name": "status",
+        "in": "query",
+        "description": "Filter terms by status",
+        "schema": { "type": "string", "enum": ["UPCOMING", "ACTIVE", "COMPLETED"] }
+      },
+      "CohortIdFilterParam": {
+        "name": "cohort_id",
+        "in": "query",
+        "description": "Filter by cohort ID",
+        "schema": { "type": "string", "format": "uuid" }
+      },
+      "AssignmentStatusFilterParam": {
+        "name": "status",
+        "in": "query",
+        "description": "Filter assignments by status",
+        "schema": { "type": "string", "enum": ["DRAFT", "PUBLISHED", "CLOSED"] }
+      },
+      "CourseIdFilterParam": {
+        "name": "course_id",
+        "in": "query",
+        "description": "Filter by course ID",
+        "schema": { "type": "string", "format": "uuid" }
+      },
+      "TermIdFilterParam": {
+        "name": "term_id",
+        "in": "query",
+        "description": "Filter by term ID",
+        "schema": { "type": "string", "format": "uuid" }
+      },
+      "TeacherIdFilterParam": {
+        "name": "teacher_id",
+        "in": "query",
+        "description": "Filter by teacher ID",
+        "schema": { "type": "string", "format": "uuid" }
+      },
+      "ExamTypeFilterParam": {
+        "name": "type",
+        "in": "query",
+        "description": "Filter examinations by type",
+        "schema": { "type": "string", "enum": ["TEST", "MID_TERM", "FINAL", "MOCK"] }
+      },
+      "ExamStatusFilterParam": {
+        "name": "status",
+        "in": "query",
+        "description": "Filter examinations by status",
+        "schema": { "type": "string", "enum": ["SCHEDULED", "IN_PROGRESS", "COMPLETED", "CANCELLED"] }
+      },
+      "StudentIdParam": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "Student ID",
+        "schema": { "type": "string", "format": "uuid" }
       }
     },
     "responses": {
@@ -3325,6 +4190,395 @@
               "body": { "type": "string" }
             }
           }
+        }
+      },
+      "TermStatus": {
+        "type": "string",
+        "enum": ["UPCOMING", "ACTIVE", "COMPLETED"]
+      },
+      "Term": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "tenant_id": { "type": "string", "format": "uuid" },
+          "cohort_id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "number": { "type": "integer" },
+          "start_date": { "type": "string", "format": "date-time" },
+          "end_date": { "type": "string", "format": "date-time" },
+          "status": { "$ref": "#/components/schemas/TermStatus" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "TermResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Term" }
+        }
+      },
+      "TermsListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Term" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "CreateTermInput": {
+        "type": "object",
+        "required": ["cohort_id", "name", "number"],
+        "properties": {
+          "cohort_id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "number": { "type": "integer" },
+          "start_date": { "type": "string", "format": "date-time" },
+          "end_date": { "type": "string", "format": "date-time" }
+        }
+      },
+      "UpdateTermInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "number": { "type": "integer" },
+          "start_date": { "type": "string", "format": "date-time" },
+          "end_date": { "type": "string", "format": "date-time" },
+          "status": { "$ref": "#/components/schemas/TermStatus" }
+        }
+      },
+      "AssignmentStatus": {
+        "type": "string",
+        "enum": ["DRAFT", "PUBLISHED", "CLOSED"]
+      },
+      "Assignment": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "tenant_id": { "type": "string", "format": "uuid" },
+          "course_id": { "type": "string", "format": "uuid" },
+          "term_id": { "type": "string", "format": "uuid" },
+          "teacher_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "instructions": { "type": "string" },
+          "due_date": { "type": "string", "format": "date-time" },
+          "max_score": { "type": "integer", "default": 100 },
+          "status": { "$ref": "#/components/schemas/AssignmentStatus" },
+          "attachments": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "AssignmentResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Assignment" }
+        }
+      },
+      "AssignmentsListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Assignment" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "CreateAssignmentInput": {
+        "type": "object",
+        "required": ["course_id", "term_id", "teacher_id", "title", "due_date"],
+        "properties": {
+          "course_id": { "type": "string", "format": "uuid" },
+          "term_id": { "type": "string", "format": "uuid" },
+          "teacher_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "instructions": { "type": "string" },
+          "due_date": { "type": "string", "format": "date-time" },
+          "max_score": { "type": "integer", "default": 100 },
+          "attachments": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "UpdateAssignmentInput": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "instructions": { "type": "string" },
+          "due_date": { "type": "string", "format": "date-time" },
+          "max_score": { "type": "integer" },
+          "attachments": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "AssignmentSubmission": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "assignment_id": { "type": "string", "format": "uuid" },
+          "student_id": { "type": "string", "format": "uuid" },
+          "content": { "type": "string" },
+          "attachments": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "submitted_at": { "type": "string", "format": "date-time" },
+          "score": { "type": "integer" },
+          "feedback": { "type": "string" },
+          "graded_at": { "type": "string", "format": "date-time" },
+          "graded_by_id": { "type": "string", "format": "uuid" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "SubmissionResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/AssignmentSubmission" }
+        }
+      },
+      "SubmissionsListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AssignmentSubmission" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "SubmitAssignmentInput": {
+        "type": "object",
+        "properties": {
+          "content": { "type": "string" },
+          "attachments": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "GradeSubmissionInput": {
+        "type": "object",
+        "required": ["score"],
+        "properties": {
+          "score": { "type": "integer" },
+          "feedback": { "type": "string" }
+        }
+      },
+      "ExaminationType": {
+        "type": "string",
+        "enum": ["TEST", "MID_TERM", "FINAL", "MOCK"]
+      },
+      "ExaminationStatus": {
+        "type": "string",
+        "enum": ["SCHEDULED", "IN_PROGRESS", "COMPLETED", "CANCELLED"]
+      },
+      "Examination": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "tenant_id": { "type": "string", "format": "uuid" },
+          "course_id": { "type": "string", "format": "uuid" },
+          "term_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "type": { "$ref": "#/components/schemas/ExaminationType" },
+          "exam_date": { "type": "string", "format": "date-time" },
+          "duration": { "type": "integer", "description": "Duration in minutes" },
+          "max_score": { "type": "integer", "default": 100 },
+          "status": { "$ref": "#/components/schemas/ExaminationStatus" },
+          "instructions": { "type": "string" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ExaminationResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Examination" }
+        }
+      },
+      "ExaminationsListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Examination" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "CreateExaminationInput": {
+        "type": "object",
+        "required": ["course_id", "term_id", "title", "type"],
+        "properties": {
+          "course_id": { "type": "string", "format": "uuid" },
+          "term_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "type": { "$ref": "#/components/schemas/ExaminationType" },
+          "exam_date": { "type": "string", "format": "date-time" },
+          "duration": { "type": "integer", "description": "Duration in minutes" },
+          "max_score": { "type": "integer", "default": 100 },
+          "instructions": { "type": "string" }
+        }
+      },
+      "UpdateExaminationInput": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "type": { "$ref": "#/components/schemas/ExaminationType" },
+          "exam_date": { "type": "string", "format": "date-time" },
+          "duration": { "type": "integer" },
+          "max_score": { "type": "integer" },
+          "instructions": { "type": "string" }
+        }
+      },
+      "ExaminationResult": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "examination_id": { "type": "string", "format": "uuid" },
+          "student_id": { "type": "string", "format": "uuid" },
+          "score": { "type": "integer" },
+          "grade": { "type": "string", "description": "Nigerian grading: A, B, C, D, E, F" },
+          "remarks": { "type": "string" },
+          "graded_at": { "type": "string", "format": "date-time" },
+          "graded_by_id": { "type": "string", "format": "uuid" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ExamResultResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/ExaminationResult" }
+        }
+      },
+      "ExamResultsListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ExaminationResult" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "RecordResultInput": {
+        "type": "object",
+        "required": ["student_id", "score"],
+        "properties": {
+          "student_id": { "type": "string", "format": "uuid" },
+          "score": { "type": "integer" },
+          "remarks": { "type": "string" }
+        }
+      },
+      "BulkRecordResultsInput": {
+        "type": "array",
+        "items": { "$ref": "#/components/schemas/RecordResultInput" }
+      },
+      "UpdateResultInput": {
+        "type": "object",
+        "properties": {
+          "score": { "type": "integer" },
+          "remarks": { "type": "string" }
+        }
+      },
+      "DashboardData": {
+        "type": "object",
+        "description": "Role-based dashboard data",
+        "properties": {
+          "role": { "$ref": "#/components/schemas/Role" },
+          "stats": {
+            "type": "object",
+            "description": "Summary statistics based on role",
+            "properties": {
+              "total_students": { "type": "integer" },
+              "total_tutors": { "type": "integer" },
+              "total_courses": { "type": "integer" },
+              "total_cohorts": { "type": "integer" },
+              "total_tenants": { "type": "integer" },
+              "active_terms": { "type": "integer" },
+              "pending_assignments": { "type": "integer" },
+              "upcoming_exams": { "type": "integer" },
+              "unread_notifications": { "type": "integer" },
+              "attendance_rate": { "type": "number" },
+              "average_score": { "type": "number" },
+              "completed_modules": { "type": "integer" },
+              "total_modules": { "type": "integer" }
+            }
+          },
+          "recent_activities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string" },
+                "title": { "type": "string" },
+                "description": { "type": "string" },
+                "timestamp": { "type": "string", "format": "date-time" },
+                "link": { "type": "string" }
+              }
+            }
+          },
+          "upcoming_events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string", "enum": ["assignment", "exam", "session"] },
+                "title": { "type": "string" },
+                "due_date": { "type": "string", "format": "date-time" },
+                "course_name": { "type": "string" },
+                "link": { "type": "string" }
+              }
+            }
+          },
+          "quick_actions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": { "type": "string" },
+                "action": { "type": "string" },
+                "icon": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "DashboardResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/DashboardData" }
         }
       }
     }
