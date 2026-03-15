@@ -1,0 +1,3332 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "LMS API",
+    "description": "Learning Management System API for managing educational programs, courses, and student progress.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "LMS Support",
+      "email": "support@lms.com"
+    },
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/api/v1",
+      "description": "Development server"
+    },
+    {
+      "url": "https://lms.onrender.com/api/v1",
+      "description": "Production server"
+    }
+  ],
+  "tags": [
+    { "name": "Auth", "description": "Authentication endpoints" },
+    { "name": "Users", "description": "User management" },
+    { "name": "Permissions", "description": "System permissions" },
+    { "name": "Tenants", "description": "Tenant management (Super Admin only)" },
+    { "name": "Cohorts", "description": "Cohort management" },
+    { "name": "Tracks", "description": "Track/discipline management" },
+    { "name": "Application Forms", "description": "Application form templates" },
+    { "name": "Courses", "description": "Course management" },
+    { "name": "Modules", "description": "Module management" },
+    { "name": "Quizzes", "description": "Quiz management" },
+    { "name": "Applications", "description": "Student applications" },
+    { "name": "Progress", "description": "Progress tracking" },
+    { "name": "Sessions", "description": "Session scheduling" },
+    { "name": "Communications", "description": "Notifications and emails" },
+    { "name": "Applicants", "description": "Application flow for new students" },
+    { "name": "Email Templates", "description": "Email template management" }
+  ],
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register a new user",
+        "operationId": "register",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegisterInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "409": { "$ref": "#/components/responses/Conflict" }
+        }
+      }
+    },
+    "/auth/signin": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login with email and password",
+        "operationId": "login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LoginResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Refresh access token",
+        "operationId": "refreshToken",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["refresh_token"],
+                "properties": {
+                  "refresh_token": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token refreshed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TokenPair" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "List all users",
+        "operationId": "getUsers",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          { "$ref": "#/components/parameters/SortByParam" },
+          { "$ref": "#/components/parameters/OrderParam" },
+          { "$ref": "#/components/parameters/RoleFilterParam" },
+          { "$ref": "#/components/parameters/StatusFilterParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UsersListResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get current user",
+        "operationId": "getCurrentUser",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Current user data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update current user",
+        "operationId": "updateCurrentUser",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateUserInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/users/me/password": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Change password",
+        "operationId": "changePassword",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ChangePasswordInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Password changed successfully" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/users/me/profile": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get current user profile",
+        "operationId": "getProfile",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "User profile",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProfileResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update current user profile",
+        "operationId": "updateProfile",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateProfileInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProfileResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get user by ID",
+        "operationId": "getUserById",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "User data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user by ID",
+        "operationId": "updateUser",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateUserInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete user",
+        "operationId": "deleteUser",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "204": { "description": "User deleted" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/tenants": {
+      "get": {
+        "tags": ["Tenants"],
+        "summary": "List all tenants",
+        "operationId": "getTenants",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          { "$ref": "#/components/parameters/SortByParam" },
+          { "$ref": "#/components/parameters/OrderParam" },
+          { "$ref": "#/components/parameters/TenantStatusFilterParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of tenants",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TenantsListResponse" }
+              }
+            }
+          },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      },
+      "post": {
+        "tags": ["Tenants"],
+        "summary": "Create a new tenant",
+        "operationId": "createTenant",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateTenantInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tenant created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TenantResponse" }
+              }
+            }
+          },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/tenants/{id}": {
+      "get": {
+        "tags": ["Tenants"],
+        "summary": "Get tenant by ID",
+        "operationId": "getTenantById",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Tenant data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TenantResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "tags": ["Tenants"],
+        "summary": "Update tenant",
+        "operationId": "updateTenant",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateTenantInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tenant updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TenantResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "tags": ["Tenants"],
+        "summary": "Delete tenant",
+        "operationId": "deleteTenant",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "204": { "description": "Tenant deleted" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/cohorts": {
+      "get": {
+        "tags": ["Cohorts"],
+        "summary": "List all cohorts",
+        "operationId": "getCohorts",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          { "$ref": "#/components/parameters/SortByParam" },
+          { "$ref": "#/components/parameters/OrderParam" },
+          { "$ref": "#/components/parameters/CohortStatusFilterParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of cohorts",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CohortsListResponse" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Cohorts"],
+        "summary": "Create a new cohort",
+        "operationId": "createCohort",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateCohortInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cohort created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CohortResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cohorts/{id}": {
+      "get": {
+        "tags": ["Cohorts"],
+        "summary": "Get cohort by ID",
+        "operationId": "getCohortById",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Cohort data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CohortResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "tags": ["Cohorts"],
+        "summary": "Update cohort",
+        "operationId": "updateCohort",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateCohortInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cohort updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CohortResponse" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Cohorts"],
+        "summary": "Delete cohort",
+        "operationId": "deleteCohort",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "204": { "description": "Cohort deleted" }
+        }
+      }
+    },
+    "/cohorts/{id}/application-form": {
+      "get": {
+        "tags": ["Cohorts"],
+        "summary": "Get cohort application form",
+        "operationId": "getCohortApplicationForm",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Application form",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicationFormResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/tracks": {
+      "get": {
+        "tags": ["Tracks"],
+        "summary": "List all tracks",
+        "operationId": "getTracks",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          { "$ref": "#/components/parameters/SortByParam" },
+          { "$ref": "#/components/parameters/OrderParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of tracks",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TracksListResponse" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Tracks"],
+        "summary": "Create a new track",
+        "operationId": "createTrack",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateTrackInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Track created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TrackResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tracks/{id}": {
+      "get": {
+        "tags": ["Tracks"],
+        "summary": "Get track by ID",
+        "operationId": "getTrackById",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Track data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TrackResponse" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Tracks"],
+        "summary": "Update track",
+        "operationId": "updateTrack",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateTrackInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Track updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TrackResponse" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Tracks"],
+        "summary": "Delete track",
+        "operationId": "deleteTrack",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "204": { "description": "Track deleted" }
+        }
+      }
+    },
+    "/permissions": {
+      "get": {
+        "tags": ["Permissions"],
+        "summary": "List all available permissions",
+        "operationId": "getPermissions",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of permissions",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PermissionsListResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/application-forms": {
+      "get": {
+        "tags": ["Application Forms"],
+        "summary": "List all application forms",
+        "operationId": "getApplicationForms",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          { "$ref": "#/components/parameters/SortByParam" },
+          { "$ref": "#/components/parameters/OrderParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of application forms",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicationFormsListResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      },
+      "post": {
+        "tags": ["Application Forms"],
+        "summary": "Create a new application form",
+        "operationId": "createApplicationForm",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateApplicationFormInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Application form created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicationFormResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/application-forms/{id}": {
+      "get": {
+        "tags": ["Application Forms"],
+        "summary": "Get application form by ID",
+        "operationId": "getApplicationFormById",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Application form data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicationFormResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "tags": ["Application Forms"],
+        "summary": "Update application form",
+        "operationId": "updateApplicationForm",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateApplicationFormInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Application form updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicationFormResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "tags": ["Application Forms"],
+        "summary": "Delete application form",
+        "operationId": "deleteApplicationForm",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "204": { "description": "Application form deleted" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/courses": {
+      "get": {
+        "tags": ["Courses"],
+        "summary": "List all courses",
+        "operationId": "getCourses",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          { "$ref": "#/components/parameters/SortByParam" },
+          { "$ref": "#/components/parameters/OrderParam" },
+          { "$ref": "#/components/parameters/CourseStatusFilterParam" },
+          { "$ref": "#/components/parameters/TrackIdFilterParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of courses",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CoursesListResponse" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Courses"],
+        "summary": "Create a new course",
+        "operationId": "createCourse",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateCourseInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Course created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CourseResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/{id}": {
+      "get": {
+        "tags": ["Courses"],
+        "summary": "Get course by ID",
+        "operationId": "getCourseById",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Course data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CourseResponse" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Courses"],
+        "summary": "Update course",
+        "operationId": "updateCourse",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateCourseInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Course updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CourseResponse" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Courses"],
+        "summary": "Delete course",
+        "operationId": "deleteCourse",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "204": { "description": "Course deleted" }
+        }
+      }
+    },
+    "/courses/{id}/modules": {
+      "get": {
+        "tags": ["Courses"],
+        "summary": "Get course modules",
+        "operationId": "getCourseModules",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/IdParam" },
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          { "$ref": "#/components/parameters/SortByParam" },
+          { "$ref": "#/components/parameters/OrderParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of modules",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ModulesListResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/modules": {
+      "post": {
+        "tags": ["Modules"],
+        "summary": "Create a new module",
+        "operationId": "createModule",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateModuleInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Module created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ModuleResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/modules/{id}": {
+      "get": {
+        "tags": ["Modules"],
+        "summary": "Get module by ID",
+        "operationId": "getModuleById",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Module data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ModuleResponse" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Modules"],
+        "summary": "Update module",
+        "operationId": "updateModule",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateModuleInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Module updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ModuleResponse" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Modules"],
+        "summary": "Delete module",
+        "operationId": "deleteModule",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "204": { "description": "Module deleted" }
+        }
+      }
+    },
+    "/modules/{id}/resources": {
+      "get": {
+        "tags": ["Modules"],
+        "summary": "Get module resources",
+        "operationId": "getModuleResources",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/IdParam" },
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          { "$ref": "#/components/parameters/SortByParam" },
+          { "$ref": "#/components/parameters/OrderParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of resources",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResourcesListResponse" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Modules"],
+        "summary": "Add resource to module",
+        "operationId": "createResource",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateResourceInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResourceResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quizzes": {
+      "post": {
+        "tags": ["Quizzes"],
+        "summary": "Create a new quiz",
+        "operationId": "createQuiz",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateQuizInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Quiz created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/QuizResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quizzes/{id}": {
+      "get": {
+        "tags": ["Quizzes"],
+        "summary": "Get quiz by ID",
+        "operationId": "getQuizById",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Quiz data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/QuizResponse" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Quizzes"],
+        "summary": "Update quiz",
+        "operationId": "updateQuiz",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateQuizInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quiz updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/QuizResponse" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Quizzes"],
+        "summary": "Delete quiz",
+        "operationId": "deleteQuiz",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "204": { "description": "Quiz deleted" }
+        }
+      }
+    },
+    "/quizzes/{id}/start": {
+      "post": {
+        "tags": ["Quizzes"],
+        "summary": "Start quiz attempt",
+        "operationId": "startQuizAttempt",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "201": {
+            "description": "Attempt started",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/QuizAttemptResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quizzes/{id}/submit": {
+      "post": {
+        "tags": ["Quizzes"],
+        "summary": "Submit quiz answers",
+        "operationId": "submitQuizAttempt",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SubmitQuizInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quiz submitted",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/QuizAttemptResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quizzes/{id}/results": {
+      "get": {
+        "tags": ["Quizzes"],
+        "summary": "Get quiz results",
+        "operationId": "getQuizResults",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Quiz results",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/QuizAttemptResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applications": {
+      "post": {
+        "tags": ["Applications"],
+        "summary": "Submit application",
+        "operationId": "createApplication",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateApplicationInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Application submitted",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicationResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applications/{id}": {
+      "get": {
+        "tags": ["Applications"],
+        "summary": "Get application by ID",
+        "operationId": "getApplicationById",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Application data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicationResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applications/{id}/status": {
+      "put": {
+        "tags": ["Applications"],
+        "summary": "Update application status",
+        "operationId": "updateApplicationStatus",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["status"],
+                "properties": {
+                  "status": { "$ref": "#/components/schemas/ApplicationStatus" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Status updated" }
+        }
+      }
+    },
+    "/progress/me": {
+      "get": {
+        "tags": ["Progress"],
+        "summary": "Get my progress",
+        "operationId": "getMyProgress",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Progress data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProgressListResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/progress/users/{userId}": {
+      "get": {
+        "tags": ["Progress"],
+        "summary": "Get user progress",
+        "operationId": "getUserProgress",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Progress data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProgressListResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/progress/modules/{moduleId}/complete": {
+      "post": {
+        "tags": ["Progress"],
+        "summary": "Mark module as complete",
+        "operationId": "completeModule",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "moduleId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Module completed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ModuleProgressResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/progress/attendance": {
+      "post": {
+        "tags": ["Progress"],
+        "summary": "Mark attendance",
+        "operationId": "markAttendance",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MarkAttendanceInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Attendance marked",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AttendanceResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions": {
+      "post": {
+        "tags": ["Sessions"],
+        "summary": "Create a session",
+        "operationId": "createSession",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateSessionInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Session created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SessionResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{id}": {
+      "get": {
+        "tags": ["Sessions"],
+        "summary": "Get session by ID",
+        "operationId": "getSessionById",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Session data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SessionResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/communications/notifications": {
+      "get": {
+        "tags": ["Communications"],
+        "summary": "Get notifications",
+        "operationId": "getNotifications",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" },
+          { "$ref": "#/components/parameters/SortByParam" },
+          { "$ref": "#/components/parameters/OrderParam" },
+          {
+            "name": "read",
+            "in": "query",
+            "description": "Filter by read status",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of notifications",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/NotificationsListResponse" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Communications"],
+        "summary": "Create notification",
+        "operationId": "createNotification",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateNotificationInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Notification created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/NotificationResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/communications/notifications/{id}/read": {
+      "put": {
+        "tags": ["Communications"],
+        "summary": "Mark notification as read",
+        "operationId": "markNotificationAsRead",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": { "description": "Notification marked as read" }
+        }
+      }
+    },
+    "/communications/notifications/read-all": {
+      "put": {
+        "tags": ["Communications"],
+        "summary": "Mark all notifications as read",
+        "operationId": "markAllNotificationsAsRead",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "All notifications marked as read" }
+        }
+      }
+    },
+    "/communications/emails": {
+      "post": {
+        "tags": ["Communications"],
+        "summary": "Send email",
+        "operationId": "sendEmail",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SendEmailInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Email queued",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmailResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/communications/announcements": {
+      "get": {
+        "tags": ["Communications"],
+        "summary": "Get announcements",
+        "operationId": "getAnnouncements",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          { "$ref": "#/components/parameters/SortByParam" },
+          { "$ref": "#/components/parameters/OrderParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of announcements",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnnouncementsListResponse" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Communications"],
+        "summary": "Create announcement",
+        "operationId": "createAnnouncement",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateAnnouncementInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Announcement created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnnouncementResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applicants/register": {
+      "post": {
+        "tags": ["Applicants"],
+        "summary": "Register as an applicant",
+        "description": "Public endpoint for new students to start their application. Sends verification email.",
+        "operationId": "registerApplicant",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegisterApplicantInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Applicant registered successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicantRegistrationResponse" }
+              }
+            }
+          },
+          "409": {
+            "description": "Already applied or account exists",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applicants/validate-token": {
+      "get": {
+        "tags": ["Applicants"],
+        "summary": "Validate application token",
+        "description": "Validates the token from the email link and returns the application form fields",
+        "operationId": "validateApplicantToken",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token validation result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TokenValidationResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applicants/submit": {
+      "post": {
+        "tags": ["Applicants"],
+        "summary": "Submit application form",
+        "description": "Submits the application with the form data. Creates user and student records.",
+        "operationId": "submitApplication",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SubmitApplicationInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Application submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicationSubmitResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or expired token",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applicants/{id}/resend-token": {
+      "post": {
+        "tags": ["Applicants"],
+        "summary": "Resend verification email",
+        "description": "Resends the verification email with a new token",
+        "operationId": "resendApplicantToken",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Email resent",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MessageResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applicants": {
+      "get": {
+        "tags": ["Applicants"],
+        "summary": "List all applicants",
+        "description": "Admin endpoint to list all applicants for a tenant",
+        "operationId": "getApplicants",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          { "$ref": "#/components/parameters/SortByParam" },
+          { "$ref": "#/components/parameters/OrderParam" },
+          { "$ref": "#/components/parameters/StatusFilterParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of applicants",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicantsListResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applicants/{id}": {
+      "get": {
+        "tags": ["Applicants"],
+        "summary": "Get applicant details",
+        "operationId": "getApplicant",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Applicant details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicantResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applicants/{id}/status": {
+      "put": {
+        "tags": ["Applicants"],
+        "summary": "Update applicant status",
+        "operationId": "updateApplicantStatus",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["status"],
+                "properties": {
+                  "status": { "$ref": "#/components/schemas/ApplicantStatus" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Status updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MessageResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cohorts/{id}/applicants": {
+      "get": {
+        "tags": ["Applicants"],
+        "summary": "Get applicants for a cohort",
+        "operationId": "getApplicantsByCohort",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/IdParam" },
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          { "$ref": "#/components/parameters/SortByParam" },
+          { "$ref": "#/components/parameters/OrderParam" },
+          { "$ref": "#/components/parameters/StatusFilterParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of applicants for the cohort",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicantsListResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/email-templates": {
+      "get": {
+        "tags": ["Email Templates"],
+        "summary": "List email templates",
+        "operationId": "getEmailTemplates",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PerPageParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          { "$ref": "#/components/parameters/SortByParam" },
+          { "$ref": "#/components/parameters/OrderParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of email templates",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmailTemplatesListResponse" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Email Templates"],
+        "summary": "Create email template",
+        "operationId": "createEmailTemplate",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateEmailTemplateInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Template created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmailTemplateResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/email-templates/{id}": {
+      "get": {
+        "tags": ["Email Templates"],
+        "summary": "Get email template",
+        "operationId": "getEmailTemplate",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": {
+            "description": "Email template details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmailTemplateResponse" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Email Templates"],
+        "summary": "Update email template",
+        "operationId": "updateEmailTemplate",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateEmailTemplateInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Template updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmailTemplateResponse" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Email Templates"],
+        "summary": "Delete email template",
+        "operationId": "deleteEmailTemplate",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "204": {
+            "description": "Template deleted"
+          }
+        }
+      }
+    },
+    "/email-templates/{id}/preview": {
+      "post": {
+        "tags": ["Email Templates"],
+        "summary": "Preview email template",
+        "description": "Renders the template with the provided variables",
+        "operationId": "previewEmailTemplate",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "variables": {
+                    "type": "object",
+                    "additionalProperties": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rendered template preview",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmailTemplatePreviewResponse" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "parameters": {
+      "IdParam": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "format": "uuid" }
+      },
+      "PageParam": {
+        "name": "page",
+        "in": "query",
+        "description": "Page number for pagination",
+        "schema": { "type": "integer", "default": 1 }
+      },
+      "PerPageParam": {
+        "name": "per_page",
+        "in": "query",
+        "description": "Number of items per page (max 100)",
+        "schema": { "type": "integer", "default": 10, "maximum": 100 }
+      },
+      "SearchParam": {
+        "name": "search",
+        "in": "query",
+        "description": "Search term for filtering results",
+        "schema": { "type": "string" }
+      },
+      "SortByParam": {
+        "name": "sort_by",
+        "in": "query",
+        "description": "Field to sort by (default: created_at)",
+        "schema": { "type": "string", "default": "created_at" }
+      },
+      "OrderParam": {
+        "name": "order",
+        "in": "query",
+        "description": "Sort order (asc or desc)",
+        "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" }
+      },
+      "StatusFilterParam": {
+        "name": "status",
+        "in": "query",
+        "description": "Filter by status",
+        "schema": { "type": "string" }
+      },
+      "RoleFilterParam": {
+        "name": "role",
+        "in": "query",
+        "description": "Filter by role",
+        "schema": { "type": "string" }
+      },
+      "TrackIdFilterParam": {
+        "name": "track_id",
+        "in": "query",
+        "description": "Filter by track ID",
+        "schema": { "type": "string", "format": "uuid" }
+      },
+      "TenantStatusFilterParam": {
+        "name": "status",
+        "in": "query",
+        "description": "Filter tenants by status",
+        "schema": { "type": "string", "enum": ["ACTIVE", "INACTIVE", "SUSPENDED"] }
+      },
+      "CohortStatusFilterParam": {
+        "name": "status",
+        "in": "query",
+        "description": "Filter cohorts by status",
+        "schema": { "type": "string", "enum": ["DRAFT", "OPEN", "CLOSED", "ACTIVE", "COMPLETED"] }
+      },
+      "CourseStatusFilterParam": {
+        "name": "status",
+        "in": "query",
+        "description": "Filter courses by status",
+        "schema": { "type": "string", "enum": ["DRAFT", "PUBLISHED", "ARCHIVED"] }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Forbidden",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Not found",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "Conflict",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "status": { "type": "integer", "example": 400 },
+          "message": { "type": "string", "example": "Bad request" },
+          "error": { "type": "string" }
+        }
+      },
+      "PaginatedMeta": {
+        "type": "object",
+        "properties": {
+          "has_next": { "type": "boolean" },
+          "has_prev": { "type": "boolean" },
+          "page": { "type": "integer" },
+          "page_size": { "type": "integer" },
+          "total": { "type": "integer" },
+          "total_pages": { "type": "integer" }
+        }
+      },
+      "Role": {
+        "type": "string",
+        "enum": ["SUPER_ADMIN", "ADMIN", "TUTOR", "STUDENT"]
+      },
+      "UserStatus": {
+        "type": "string",
+        "enum": ["ACTIVE", "INACTIVE"]
+      },
+      "ApplicationStatus": {
+        "type": "string",
+        "enum": ["REVIEWING", "ADMITTED", "ENROLLED", "ONBOARDED", "GRADUATED", "SUSPENDED", "WITHDRAWN", "EXPELLED"]
+      },
+      "CohortStatus": {
+        "type": "string",
+        "enum": ["DRAFT", "OPEN", "CLOSED", "ACTIVE", "COMPLETED"]
+      },
+      "CourseStatus": {
+        "type": "string",
+        "enum": ["DRAFT", "PUBLISHED", "ARCHIVED"]
+      },
+      "ResourceType": {
+        "type": "string",
+        "enum": ["VIDEO", "PDF", "LINK", "DOCUMENT", "IMAGE", "AUDIO"]
+      },
+      "RegisterInput": {
+        "type": "object",
+        "required": ["name", "email", "password"],
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string", "minLength": 8 },
+          "role": { "$ref": "#/components/schemas/Role" },
+          "tenant_id": { "type": "string", "format": "uuid" }
+        }
+      },
+      "LoginInput": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" }
+        }
+      },
+      "TokenPair": {
+        "type": "object",
+        "properties": {
+          "access_token": { "type": "string" },
+          "refresh_token": { "type": "string" },
+          "expires_at": { "type": "integer" }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "user": { "$ref": "#/components/schemas/User" },
+              "tokens": { "$ref": "#/components/schemas/TokenPair" }
+            }
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "tenant_id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "role": { "$ref": "#/components/schemas/Role" },
+          "status": { "$ref": "#/components/schemas/UserStatus" },
+          "last_login_at": { "type": "string", "format": "date-time" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/User" }
+        }
+      },
+      "UsersListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/User" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "UpdateUserInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "role": { "$ref": "#/components/schemas/Role" },
+          "status": { "$ref": "#/components/schemas/UserStatus" }
+        }
+      },
+      "ChangePasswordInput": {
+        "type": "object",
+        "required": ["current_password", "new_password"],
+        "properties": {
+          "current_password": { "type": "string" },
+          "new_password": { "type": "string", "minLength": 8 }
+        }
+      },
+      "Profile": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "user_id": { "type": "string", "format": "uuid" },
+          "phone": { "type": "string" },
+          "gender": { "type": "string" },
+          "date_of_birth": { "type": "string", "format": "date" },
+          "avatar": { "type": "string" },
+          "bio": { "type": "string" },
+          "address": { "type": "string" },
+          "city": { "type": "string" },
+          "state": { "type": "string" },
+          "country": { "type": "string" },
+          "postal_code": { "type": "string" }
+        }
+      },
+      "ProfileResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Profile" }
+        }
+      },
+      "UpdateProfileInput": {
+        "type": "object",
+        "properties": {
+          "phone": { "type": "string" },
+          "gender": { "type": "string" },
+          "date_of_birth": { "type": "string", "format": "date" },
+          "avatar": { "type": "string" },
+          "bio": { "type": "string" },
+          "address": { "type": "string" },
+          "city": { "type": "string" },
+          "state": { "type": "string" },
+          "country": { "type": "string" },
+          "postal_code": { "type": "string" }
+        }
+      },
+      "Tenant": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "slug": { "type": "string" },
+          "description": { "type": "string" },
+          "logo": { "type": "string" },
+          "website": { "type": "string" },
+          "email": { "type": "string" },
+          "phone": { "type": "string" },
+          "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE", "SUSPENDED"] },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "TenantResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Tenant" }
+        }
+      },
+      "TenantsListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Tenant" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "CreateTenantInput": {
+        "type": "object",
+        "required": ["name", "slug", "email"],
+        "properties": {
+          "name": { "type": "string" },
+          "slug": { "type": "string" },
+          "description": { "type": "string" },
+          "logo": { "type": "string" },
+          "website": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "phone": { "type": "string" }
+        }
+      },
+      "UpdateTenantInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "logo": { "type": "string" },
+          "website": { "type": "string" },
+          "email": { "type": "string" },
+          "phone": { "type": "string" },
+          "status": { "type": "string" }
+        }
+      },
+      "Cohort": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "tenant_id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "status": { "$ref": "#/components/schemas/CohortStatus" },
+          "application_start_date": { "type": "string", "format": "date-time" },
+          "application_end_date": { "type": "string", "format": "date-time" },
+          "start_date": { "type": "string", "format": "date-time" },
+          "end_date": { "type": "string", "format": "date-time" },
+          "max_students": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CohortResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Cohort" }
+        }
+      },
+      "CohortsListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Cohort" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "CreateCohortInput": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "application_start_date": { "type": "string", "format": "date-time" },
+          "application_end_date": { "type": "string", "format": "date-time" },
+          "start_date": { "type": "string", "format": "date-time" },
+          "end_date": { "type": "string", "format": "date-time" },
+          "max_students": { "type": "integer" },
+          "application_form_id": { "type": "string", "format": "uuid" },
+          "track_ids": {
+            "type": "array",
+            "items": { "type": "string", "format": "uuid" }
+          }
+        }
+      },
+      "UpdateCohortInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "status": { "$ref": "#/components/schemas/CohortStatus" },
+          "max_students": { "type": "integer" }
+        }
+      },
+      "ApplicationForm": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "tenant_id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "fields": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ApplicationFormField" }
+          },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ApplicationFormField": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "form_id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "type": { "$ref": "#/components/schemas/FieldType" },
+          "label": { "type": "string" },
+          "placeholder": { "type": "string" },
+          "helper_text": { "type": "string" },
+          "options": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/FieldOption" }
+          },
+          "validation": { "$ref": "#/components/schemas/FieldValidation" },
+          "order": { "type": "integer" },
+          "width": { "type": "integer", "minimum": 1, "maximum": 4, "default": 4 }
+        }
+      },
+      "FieldType": {
+        "type": "string",
+        "enum": ["TEXT", "TEXTAREA", "NUMBER", "EMAIL", "PHONE", "DATE", "SELECT", "CHECKBOX", "RADIO", "FILE"]
+      },
+      "FieldOption": {
+        "type": "object",
+        "properties": {
+          "label": { "type": "string" },
+          "value": { "type": "string" }
+        }
+      },
+      "FieldValidation": {
+        "type": "object",
+        "properties": {
+          "required": { "type": "boolean" },
+          "min": { "type": "integer" },
+          "max": { "type": "integer" },
+          "min_length": { "type": "integer" },
+          "max_length": { "type": "integer" },
+          "pattern": { "type": "string" },
+          "message": { "type": "string" }
+        }
+      },
+      "ApplicationFormResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/ApplicationForm" }
+        }
+      },
+      "ApplicationFormsListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ApplicationForm" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "CreateApplicationFormInput": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "fields": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ApplicationFormFieldInput" }
+          }
+        }
+      },
+      "UpdateApplicationFormInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "fields": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ApplicationFormFieldInput" }
+          }
+        }
+      },
+      "ApplicationFormFieldInput": {
+        "type": "object",
+        "required": ["name", "type", "label"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "$ref": "#/components/schemas/FieldType" },
+          "label": { "type": "string" },
+          "placeholder": { "type": "string" },
+          "helper_text": { "type": "string" },
+          "options": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/FieldOption" }
+          },
+          "validation": { "$ref": "#/components/schemas/FieldValidation" },
+          "order": { "type": "integer" },
+          "width": { "type": "integer", "minimum": 1, "maximum": 4, "default": 4 }
+        }
+      },
+      "Permission": {
+        "type": "object",
+        "properties": {
+          "permission": { "type": "string" },
+          "resource": { "type": "string" },
+          "action": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      },
+      "PermissionsListResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Permission" }
+          }
+        }
+      },
+      "Track": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "tenant_id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "code": { "type": "string" },
+          "description": { "type": "string" },
+          "duration": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "TrackResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Track" }
+        }
+      },
+      "TracksListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Track" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "CreateTrackInput": {
+        "type": "object",
+        "required": ["name", "code"],
+        "properties": {
+          "name": { "type": "string" },
+          "code": { "type": "string" },
+          "description": { "type": "string" },
+          "duration": { "type": "integer" }
+        }
+      },
+      "UpdateTrackInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "code": { "type": "string" },
+          "description": { "type": "string" },
+          "duration": { "type": "integer" }
+        }
+      },
+      "Course": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "tenant_id": { "type": "string", "format": "uuid" },
+          "track_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "code": { "type": "string" },
+          "description": { "type": "string" },
+          "thumbnail": { "type": "string" },
+          "status": { "$ref": "#/components/schemas/CourseStatus" },
+          "pass_threshold": { "type": "integer" },
+          "duration": { "type": "integer" },
+          "order": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CourseResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Course" }
+        }
+      },
+      "CoursesListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Course" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "CreateCourseInput": {
+        "type": "object",
+        "required": ["track_id", "title", "code"],
+        "properties": {
+          "track_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "code": { "type": "string" },
+          "description": { "type": "string" },
+          "thumbnail": { "type": "string" },
+          "pass_threshold": { "type": "integer", "default": 70 },
+          "duration": { "type": "integer" },
+          "order": { "type": "integer" }
+        }
+      },
+      "UpdateCourseInput": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "code": { "type": "string" },
+          "description": { "type": "string" },
+          "thumbnail": { "type": "string" },
+          "status": { "$ref": "#/components/schemas/CourseStatus" },
+          "pass_threshold": { "type": "integer" },
+          "duration": { "type": "integer" },
+          "order": { "type": "integer" }
+        }
+      },
+      "Module": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "course_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "content": { "type": "string" },
+          "duration": { "type": "integer" },
+          "order": { "type": "integer" },
+          "is_published": { "type": "boolean" },
+          "requires_quiz": { "type": "boolean" },
+          "resources": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Resource" }
+          }
+        }
+      },
+      "ModuleResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Module" }
+        }
+      },
+      "ModulesListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Module" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "CreateModuleInput": {
+        "type": "object",
+        "required": ["course_id", "title"],
+        "properties": {
+          "course_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "content": { "type": "string" },
+          "duration": { "type": "integer" },
+          "order": { "type": "integer" },
+          "requires_quiz": { "type": "boolean" }
+        }
+      },
+      "UpdateModuleInput": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "content": { "type": "string" },
+          "duration": { "type": "integer" },
+          "order": { "type": "integer" },
+          "is_published": { "type": "boolean" },
+          "requires_quiz": { "type": "boolean" }
+        }
+      },
+      "Resource": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "module_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "type": { "$ref": "#/components/schemas/ResourceType" },
+          "url": { "type": "string" },
+          "file_key": { "type": "string" },
+          "file_size": { "type": "integer" },
+          "duration": { "type": "integer" },
+          "order": { "type": "integer" },
+          "tags": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "ResourceResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Resource" }
+        }
+      },
+      "ResourcesListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Resource" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "CreateResourceInput": {
+        "type": "object",
+        "required": ["module_id", "title", "type"],
+        "properties": {
+          "module_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "type": { "$ref": "#/components/schemas/ResourceType" },
+          "url": { "type": "string" },
+          "file_key": { "type": "string" },
+          "file_size": { "type": "integer" },
+          "duration": { "type": "integer" },
+          "order": { "type": "integer" },
+          "tags": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "Quiz": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "module_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "instructions": { "type": "string" },
+          "status": { "type": "string" },
+          "duration": { "type": "integer" },
+          "pass_threshold": { "type": "integer" },
+          "max_attempts": { "type": "integer" },
+          "shuffle_questions": { "type": "boolean" },
+          "shuffle_options": { "type": "boolean" },
+          "show_results": { "type": "boolean" },
+          "questions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Question" }
+          }
+        }
+      },
+      "Question": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "quiz_id": { "type": "string", "format": "uuid" },
+          "type": { "type": "string" },
+          "text": { "type": "string" },
+          "explanation": { "type": "string" },
+          "points": { "type": "integer" },
+          "order": { "type": "integer" },
+          "options": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Option" }
+          }
+        }
+      },
+      "Option": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "text": { "type": "string" },
+          "is_correct": { "type": "boolean" },
+          "order": { "type": "integer" }
+        }
+      },
+      "QuizResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Quiz" }
+        }
+      },
+      "CreateQuizInput": {
+        "type": "object",
+        "required": ["module_id", "title"],
+        "properties": {
+          "module_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "instructions": { "type": "string" },
+          "duration": { "type": "integer" },
+          "pass_threshold": { "type": "integer" },
+          "max_attempts": { "type": "integer" },
+          "shuffle_questions": { "type": "boolean" },
+          "shuffle_options": { "type": "boolean" },
+          "show_results": { "type": "boolean" }
+        }
+      },
+      "UpdateQuizInput": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "instructions": { "type": "string" },
+          "status": { "type": "string" },
+          "duration": { "type": "integer" },
+          "pass_threshold": { "type": "integer" },
+          "max_attempts": { "type": "integer" }
+        }
+      },
+      "QuizAttempt": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "quiz_id": { "type": "string", "format": "uuid" },
+          "student_id": { "type": "string", "format": "uuid" },
+          "status": { "type": "string" },
+          "score": { "type": "number" },
+          "total_points": { "type": "integer" },
+          "earned_points": { "type": "integer" },
+          "passed": { "type": "boolean" },
+          "started_at": { "type": "string", "format": "date-time" },
+          "submitted_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "QuizAttemptResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/QuizAttempt" }
+        }
+      },
+      "SubmitQuizInput": {
+        "type": "object",
+        "required": ["answers"],
+        "properties": {
+          "answers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["question_id"],
+              "properties": {
+                "question_id": { "type": "string", "format": "uuid" },
+                "selected_options": { "type": "array", "items": { "type": "string" } },
+                "text_answer": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "Application": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "student_id": { "type": "string", "format": "uuid" },
+          "cohort_id": { "type": "string", "format": "uuid" },
+          "track_id": { "type": "string", "format": "uuid" },
+          "status": { "$ref": "#/components/schemas/ApplicationStatus" },
+          "form_data": { "type": "object" },
+          "submitted_at": { "type": "string", "format": "date-time" },
+          "reviewed_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ApplicationResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Application" }
+        }
+      },
+      "CreateApplicationInput": {
+        "type": "object",
+        "required": ["cohort_id", "track_id"],
+        "properties": {
+          "cohort_id": { "type": "string", "format": "uuid" },
+          "track_id": { "type": "string", "format": "uuid" },
+          "form_data": { "type": "object" }
+        }
+      },
+      "Progress": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "student_id": { "type": "string", "format": "uuid" },
+          "course_id": { "type": "string", "format": "uuid" },
+          "cohort_id": { "type": "string", "format": "uuid" },
+          "completed_modules": { "type": "integer" },
+          "total_modules": { "type": "integer" },
+          "percentage": { "type": "number" },
+          "last_accessed_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ProgressListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Progress" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "ModuleProgress": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "student_id": { "type": "string", "format": "uuid" },
+          "module_id": { "type": "string", "format": "uuid" },
+          "status": { "type": "string" },
+          "progress": { "type": "number" },
+          "started_at": { "type": "string", "format": "date-time" },
+          "completed_at": { "type": "string", "format": "date-time" },
+          "time_spent": { "type": "integer" }
+        }
+      },
+      "ModuleProgressResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/ModuleProgress" }
+        }
+      },
+      "Attendance": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "student_id": { "type": "string", "format": "uuid" },
+          "session_id": { "type": "string", "format": "uuid" },
+          "status": { "type": "string", "enum": ["PRESENT", "ABSENT", "LATE", "EXCUSED"] },
+          "check_in_at": { "type": "string", "format": "date-time" },
+          "notes": { "type": "string" }
+        }
+      },
+      "AttendanceResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Attendance" }
+        }
+      },
+      "MarkAttendanceInput": {
+        "type": "object",
+        "required": ["student_id", "session_id", "status"],
+        "properties": {
+          "student_id": { "type": "string", "format": "uuid" },
+          "session_id": { "type": "string", "format": "uuid" },
+          "status": { "type": "string", "enum": ["PRESENT", "ABSENT", "LATE", "EXCUSED"] },
+          "notes": { "type": "string" }
+        }
+      },
+      "Session": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "course_id": { "type": "string", "format": "uuid" },
+          "cohort_id": { "type": "string", "format": "uuid" },
+          "tutor_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "type": { "type": "string", "enum": ["LIVE", "RECORDED", "OFFICE_HOURS"] },
+          "meeting_link": { "type": "string" },
+          "start_time": { "type": "string", "format": "date-time" },
+          "end_time": { "type": "string", "format": "date-time" }
+        }
+      },
+      "SessionResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Session" }
+        }
+      },
+      "CreateSessionInput": {
+        "type": "object",
+        "required": ["course_id", "cohort_id", "tutor_id", "title", "start_time", "end_time"],
+        "properties": {
+          "course_id": { "type": "string", "format": "uuid" },
+          "cohort_id": { "type": "string", "format": "uuid" },
+          "tutor_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "type": { "type": "string", "enum": ["LIVE", "RECORDED", "OFFICE_HOURS"] },
+          "meeting_link": { "type": "string" },
+          "start_time": { "type": "string", "format": "date-time" },
+          "end_time": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Notification": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "user_id": { "type": "string", "format": "uuid" },
+          "type": { "type": "string", "enum": ["INFO", "WARNING", "SUCCESS", "ERROR", "REMINDER"] },
+          "title": { "type": "string" },
+          "message": { "type": "string" },
+          "link": { "type": "string" },
+          "is_read": { "type": "boolean" },
+          "read_at": { "type": "string", "format": "date-time" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "NotificationResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Notification" }
+        }
+      },
+      "NotificationsListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Notification" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "CreateNotificationInput": {
+        "type": "object",
+        "required": ["user_id", "title", "message"],
+        "properties": {
+          "tenant_id": { "type": "string", "format": "uuid" },
+          "user_id": { "type": "string", "format": "uuid" },
+          "type": { "type": "string", "enum": ["INFO", "WARNING", "SUCCESS", "ERROR", "REMINDER"] },
+          "title": { "type": "string" },
+          "message": { "type": "string" },
+          "link": { "type": "string" }
+        }
+      },
+      "Email": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "sender_id": { "type": "string", "format": "uuid" },
+          "recipients": { "type": "array", "items": { "type": "string" } },
+          "subject": { "type": "string" },
+          "body": { "type": "string" },
+          "status": { "type": "string", "enum": ["PENDING", "SENT", "FAILED", "DELIVERED", "BOUNCED"] },
+          "sent_at": { "type": "string", "format": "date-time" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "EmailResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Email" }
+        }
+      },
+      "RecipientType": {
+        "type": "string",
+        "enum": [
+          "DIRECT",
+          "ALL_ADMINS",
+          "ALL_TUTORS",
+          "ALL_STUDENTS",
+          "COHORT_TUTORS",
+          "COHORT_STUDENTS",
+          "COHORT_ALL",
+          "TRACK_TUTORS",
+          "TRACK_STUDENTS",
+          "TRACK_ALL"
+        ],
+        "description": "Type of recipient group for bulk emails"
+      },
+      "SendEmailInput": {
+        "type": "object",
+        "required": ["subject", "body"],
+        "properties": {
+          "recipient_type": {
+            "$ref": "#/components/schemas/RecipientType",
+            "description": "Type of recipient group. Defaults to DIRECT if not specified"
+          },
+          "recipients": {
+            "type": "array",
+            "items": { "type": "string", "format": "email" },
+            "description": "Direct email addresses (required when recipient_type is DIRECT)"
+          },
+          "cohort_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Required when recipient_type is COHORT_*"
+          },
+          "track_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Required when recipient_type is TRACK_*"
+          },
+          "cc": { "type": "array", "items": { "type": "string", "format": "email" } },
+          "bcc": { "type": "array", "items": { "type": "string", "format": "email" } },
+          "subject": { "type": "string" },
+          "body": { "type": "string" },
+          "is_html": { "type": "boolean", "default": true },
+          "template_id": { "type": "string", "format": "uuid" }
+        }
+      },
+      "Announcement": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "author_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "content": { "type": "string" },
+          "cohort_id": { "type": "string", "format": "uuid" },
+          "course_id": { "type": "string", "format": "uuid" },
+          "is_pinned": { "type": "boolean" },
+          "published_at": { "type": "string", "format": "date-time" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "AnnouncementResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Announcement" }
+        }
+      },
+      "AnnouncementsListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Announcement" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "CreateAnnouncementInput": {
+        "type": "object",
+        "required": ["title", "content"],
+        "properties": {
+          "title": { "type": "string" },
+          "content": { "type": "string" },
+          "cohort_id": { "type": "string", "format": "uuid" },
+          "course_id": { "type": "string", "format": "uuid" },
+          "is_pinned": { "type": "boolean", "default": false }
+        }
+      },
+      "ApplicantStatus": {
+        "type": "string",
+        "enum": ["PENDING", "SUBMITTED", "APPROVED", "REJECTED", "EXPIRED"]
+      },
+      "Applicant": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "tenant_id": { "type": "string", "format": "uuid" },
+          "email": { "type": "string", "format": "email" },
+          "name": { "type": "string" },
+          "cohort_id": { "type": "string", "format": "uuid" },
+          "track_id": { "type": "string", "format": "uuid" },
+          "status": { "$ref": "#/components/schemas/ApplicantStatus" },
+          "form_data": { "type": "object" },
+          "submitted_at": { "type": "string", "format": "date-time" },
+          "user_id": { "type": "string", "format": "uuid" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ApplicantResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Applicant" }
+        }
+      },
+      "ApplicantsListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Applicant" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "RegisterApplicantInput": {
+        "type": "object",
+        "required": ["tenant_id", "email", "name", "password", "cohort_id", "track_id"],
+        "properties": {
+          "tenant_id": { "type": "string", "format": "uuid" },
+          "email": { "type": "string", "format": "email" },
+          "name": { "type": "string" },
+          "password": { "type": "string", "minLength": 8 },
+          "cohort_id": { "type": "string", "format": "uuid" },
+          "track_id": { "type": "string", "format": "uuid" }
+        }
+      },
+      "ApplicantRegistrationResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "applicant_id": { "type": "string", "format": "uuid" },
+              "email": { "type": "string" }
+            }
+          }
+        }
+      },
+      "TokenValidationResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "valid": { "type": "boolean" },
+              "applicant_id": { "type": "string", "format": "uuid" },
+              "email": { "type": "string" },
+              "name": { "type": "string" },
+              "cohort_id": { "type": "string", "format": "uuid" },
+              "track_id": { "type": "string", "format": "uuid" },
+              "cohort_name": { "type": "string" },
+              "track_name": { "type": "string" },
+              "expires_at": { "type": "string", "format": "date-time" },
+              "form_fields": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/ApplicationFormField" }
+              }
+            }
+          }
+        }
+      },
+      "SubmitApplicationInput": {
+        "type": "object",
+        "required": ["token", "form_data"],
+        "properties": {
+          "token": { "type": "string" },
+          "form_data": { "type": "object" }
+        }
+      },
+      "ApplicationSubmitResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "applicant": { "$ref": "#/components/schemas/Applicant" },
+              "user": { "$ref": "#/components/schemas/User" }
+            }
+          }
+        }
+      },
+      "EmailTemplate": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "tenant_id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "subject": { "type": "string" },
+          "body": { "type": "string" },
+          "variables": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "is_default": { "type": "boolean" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "EmailTemplateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/EmailTemplate" }
+        }
+      },
+      "EmailTemplatesListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/EmailTemplate" }
+          },
+          "meta": { "$ref": "#/components/schemas/PaginatedMeta" }
+        }
+      },
+      "CreateEmailTemplateInput": {
+        "type": "object",
+        "required": ["name", "subject", "body"],
+        "properties": {
+          "name": { "type": "string" },
+          "subject": { "type": "string" },
+          "body": { "type": "string" },
+          "variables": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "is_default": { "type": "boolean", "default": false }
+        }
+      },
+      "UpdateEmailTemplateInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "subject": { "type": "string" },
+          "body": { "type": "string" },
+          "variables": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "is_default": { "type": "boolean" }
+        }
+      },
+      "EmailTemplatePreviewResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "subject": { "type": "string" },
+              "body": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

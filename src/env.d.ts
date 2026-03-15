@@ -1,0 +1,14 @@
+export const requiredEnvVars = ["API_URL", "NODE_ENV"] as const;
+
+type RequiredEnvVars = (typeof requiredEnvVars)[number];
+
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv extends Record<RequiredEnvVars, string> {
+      readonly API_URL: string;
+      readonly NODE_ENV: "development" | "production";
+    }
+  }
+}
+
+export {};
