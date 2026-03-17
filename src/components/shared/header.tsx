@@ -28,7 +28,7 @@ export const Header = () => {
           />
         </button>
         <h3 className="text-2xl font-bold">ArcLMS</h3>
-        <Input type="search" wrapperClassName="w-75" />
+        <Input type="search" placeholder="Search..." wrapperClassName="w-75" />
       </div>
       <div className="flex items-center gap-x-4">
         <button className="relative grid size-8 place-items-center rounded-md border">

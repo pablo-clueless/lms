@@ -113,3 +113,33 @@ export interface Term {
   created_at: string;
   updated_at: string;
 }
+
+export interface CreateApplicationFormDto {
+  name: string;
+  description: string;
+  fields: ApplicationFormFieldDto[];
+}
+
+export type OptionsSourceType = "manual" | "api" | "file";
+
+export interface OptionsApiConfig {
+  url: string;
+  method: "GET" | "POST";
+  headers?: Record<string, string>;
+  label_field: string;
+  value_field: string;
+}
+
+export interface ApplicationFormFieldDto {
+  name: string;
+  type: FieldType;
+  label: string;
+  placeholder: string;
+  helper_text: string;
+  options?: FormFieldOption[];
+  options_source?: OptionsSourceType;
+  options_api_config?: OptionsApiConfig;
+  validation: FieldValidation;
+  order: number;
+  width: 1 | 2 | 3 | 4;
+}

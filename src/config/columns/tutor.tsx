@@ -7,19 +7,29 @@ import Link from "next/link";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { StatusBadge } from "@/components/shared/status-badge";
-import { getBasePathByRole, truncateText } from "@/lib";
+import { formatDate, getBasePathByRole, truncateText } from "@/lib";
 import { Button } from "@/components/ui/button";
-import type { Role, Tutor } from "@/types";
+import type { Role, User } from "@/types";
 
-export const createColumns = (role: Role): ColumnDef<Tutor>[] => {
+export const createColumns = (role: Role): ColumnDef<User>[] => {
   return [
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => (
+        <div className="flex flex-col">
+          <span className="font-medium">{row.original.name}</span>
+          <span className="text-xs text-neutral-500">{row.original.email}</span>
+        </div>
+      ),
+    },
     {
       accessorKey: "headline",
       header: "Headline",
       cell: ({ row }) => (
         <div className="flex flex-col">
-          <span className="font-medium">{row.original.headline || "-"}</span>
-          <span className="text-xs text-neutral-500">{truncateText(row.original.bio || "", 40)}</span>
+          <span className="text-sm">{row.original.tutor?.headline || "—"}</span>
+          <span className="text-xs text-neutral-500">{truncateText(row.original.tutor?.bio || "", 40)}</span>
         </div>
       ),
     },
@@ -31,32 +41,41 @@ export const createColumns = (role: Role): ColumnDef<Tutor>[] => {
     {
       accessorKey: "years_of_experience",
       header: "Experience",
-      cell: ({ row }) => (
-        <span className="text-sm">
-          {row.original.years_of_experience} {row.original.years_of_experience === 1 ? "year" : "years"}
-        </span>
-      ),
+      cell: ({ row }) => {
+        const years = row.original.tutor?.years_of_experience;
+        return (
+          <span className="text-sm">
+            {years ? `${years} ${years === 1 ? "year" : "years"}` : "—"}
+          </span>
+        );
+      },
     },
     {
       accessorKey: "specialities",
       header: "Specialities",
-      cell: ({ row }) => (
-        <div className="flex flex-wrap gap-1">
-          {row.original.specialities?.slice(0, 2).map((s) => (
-            <span key={s} className="rounded bg-neutral-100 px-1.5 py-0.5 text-xs">
-              {s}
-            </span>
-          ))}
-          {(row.original.specialities?.length ?? 0) > 2 && (
-            <span className="text-xs text-neutral-500">+{row.original.specialities!.length - 2}</span>
-          )}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const specialities = row.original.tutor?.specialities;
+        if (!specialities || specialities.length === 0) {
+          return <span className="text-sm text-neutral-500">—</span>;
+        }
+        return (
+          <div className="flex flex-wrap gap-1">
+            {specialities.slice(0, 2).map((s) => (
+              <span key={s} className="rounded bg-neutral-100 px-1.5 py-0.5 text-xs">
+                {s}
+              </span>
+            ))}
+            {specialities.length > 2 && (
+              <span className="text-xs text-neutral-500">+{specialities.length - 2}</span>
+            )}
+          </div>
+        );
+      },
     },
     {
-      accessorKey: "timezone",
-      header: "Timezone",
-      cell: ({ row }) => <span className="text-sm text-neutral-600">{row.original.timezone || "-"}</span>,
+      accessorKey: "last_login_at",
+      header: "Last Login",
+      cell: ({ row }) => <span className="text-sm text-neutral-600">{formatDate(row.original.last_login_at)}</span>,
     },
     {
       id: "actions",

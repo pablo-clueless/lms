@@ -1,3 +1,5 @@
+import type { Tenant } from "./tenant";
+
 export type ApplicationStatus =
   | "REVIEWING"
   | "ADMITTED"
@@ -95,6 +97,7 @@ export interface Student {
 export interface User {
   id: string;
   tenant_id?: string;
+  tenant?: Tenant;
   name: string;
   email: string;
   role: Role;
@@ -127,3 +130,76 @@ export interface UpdateUserProfileDto {
   country?: string;
   postal_code?: string;
 }
+
+export type CreateUserDto =
+  | {
+      name: string;
+      email: string;
+      password: string;
+      role: "ADMIN";
+      tenant_id: string;
+      permissions: string[];
+      profile?: {
+        phone: string;
+        gender: string;
+        date_of_birth: string;
+        avatar: string;
+        bio: string;
+        address: string;
+        city: string;
+        state: string;
+        country: string;
+        postal_code: string;
+      };
+    }
+  | {
+      name: string;
+      email: string;
+      password: string;
+      role: "TUTOR";
+      tenant_id: string;
+      profile?: {
+        phone?: string;
+        gender?: string;
+        date_of_birth?: string;
+        avatar?: string;
+        bio?: string;
+        address?: string;
+        city?: string;
+        state?: string;
+        country?: string;
+        postal_code?: string;
+      };
+      tutor?: {
+        bio?: string;
+        headline?: string;
+        timezone?: string;
+        years_of_experience?: number;
+        status?: TutorStatus;
+        specialities?: string[];
+      };
+    }
+  | {
+      name: string;
+      email: string;
+      password: string;
+      role: "STUDENT";
+      tenant_id: string;
+      profile?: {
+        phone?: string;
+        gender?: string;
+        date_of_birth?: string;
+        avatar?: string;
+        bio?: string;
+        address?: string;
+        city?: string;
+        state?: string;
+        country?: string;
+        postal_code?: string;
+      };
+      student?: {
+        student_number: string;
+        enrollment_date: string;
+        graduation_date?: string;
+      };
+    };

@@ -14,7 +14,8 @@ const tenantKeys = {
 };
 
 const tenantApi = {
-  getTenants: (params: PaginationParams) => apiClient.get<PaginatedResponse<Tenant>>("/tenants", { params }),
+  getTenants: (params: PaginationParams) =>
+    apiClient.get<PaginatedResponse<Tenant>>("/tenants", params as Record<string, string>),
   getTenant: (id: string) => apiClient.get<HttpResponse<Tenant>>(`/tenants/${id}`),
   createTenant: (data: CreateTenantDto) => apiClient.post<HttpResponse<Tenant>>("/tenants", data),
   updateTenant: (id: string, data: Partial<Tenant>) => apiClient.put<HttpResponse<Tenant>>(`/tenants/${id}`, data),

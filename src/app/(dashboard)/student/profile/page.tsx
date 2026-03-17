@@ -1,12 +1,20 @@
-import { Breadcrumb } from "@/components/shared";
+"use client";
 
-const breadcrumbs = [{ label: "Assignments", href: "/superadmin/assignments" }];
+import { Breadcrumb, ProfilePage } from "@/components/shared";
+
+const breadcrumbs = [{ label: "Profile", href: "/student/profile" }];
 
 const Page = () => {
   return (
     <div className="space-y-6 p-6">
       <Breadcrumb items={breadcrumbs} />
-      <div></div>
+      <div className="flex w-full items-center justify-between">
+        <div>
+          <h3 className="text-foreground text-3xl">Profile</h3>
+          <p className="text-sm text-neutral-600">Manage your profile and settings</p>
+        </div>
+      </div>
+      <ProfilePage role="STUDENT" />
     </div>
   );
 };

@@ -9,7 +9,7 @@ interface Props {
 
 const DashboardLayout = ({ children }: Props) => {
   return (
-    <WithAuth roles={["TUTOR"]}>
+    <WithAuth roles={["TUTOR", "SUPER_ADMIN"]}>
       <div className="h-screen w-screen overflow-hidden">
         <Header />
         <div className="flex h-[calc(100%-64px)] w-full items-start">

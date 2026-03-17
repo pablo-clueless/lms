@@ -1,5 +1,11 @@
 export * from "./bread-crumb";
 export * from "./calendar";
+export * from "./create-admin-dialog";
+export * from "./create-session-dialog";
+export * from "./create-student-dialog";
+export * from "./create-tenant-dialog";
+export * from "./create-track-dialog";
+export * from "./create-tutor-dialog";
 export * from "./data-table";
 export * from "./date-picker";
 export * from "./footer";
@@ -13,3 +19,4 @@ export * from "./sidebar";
 export * from "./status-badge";
 export * from "./stepper";
 export * from "./tab-panel";
+export * from "./profile";

@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Add01Icon, RefreshIcon } from "@hugeicons/core-free-icons";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DataTable, Loader, Pagination } from "@/components/shared";
+import { DataTable, Loader, Pagination, Breadcrumb, CreateTenantDialog } from "@/components/shared";
 import { createTenantColumns } from "@/config/columns";
-import { Breadcrumb } from "@/components/shared";
-import { useGetTenants } from "@/lib/api/tenant";
+import { useGetTenants, useCreateTenant } from "@/lib/api/tenant";
 import { Button } from "@/components/ui/button";
-import type { PaginationParams } from "@/types";
+import type { PaginationParams, CreateTenantDto } from "@/types";
+import { cn } from "@/lib";
 
 const breadcrumbs = [{ label: "Tenants", href: "/superadmin/tenants" }];
 
@@ -29,13 +31,20 @@ const STATUS = [
 
 const Page = () => {
   const [params, setParams] = useState(initialParams);
+  const [createOpen, setCreateOpen] = useState(false);
+
   const columns = createTenantColumns("SUPER_ADMIN");
+  const { data, isFetching, isPending, refetch } = useGetTenants(params);
+  const createTenant = useCreateTenant();
 
   const handleParamsChange = <K extends keyof PaginationParams>(field: K, value: PaginationParams[K]) => {
     setParams((prev) => ({ ...prev, [field]: value }));
   };
 
-  const { data, isFetching, isPending } = useGetTenants(params);
+  const handleCreateTenant = async (tenant: CreateTenantDto) => {
+    await createTenant.mutateAsync(tenant);
+    setCreateOpen(false);
+  };
 
   if (isPending) return <Loader />;
 
@@ -43,14 +52,14 @@ const Page = () => {
     <div className="space-y-6 p-6">
       <Breadcrumb items={breadcrumbs} />
       <div className="flex w-full items-center justify-between">
-        <div className="">
-          <h3 className="text-3xl">Tenants</h3>
-          <p className="text-sm text-neutral-600"></p>
+        <div>
+          <h3 className="text-foreground text-3xl">Tenants</h3>
+          <p className="text-muted-foreground text-sm">Manage all tenants in the system</p>
         </div>
         <div className="flex items-center gap-x-4">
           <Select onValueChange={(status) => handleParamsChange("status", status)} value={params.status}>
-            <SelectTrigger className="w-37.5">
-              <SelectValue />
+            <SelectTrigger className="w-32">
+              <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
               {STATUS.map((status) => (
@@ -60,10 +69,16 @@ const Page = () => {
               ))}
             </SelectContent>
           </Select>
-          <Button disabled={isFetching || isPending} size="sm">
-            {isFetching ? "Refreshing" : "Refresh"}
+          <Button variant="outline" disabled={isFetching} onClick={() => refetch()} size="sm">
+            <HugeiconsIcon
+              icon={RefreshIcon}
+              data-icon="inline-start"
+              className={cn("size-4", isFetching && "animate-spin")}
+            />
+            Refresh
           </Button>
-          <Button disabled={isFetching || isPending} size="sm">
+          <Button onClick={() => setCreateOpen(true)} size="sm">
+            <HugeiconsIcon icon={Add01Icon} data-icon="inline-start" className="size-4" />
             New Tenant
           </Button>
         </div>
@@ -78,6 +93,12 @@ const Page = () => {
           total={data?.meta.total || 0}
         />
       </div>
+      <CreateTenantDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onSubmit={handleCreateTenant}
+        isPending={createTenant.isPending}
+      />
     </div>
   );
 };

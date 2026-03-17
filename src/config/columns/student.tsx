@@ -6,40 +6,36 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { StatusBadge } from "@/components/shared/status-badge";
 import { formatDate, getBasePathByRole } from "@/lib";
 import { Button } from "@/components/ui/button";
-import type { Role, Student } from "@/types";
+import type { Role, User } from "@/types";
 
-export const createColumns = (role: Role): ColumnDef<Student>[] => {
+export const createColumns = (role: Role): ColumnDef<User>[] => {
   return [
     {
-      accessorKey: "student_number",
-      header: "Student ID",
-      cell: ({ row }) => <span className="font-mono text-sm">{row.original.student_number}</span>,
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => (
+        <div className="flex flex-col">
+          <span className="font-medium">{row.original.name}</span>
+          <span className="text-xs text-neutral-500">{row.original.email}</span>
+        </div>
+      ),
     },
     {
-      accessorKey: "user_id",
-      header: "User ID",
-      cell: ({ row }) => <span className="text-sm text-neutral-600">{row.original.user_id}</span>,
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => <StatusBadge status={row.original.status} />,
     },
     {
-      accessorKey: "enrollment_date",
-      header: "Enrolled",
-      cell: ({ row }) => <span className="text-sm text-neutral-600">{formatDate(row.original.enrollment_date)}</span>,
-    },
-    {
-      accessorKey: "graduation_date",
-      header: "Graduated",
-      cell: ({ row }) => <span className="text-sm text-neutral-600">{formatDate(row.original.graduation_date)}</span>,
-    },
-    {
-      accessorKey: "applications",
-      header: "Applications",
-      cell: ({ row }) => <span className="text-sm">{row.original.applications?.length ?? 0}</span>,
+      accessorKey: "last_login_at",
+      header: "Last Login",
+      cell: ({ row }) => <span className="text-sm text-neutral-600">{formatDate(row.original.last_login_at)}</span>,
     },
     {
       accessorKey: "created_at",
-      header: "Created",
+      header: "Joined",
       cell: ({ row }) => <span className="text-sm text-neutral-600">{formatDate(row.original.created_at)}</span>,
     },
     {

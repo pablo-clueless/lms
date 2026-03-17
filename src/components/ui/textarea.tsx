@@ -21,7 +21,7 @@ const textareaWrapperVariants = cva("group/field flex flex-col gap-1.5 w-full", 
 });
 
 const textareaVariants = cva(
-  "flex field-sizing-content w-full resize-none rounded-xl border bg-input/30 transition-colors outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
+  "flex field-sizing-content w-full resize-none rounded-md border bg-input/30 transition-colors outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       size: {
@@ -84,7 +84,8 @@ function Textarea({
   ...props
 }: TextareaProps) {
   const [charCount, setCharCount] = React.useState(0);
-  const textareaId = id || React.useId();
+  const reactId = React.useId();
+  const textareaId = id || reactId;
 
   const state: "default" | "invalid" | "valid" | "validating" = error
     ? "invalid"

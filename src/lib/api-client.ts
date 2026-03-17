@@ -5,10 +5,12 @@ import { toast } from "sonner";
 import { removeNullOrUndefined } from "@/lib";
 import type { RefreshResponse } from "@/types/auth";
 
-const MAX_RETRIES = 3;
 const baseURL = "/api/v1/proxy";
 let isRefreshing = false;
-let retryCount = 0;
+let failedQueue: Array<{
+  resolve: (token: string) => void;
+  reject: (error: unknown) => void;
+}> = [];
 
 export class ApiError extends Error {
   constructor(
@@ -20,6 +22,26 @@ export class ApiError extends Error {
     this.name = "ApiError";
   }
 }
+
+const processQueue = (error: unknown, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else if (token) {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
+const clearAuthAndRedirect = () => {
+  Cookies.remove("ACCESS_TOKEN");
+  Cookies.remove("REFRESH_TOKEN");
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("token-expired"));
+    window.location.href = "/";
+  }
+};
 
 const client = axios.create({
   baseURL,
@@ -35,56 +57,79 @@ client.interceptors.request.use((config) => {
 client.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry: boolean };
-    const refresh_token = Cookies.get("REFRESH_TOKEN");
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-    if (error.response?.status === 401 && refresh_token && !originalRequest._retry && !isRefreshing) {
-      originalRequest._retry = true;
-      isRefreshing = true;
-
-      try {
-        const toastId = toast.loading("Refreshing session...");
-        const response = await axios.post(`${baseURL}/auth/refresh`, { refresh_token });
-
-        if (response.data.success) {
-          const data = response.data.data as RefreshResponse;
-          Cookies.set("ACCESS_TOKEN", data.access_token);
-          Cookies.set("REFRESH_TOKEN", data.refresh_token);
-          originalRequest.headers["Authorization"] = `Bearer ${data.access_token}`;
-
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(new CustomEvent("token-refreshed", { detail: data }));
-          }
-
-          toast.dismiss(toastId);
-          toast.success("Session refreshed successfully");
-          isRefreshing = false;
-          retryCount = 0;
-
-          return client(originalRequest);
-        }
-        throw new Error("Token refresh failed");
-      } catch (err) {
-        if (process.env.NODE_ENV === "development") console.error(err);
-        isRefreshing = false;
-        retryCount++;
-
-        if (retryCount > MAX_RETRIES) {
-          toast.error("Session expired. Please log in again.");
-          retryCount = 0;
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(new CustomEvent("token-expired"));
-            Cookies.remove("ACCESS_TOKEN");
-            Cookies.remove("REFRESH_TOKEN");
-            window.location.href = "/";
-          }
-        }
-
-        return Promise.reject(err);
-      }
+    // Only handle 401 Unauthorized errors for token refresh
+    if (error.response?.status !== 401) {
+      return Promise.reject(error);
     }
 
-    return Promise.reject(error);
+    const refresh_token = Cookies.get("REFRESH_TOKEN");
+
+    // No refresh token available - clear auth and redirect
+    if (!refresh_token) {
+      clearAuthAndRedirect();
+      return Promise.reject(error);
+    }
+
+    // Already retried this request - don't retry again
+    if (originalRequest._retry) {
+      return Promise.reject(error);
+    }
+
+    // If already refreshing, queue this request
+    if (isRefreshing) {
+      return new Promise((resolve, reject) => {
+        failedQueue.push({
+          resolve: (token: string) => {
+            originalRequest.headers["Authorization"] = `Bearer ${token}`;
+            resolve(client(originalRequest));
+          },
+          reject: (err: unknown) => {
+            reject(err);
+          },
+        });
+      });
+    }
+
+    originalRequest._retry = true;
+    isRefreshing = true;
+
+    try {
+      const toastId = toast.loading("Refreshing session...");
+      const response = await axios.post(`${baseURL}/auth/refresh`, { refresh_token });
+
+      if (response.data.success) {
+        const data = response.data.data as RefreshResponse;
+        Cookies.set("ACCESS_TOKEN", data.access_token);
+        Cookies.set("REFRESH_TOKEN", data.refresh_token);
+        originalRequest.headers["Authorization"] = `Bearer ${data.access_token}`;
+
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("token-refreshed", { detail: data }));
+        }
+
+        toast.dismiss(toastId);
+        toast.success("Session refreshed successfully");
+
+        processQueue(null, data.access_token);
+        isRefreshing = false;
+
+        return client(originalRequest);
+      }
+
+      throw new Error("Token refresh failed");
+    } catch (refreshError) {
+      if (process.env.NODE_ENV === "development") console.error(refreshError);
+
+      processQueue(refreshError, null);
+      isRefreshing = false;
+
+      toast.error("Session expired. Please log in again.");
+      clearAuthAndRedirect();
+
+      return Promise.reject(refreshError);
+    }
   },
 );
 

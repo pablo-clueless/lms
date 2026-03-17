@@ -20,7 +20,7 @@ export const createColumns = (role: Role): ColumnDef<Tenant>[] => {
       cell: ({ row }) => (
         <div className="flex items-center gap-3">
           <Avatar className="size-8 rounded">
-            <AvatarImage src={row.original.logo} />
+            <AvatarImage src={row.original.logo || ""} />
             <AvatarFallback>{row.original.name.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">

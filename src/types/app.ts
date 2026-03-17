@@ -1,3 +1,5 @@
+import type { Role } from "./user";
+
 export type Maybe<T> = T | null;
 
 export type Undefined<T> = T | undefined;
@@ -21,7 +23,7 @@ export interface PaginationParams {
   order?: "asc" | "desc";
   page?: number;
   per_page?: number;
-  role?: string;
+  role?: Role;
   search?: string;
   sort_by?: string;
   status?: string;

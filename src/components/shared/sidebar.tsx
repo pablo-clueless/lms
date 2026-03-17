@@ -1,14 +1,18 @@
 "use client";
 
+import { Logout01Icon } from "@hugeicons/core-free-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { type RouteConfig, getRoleRoutes } from "@/config/routes";
-import { useGlobalStore } from "@/store/core";
+import { useGlobalStore, useUserStore } from "@/store/core";
+import { cn, getInitials } from "@/lib";
+import { Button } from "../ui/button";
 import type { Role } from "@/types";
-import { cn } from "@/lib";
 
 interface Props {
   role: Role;
@@ -105,6 +109,7 @@ const NavLink = ({
 
 export const Sidebar = ({ role }: Props) => {
   const { isCollapsed } = useGlobalStore();
+  const { signout, user } = useUserStore();
   const ROUTES = getRoleRoutes(role);
   const pathname = usePathname();
 
@@ -139,6 +144,57 @@ export const Sidebar = ({ role }: Props) => {
             );
           })}
         </motion.nav>
+        <motion.div
+          className={cn("flex items-center border-t py-4", isCollapsed ? "justify-center" : "justify-between")}
+        >
+          {!isCollapsed && (
+            <motion.div className="flex max-w-45 items-center gap-x-2">
+              <Avatar>
+                <AvatarImage src={user?.profile?.avatar || ""} />
+                <AvatarFallback>{getInitials(user?.name)}</AvatarFallback>
+              </Avatar>
+              <div className="max-w-35">
+                <h5 className="text-xs font-medium">{user?.name}</h5>
+                <p className="text-[10px] text-gray-600">{user?.email}</p>
+              </div>
+            </motion.div>
+          )}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                className="bg-red-500 text-white hover:bg-red-500/80 hover:text-white"
+                size="icon"
+                variant="outline"
+                title="Sign out"
+              >
+                <HugeiconsIcon icon={Logout01Icon} className="size-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-sm">
+              <div className="flex flex-col items-center gap-4 py-4">
+                <div className="flex size-12 items-center justify-center rounded-full bg-red-500/10">
+                  <HugeiconsIcon icon={Logout01Icon} className="size-6 text-red-500" />
+                </div>
+                <div className="text-center">
+                  <DialogTitle className="text-lg font-semibold">Sign out</DialogTitle>
+                  <DialogDescription className="text-muted-foreground mt-1 text-sm">
+                    Are you sure you want to sign out? You will need to sign in again to access your account.
+                  </DialogDescription>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="flex-1">
+                    Cancel
+                  </Button>
+                </DialogTrigger>
+                <Button variant="destructive" className="flex-1" onClick={() => signout()}>
+                  Sign out
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </motion.div>
       </motion.div>
     </motion.aside>
   );

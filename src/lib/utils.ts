@@ -19,11 +19,24 @@ export function removeNullOrUndefined<T>(obj: T): Partial<T> {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
       const value = obj[key];
       if (value !== null && value !== undefined) {
-        result[key] = value;
+        const normalizedValue = value === "ALL" ? "" : value;
+        if (normalizedValue !== "") {
+          result[key] = normalizedValue;
+        }
       }
     }
   }
   return result as T;
+}
+
+export function getInitials(value?: string) {
+  if (!value || !value.trim()) return "";
+  return value
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => word.charAt(0).toUpperCase())
+    .join("");
 }
 
 export function getBasePathByRole(role: Role) {
@@ -39,6 +52,16 @@ export function getBasePathByRole(role: Role) {
     default:
       return "/";
   }
+}
+
+export function formatCurrency(amount: number, currency = "NGN"): string {
+  return new Intl.NumberFormat("en-US", {
+    currency,
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+    notation: "compact",
+    style: "currency",
+  }).format(amount);
 }
 
 export function formatDate(dateString?: string | null): string {

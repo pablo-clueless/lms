@@ -20,7 +20,7 @@ export const createColumns = (role: Role): ColumnDef<Course>[] => {
       cell: ({ row }) => (
         <div className="flex items-center gap-3">
           <Avatar className="size-10 rounded">
-            <AvatarImage src={row.original.thumbnail} />
+            <AvatarImage src={row.original.thumbnail || ""} />
             <AvatarFallback></AvatarFallback>
           </Avatar>
           <div className="flex flex-col">

@@ -1,6 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { ApplicationForm, Cohort, HttpResponse, PaginatedResponse, PaginationParams, Track } from "@/types";
+import type {
+  ApplicationForm,
+  Cohort,
+  CreateApplicationFormDto,
+  HttpResponse,
+  PaginatedResponse,
+  PaginationParams,
+  Track,
+} from "@/types";
 import { apiClient } from "../api-client";
 
 // ─── Cohorts ────────────────────────────────────────────────────────────────
@@ -123,7 +131,7 @@ const applicationFormApi = {
   getApplicationForms: (params: PaginationParams) =>
     apiClient.get<PaginatedResponse<ApplicationForm>>("/application-forms", { params }),
   getApplicationForm: (id: string) => apiClient.get<HttpResponse<ApplicationForm>>(`/application-forms/${id}`),
-  createApplicationForm: (data: Partial<ApplicationForm>) =>
+  createApplicationForm: (data: Partial<CreateApplicationFormDto>) =>
     apiClient.post<HttpResponse<ApplicationForm>>("/application-forms", data),
   updateApplicationForm: (id: string, data: Partial<ApplicationForm>) =>
     apiClient.put<HttpResponse<ApplicationForm>>(`/application-forms/${id}`, data),
@@ -145,7 +153,7 @@ export const useGetApplicationForm = (id: string) =>
 export const useCreateApplicationForm = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<ApplicationForm>) => applicationFormApi.createApplicationForm(data),
+    mutationFn: (data: Partial<CreateApplicationFormDto>) => applicationFormApi.createApplicationForm(data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: applicationFormKeys.getApplicationForms() }),
   });
 };

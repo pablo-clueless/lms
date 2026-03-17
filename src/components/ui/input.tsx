@@ -27,7 +27,7 @@ const inputWrapperVariants = cva("group/field flex flex-col gap-1.5 w-full", {
 });
 
 const inputVariants = cva(
-  "flex w-full min-w-0 rounded-md border bg-input/30 transition-colors outline-none file:inline-flex file:border-0 file:bg-transparent file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+  "flex w-full min-w-0 rounded-md text-foreground border bg-input/30 transition-colors outline-none file:inline-flex file:border-0 file:bg-transparent file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       size: {

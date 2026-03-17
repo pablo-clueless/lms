@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { HttpResponse, Quiz, QuizAttempt } from "@/types";
+import type { HttpResponse, PaginatedResponse, PaginationParams, Quiz, QuizAttempt } from "@/types";
 import { apiClient } from "../api-client";
 
 interface SubmitQuizInput {
@@ -9,11 +9,14 @@ interface SubmitQuizInput {
 
 const quizKeys = {
   all: ["quizzes"] as const,
+  getQuizzes: () => [...quizKeys.all, "getQuizzes"] as const,
   getQuiz: (id: string) => [...quizKeys.all, "getQuiz", id] as const,
   getQuizResults: (id: string) => [...quizKeys.all, "getQuizResults", id] as const,
+  getMyAttempts: () => [...quizKeys.all, "getMyAttempts"] as const,
 };
 
 const quizApi = {
+  getQuizzes: (params: PaginationParams) => apiClient.get<PaginatedResponse<Quiz>>("/quizzes", { params }),
   getQuiz: (id: string) => apiClient.get<HttpResponse<Quiz>>(`/quizzes/${id}`),
   createQuiz: (data: Partial<Quiz>) => apiClient.post<HttpResponse<Quiz>>("/quizzes", data),
   updateQuiz: (id: string, data: Partial<Quiz>) => apiClient.put<HttpResponse<Quiz>>(`/quizzes/${id}`, data),
@@ -22,7 +25,15 @@ const quizApi = {
   submitQuiz: (id: string, data: SubmitQuizInput) =>
     apiClient.post<HttpResponse<QuizAttempt>>(`/quizzes/${id}/submit`, data),
   getQuizResults: (id: string) => apiClient.get<HttpResponse<QuizAttempt>>(`/quizzes/${id}/results`),
+  getMyAttempts: (params: PaginationParams) =>
+    apiClient.get<PaginatedResponse<QuizAttempt>>("/quizzes/attempts/me", { params }),
 };
+
+export const useGetQuizzes = (params: PaginationParams) =>
+  useQuery({ queryKey: quizKeys.getQuizzes(), queryFn: () => quizApi.getQuizzes(params) });
+
+export const useGetMyQuizAttempts = (params: PaginationParams) =>
+  useQuery({ queryKey: quizKeys.getMyAttempts(), queryFn: () => quizApi.getMyAttempts(params) });
 
 export const useGetQuiz = (id: string) =>
   useQuery({ queryKey: quizKeys.getQuiz(id), queryFn: () => quizApi.getQuiz(id) });

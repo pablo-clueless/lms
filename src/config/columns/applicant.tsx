@@ -11,7 +11,11 @@ import { formatDate, getBasePathByRole } from "@/lib";
 import { Button } from "@/components/ui/button";
 import type { Applicant, Role } from "@/types";
 
-export const createColumns = (role: Role): ColumnDef<Applicant>[] => {
+interface ColumnOptions {
+  onReview?: (applicant: Applicant) => void;
+}
+
+export const createColumns = (role: Role, options?: ColumnOptions): ColumnDef<Applicant>[] => {
   return [
     {
       accessorKey: "name",
@@ -65,12 +69,22 @@ export const createColumns = (role: Role): ColumnDef<Applicant>[] => {
             >
               View
             </Link>
-            <Link
-              className="block w-full rounded px-2 py-1.5 text-sm hover:bg-neutral-100"
-              href={`${getBasePathByRole(role)}/applicants/${row.original.id}/review`}
-            >
-              Review
-            </Link>
+            {options?.onReview ? (
+              <button
+                type="button"
+                className="block w-full rounded px-2 py-1.5 text-left text-sm hover:bg-neutral-100"
+                onClick={() => options.onReview?.(row.original)}
+              >
+                Review
+              </button>
+            ) : (
+              <Link
+                className="block w-full rounded px-2 py-1.5 text-sm hover:bg-neutral-100"
+                href={`${getBasePathByRole(role)}/applicants/${row.original.id}/review`}
+              >
+                Review
+              </Link>
+            )}
           </PopoverContent>
         </Popover>
       ),

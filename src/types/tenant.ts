@@ -55,4 +55,12 @@ export interface CreateTenantDto {
   website: string;
   email: string;
   phone: string;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  settings: string;
+  admin_name: string;
+  admin_email: string;
+  admin_password: string;
 }
