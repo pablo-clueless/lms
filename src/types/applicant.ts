@@ -22,3 +22,8 @@ export interface ApplicationToken {
   used_at?: string;
   created_at: string;
 }
+
+export interface ApplicationParams {
+  cohort_id?: string;
+  track_id?: string;
+}

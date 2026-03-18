@@ -1,6 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { Applicant, ApplicantStatus, HttpResponse, PaginatedResponse, PaginationParams } from "@/types";
+import type {
+  Applicant,
+  ApplicantStatus,
+  ApplicationParams,
+  HttpResponse,
+  PaginatedResponse,
+  PaginationParams,
+} from "@/types";
 import { apiClient } from "../api-client";
 
 interface RegisterApplicantInput {
@@ -46,13 +53,13 @@ const applicantApi = {
   submitApplication: (data: SubmitApplicationInput) =>
     apiClient.post<HttpResponse<{ applicant: Applicant }>>("/applicants/submit", data),
   resendToken: (id: string) => apiClient.post<HttpResponse<{ message: string }>>(`/applicants/${id}/resend-token`, {}),
-  getApplicants: (params: PaginationParams) =>
-    apiClient.get<PaginatedResponse<Applicant>>("/applicants", params as Record<string, unknown>),
-  getApplicant: (id: string) => apiClient.get<HttpResponse<Applicant>>(`/applicants/${id}`),
+  getApplicants: (params: PaginationParams & ApplicationParams) =>
+    apiClient.get<PaginatedResponse<Applicant>>("/applications", params as Record<string, unknown>),
+  getApplicant: (id: string) => apiClient.get<HttpResponse<Applicant>>(`/applications/${id}`),
   updateApplicantStatus: (id: string, status: ApplicantStatus) =>
-    apiClient.put<HttpResponse<{ message: string }>>(`/applicants/${id}/status`, { status }),
+    apiClient.put<HttpResponse<{ message: string }>>(`/applications/${id}/status`, { status }),
   getCohortApplicants: (cohortId: string, params: PaginationParams) =>
-    apiClient.get<PaginatedResponse<Applicant>>(`/cohorts/${cohortId}/applicants`, params as Record<string, unknown>),
+    apiClient.get<PaginatedResponse<Applicant>>(`/cohorts/${cohortId}/applications`, params as Record<string, unknown>),
 };
 
 export const useValidateToken = (token: string) =>
@@ -62,7 +69,7 @@ export const useValidateToken = (token: string) =>
     enabled: !!token,
   });
 
-export const useGetApplicants = (params: PaginationParams) =>
+export const useGetApplicants = (params: PaginationParams & ApplicationParams) =>
   useQuery({ queryKey: applicantKeys.getApplicants(), queryFn: () => applicantApi.getApplicants(params) });
 
 export const useGetApplicant = (id: string) =>

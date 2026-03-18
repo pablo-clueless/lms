@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DataTable, Loader, Pagination, Breadcrumb } from "@/components/shared";
 import { useGetApplicants, useUpdateApplicantStatus } from "@/lib/api/applicant";
-import type { Applicant, ApplicantStatus, PaginationParams } from "@/types";
+import type { Applicant, ApplicantStatus, ApplicationParams, PaginationParams } from "@/types";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { createApplicantColumns } from "@/config/columns";
 import { Button } from "@/components/ui/button";
@@ -23,19 +23,26 @@ import {
 
 const breadcrumbs = [{ label: "Applications", href: "/admin/applications" }];
 
-const initialParams: PaginationParams = {
+const initialParams: PaginationParams & ApplicationParams = {
+  cohort_id: "",
+  order: "asc",
   page: 1,
   per_page: 10,
   search: "",
   status: "",
+  track_id: "",
 };
 
 const STATUS_OPTIONS = [
   { label: "All", value: "ALL" },
-  { label: "Pending", value: "PENDING" },
-  { label: "Under Review", value: "UNDER_REVIEW" },
-  { label: "Approved", value: "APPROVED" },
-  { label: "Rejected", value: "REJECTED" },
+  { label: "Reviewing", value: "REVIEWING" },
+  { label: "Admitted", value: "ADMITTED" },
+  { label: "Enrolled", value: "ENROLLED" },
+  { label: "Onboarded", value: "ONBOARDED" },
+  { label: "Graduated", value: "GRADUATED" },
+  { label: "Suspended", value: "SUSPENDED" },
+  { label: "Withdrawn", value: "WITHDRAWN" },
+  { label: "Expelled", value: "EXPELLED" },
 ];
 
 const STATUS_UPDATE_OPTIONS: { label: string; value: ApplicantStatus }[] = [
