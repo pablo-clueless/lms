@@ -1,17 +1,18 @@
 "use client";
 
-import { Add01Icon, RefreshIcon } from "@hugeicons/core-free-icons";
+import { Add01Icon, CopyIcon, Delete02Icon, RefreshIcon, ViewIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 import Link from "next/link";
 
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DataTable, Loader, Pagination, Breadcrumb } from "@/components/shared";
 import type { PaginationParams, ApplicationForm } from "@/types";
 import { useGetApplicationForms } from "@/lib/api/cohort";
 import type { ColumnDef } from "@tanstack/react-table";
+import { cn, copyString, formatDate } from "@/lib";
 import { Button } from "@/components/ui/button";
-import { cn, formatDate } from "@/lib";
 
 const breadcrumbs = [{ label: "Application Forms", href: "/admin/application-forms" }];
 
@@ -31,6 +32,18 @@ const STATUS = [
 
 const columns: ColumnDef<ApplicationForm>[] = [
   {
+    accessorKey: "id",
+    header: "Form ID",
+    cell: ({ row }) => (
+      <div className="flex items-center gap-x-2">
+        <span className="font-medium">{row.original.id}</span>
+        <Button onClick={() => copyString(row.original.id)} size="icon-xs">
+          <HugeiconsIcon icon={CopyIcon} className="size-3" />
+        </Button>
+      </div>
+    ),
+  },
+  {
     accessorKey: "name",
     header: "Form Name",
     cell: ({ row }) => <span className="font-medium">{row.original.name}</span>,
@@ -49,6 +62,33 @@ const columns: ColumnDef<ApplicationForm>[] = [
     accessorKey: "created_at",
     header: "Created",
     cell: ({ row }) => <span className="text-sm text-neutral-600">{formatDate(row.original.created_at)}</span>,
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <div className="flex items-center gap-x-4">
+        <Button asChild size="icon" variant="outline">
+          <Link href={`/admin/application-forms/${row.original.id}`}>
+            <HugeiconsIcon icon={ViewIcon} className="size-4" />
+          </Link>
+        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button size="icon" variant="destructive">
+              <HugeiconsIcon icon={Delete02Icon} className="size-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <div>
+              <DialogTitle></DialogTitle>
+              <DialogDescription></DialogDescription>
+            </div>
+            <div></div>
+          </DialogContent>
+        </Dialog>
+      </div>
+    ),
   },
 ];
 

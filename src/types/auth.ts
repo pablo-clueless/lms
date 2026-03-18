@@ -1,3 +1,4 @@
+import type { TTenant } from "./tenant";
 import type { Role, User } from "./user";
 
 export interface SigninDto {
@@ -18,6 +19,7 @@ export interface RefreshDto {
 }
 
 export interface SigninResponse {
+  tenant: TTenant;
   tokens: {
     access_token: string;
     refresh_token: string;

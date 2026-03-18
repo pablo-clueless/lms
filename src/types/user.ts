@@ -177,6 +177,11 @@ export type CreateUserDto =
         years_of_experience?: number;
         status?: TutorStatus;
         specialities?: string[];
+        availability: {
+          day: string;
+          start_time: string;
+          end_time: string;
+        }[];
       };
     }
   | {

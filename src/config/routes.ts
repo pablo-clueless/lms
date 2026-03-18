@@ -178,7 +178,7 @@ const ADMIN_ROUTES: RouteConfig[] = [
   },
   {
     name: "Admins",
-    href: "/admin/users",
+    href: "/admin/admins",
     icon: ManagerIcon,
   },
   {

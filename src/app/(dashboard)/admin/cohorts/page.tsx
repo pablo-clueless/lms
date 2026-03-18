@@ -14,12 +14,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import { createCohortColumns } from "@/config/columns";
-import { useGetCohorts, useCreateCohort } from "@/lib/api/cohort";
+import { useGetCohorts, useCreateCohort, useGetTracks, useGetApplicationForms } from "@/lib/api/cohort";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { PaginationParams, Cohort } from "@/types";
+import type { PaginationParams, CreateCohortDto } from "@/types";
 import { cn } from "@/lib";
 
 const breadcrumbs = [{ label: "Cohorts", href: "/admin/cohorts" }];
@@ -48,6 +49,8 @@ interface CreateCohortFormData {
   application_end_date?: Date;
   start_date?: Date;
   end_date?: Date;
+  application_form_id: string;
+  track_ids: string[];
 }
 
 const initialCohortForm: CreateCohortFormData = {
@@ -58,6 +61,8 @@ const initialCohortForm: CreateCohortFormData = {
   application_end_date: undefined,
   start_date: undefined,
   end_date: undefined,
+  application_form_id: "",
+  track_ids: [],
 };
 
 const Page = () => {
@@ -67,7 +72,12 @@ const Page = () => {
 
   const columns = createCohortColumns("ADMIN");
   const { data, isFetching, isPending, refetch } = useGetCohorts(params);
+  const { data: tracksData } = useGetTracks({ page: 1, per_page: 100 });
+  const { data: applicationFormsData } = useGetApplicationForms({ page: 1, per_page: 100 });
   const createCohort = useCreateCohort();
+
+  const tracks = tracksData?.data || [];
+  const applicationForms = applicationFormsData?.data || [];
 
   const handleParamsChange = <K extends keyof PaginationParams>(field: K, value: PaginationParams[K]) => {
     setParams((prev) => ({ ...prev, [field]: value }));
@@ -77,15 +87,26 @@ const Page = () => {
     setCohortForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleTrackToggle = (trackId: string) => {
+    setCohortForm((prev) => ({
+      ...prev,
+      track_ids: prev.track_ids.includes(trackId)
+        ? prev.track_ids.filter((id) => id !== trackId)
+        : [...prev.track_ids, trackId],
+    }));
+  };
+
   const handleCreateCohort = async () => {
-    const payload: Partial<Cohort> = {
+    const payload: CreateCohortDto = {
       name: cohortForm.name,
       description: cohortForm.description,
       max_students: cohortForm.max_students,
-      application_start_date: cohortForm.application_start_date?.toISOString(),
-      application_end_date: cohortForm.application_end_date?.toISOString(),
-      start_date: cohortForm.start_date?.toISOString(),
-      end_date: cohortForm.end_date?.toISOString(),
+      application_start_date: cohortForm.application_start_date?.toISOString() || "",
+      application_end_date: cohortForm.application_end_date?.toISOString() || "",
+      start_date: cohortForm.start_date?.toISOString() || "",
+      end_date: cohortForm.end_date?.toISOString() || "",
+      application_form_id: cohortForm.application_form_id,
+      track_ids: cohortForm.track_ids,
     };
     await createCohort.mutateAsync(payload);
     setCohortForm(initialCohortForm);
@@ -99,7 +120,15 @@ const Page = () => {
     setCreateOpen(value);
   };
 
-  const isValid = cohortForm.name && cohortForm.max_students > 0;
+  const isValid =
+    cohortForm.name &&
+    cohortForm.max_students > 0 &&
+    cohortForm.application_form_id &&
+    cohortForm.track_ids.length > 0 &&
+    cohortForm.application_start_date &&
+    cohortForm.application_end_date &&
+    cohortForm.start_date &&
+    cohortForm.end_date;
 
   if (isPending) return <Loader />;
 
@@ -229,6 +258,77 @@ const Page = () => {
                   placeholder="Select end date"
                   minDate={cohortForm.start_date}
                 />
+              </div>
+            </div>
+
+            <div className="border-t pt-4">
+              <h4 className="mb-3 text-sm font-medium">Application Form</h4>
+              <p className="text-muted-foreground mb-3 text-xs">
+                Select the application form that students will fill out when applying.
+              </p>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">
+                  Application Form <span className="text-destructive">*</span>
+                </label>
+                <Select
+                  value={cohortForm.application_form_id}
+                  onValueChange={(value) => handleFormChange("application_form_id", value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select application form" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {applicationForms.map((form) => (
+                      <SelectItem key={form.id} value={form.id}>
+                        {form.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {applicationForms.length === 0 && (
+                  <p className="text-muted-foreground text-xs">
+                    No application forms available. Please create one first.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="border-t pt-4">
+              <h4 className="mb-3 text-sm font-medium">Tracks</h4>
+              <p className="text-muted-foreground mb-3 text-xs">
+                Select the tracks available for this cohort. Students can apply to any of these tracks.
+              </p>
+              <div className="space-y-3">
+                <label className="text-sm font-medium">
+                  Available Tracks <span className="text-destructive">*</span>
+                </label>
+                {tracks.length === 0 ? (
+                  <p className="text-muted-foreground text-sm">No tracks available. Please create tracks first.</p>
+                ) : (
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {tracks.map((track) => (
+                      <div key={track.id} className="flex items-center space-x-2 rounded-lg border p-3">
+                        <Checkbox
+                          id={track.id}
+                          checked={cohortForm.track_ids.includes(track.id)}
+                          onCheckedChange={() => handleTrackToggle(track.id)}
+                        />
+                        <label
+                          htmlFor={track.id}
+                          className="flex-1 cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          <span className="block">{track.name}</span>
+                          {track.code && (
+                            <span className="text-muted-foreground block text-xs">{track.code}</span>
+                          )}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {cohortForm.track_ids.length === 0 && tracks.length > 0 && (
+                  <p className="text-destructive text-xs">Select at least one track</p>
+                )}
               </div>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { toast } from "sonner";
 
 import type { Role } from "@/types";
 
@@ -94,4 +95,54 @@ export function formatDuration(minutes: number): string {
 export function truncateText(text: string, maxLength: number = 50): string {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength) + "...";
+}
+
+export function normalize(path: string): string {
+  if (!path) return "";
+  const qIndex = path.indexOf("?");
+  const hIndex = path.indexOf("#");
+  const end =
+    qIndex === -1 ? (hIndex === -1 ? path.length : hIndex) : hIndex === -1 ? qIndex : Math.min(qIndex, hIndex);
+  const cleanPath = path.slice(0, end);
+  if (cleanPath.length <= 3) return cleanPath;
+
+  let firstPart = "";
+  let secondPart = "";
+  let partCount = 0;
+  const start = cleanPath.startsWith("/") ? 1 : 0;
+
+  for (let i = start; i < cleanPath.length; i++) {
+    if (cleanPath[i] === "/") {
+      if (partCount === 0 && firstPart) {
+        partCount++;
+        continue;
+      }
+      if (partCount === 1 && secondPart) {
+        break;
+      }
+      continue;
+    }
+
+    if (partCount === 0) {
+      firstPart += cleanPath[i];
+    } else if (partCount === 1) {
+      secondPart += cleanPath[i];
+    }
+  }
+
+  if (!firstPart) return "";
+  if (!secondPart) return `/${firstPart}`;
+  return `/${firstPart}/${secondPart}`;
+}
+
+export function copyString(value?: string) {
+  if (!value) return;
+  navigator.clipboard
+    .writeText(value)
+    .then(() => {
+      toast.success("Copied!");
+    })
+    .catch(() => {
+      toast.error("Failed to copy!");
+    });
 }

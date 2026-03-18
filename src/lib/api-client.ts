@@ -38,8 +38,9 @@ const clearAuthAndRedirect = () => {
   Cookies.remove("ACCESS_TOKEN");
   Cookies.remove("REFRESH_TOKEN");
   if (typeof window !== "undefined") {
+    localStorage.removeItem("USER_STORE");
     window.dispatchEvent(new CustomEvent("token-expired"));
-    window.location.href = "/";
+    window.location.href = "/signin";
   }
 };
 
@@ -59,20 +60,31 @@ client.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-    // Only handle 401 Unauthorized errors for token refresh
+    // For non-401 errors, just reject without signing out
     if (error.response?.status !== 401) {
+      return Promise.reject(error);
+    }
+
+    // Check if this is a login/auth endpoint - don't try to refresh for auth failures on login
+    const isAuthEndpoint = originalRequest.url?.includes("/auth/");
+    if (isAuthEndpoint) {
       return Promise.reject(error);
     }
 
     const refresh_token = Cookies.get("REFRESH_TOKEN");
 
-    // No refresh token available - clear auth and redirect
+    // No refresh token available - only redirect if we had a token before (session expired)
+    // Don't redirect for unauthenticated requests that never had a token
     if (!refresh_token) {
-      clearAuthAndRedirect();
+      const hadToken = Cookies.get("ACCESS_TOKEN");
+      if (hadToken) {
+        // User was logged in but token expired and no refresh token
+        clearAuthAndRedirect();
+      }
       return Promise.reject(error);
     }
 
-    // Already retried this request - don't retry again
+    // Already retried this request - don't retry again, but don't sign out either
     if (originalRequest._retry) {
       return Promise.reject(error);
     }
@@ -96,21 +108,27 @@ client.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      const toastId = toast.loading("Refreshing session...");
       const response = await axios.post(`${baseURL}/auth/refresh`, { refresh_token });
 
       if (response.data.success) {
         const data = response.data.data as RefreshResponse;
-        Cookies.set("ACCESS_TOKEN", data.access_token);
-        Cookies.set("REFRESH_TOKEN", data.refresh_token);
+
+        const cookieOptions = {
+          path: "/",
+          sameSite: "lax" as const,
+          secure: process.env.NODE_ENV === "production",
+        };
+
+        Cookies.set("ACCESS_TOKEN", data.access_token, cookieOptions);
+        if (data.refresh_token) {
+          Cookies.set("REFRESH_TOKEN", data.refresh_token, cookieOptions);
+        }
+
         originalRequest.headers["Authorization"] = `Bearer ${data.access_token}`;
 
         if (typeof window !== "undefined") {
           window.dispatchEvent(new CustomEvent("token-refreshed", { detail: data }));
         }
-
-        toast.dismiss(toastId);
-        toast.success("Session refreshed successfully");
 
         processQueue(null, data.access_token);
         isRefreshing = false;
@@ -120,13 +138,19 @@ client.interceptors.response.use(
 
       throw new Error("Token refresh failed");
     } catch (refreshError) {
-      if (process.env.NODE_ENV === "development") console.error(refreshError);
+      if (process.env.NODE_ENV === "development") console.error("Token refresh error:", refreshError);
 
       processQueue(refreshError, null);
       isRefreshing = false;
 
-      toast.error("Session expired. Please log in again.");
-      clearAuthAndRedirect();
+      // Only sign out if refresh explicitly failed (not for network errors)
+      const isNetworkError = (refreshError as AxiosError)?.code === "ERR_NETWORK";
+      if (!isNetworkError) {
+        toast.error("Session expired. Please log in again.");
+        clearAuthAndRedirect();
+      } else {
+        toast.error("Network error. Please check your connection.");
+      }
 
       return Promise.reject(refreshError);
     }

@@ -1,19 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { ArrowLeft01Icon, File02Icon } from "@hugeicons/core-free-icons";
 import { useParams, useRouter } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowLeft01Icon, File02Icon } from "@hugeicons/core-free-icons";
+import { useFormik } from "formik";
+import { useEffect, useRef, useState } from "react";
+// import { toast } from "sonner";
+import * as Yup from "yup";
 
-import type { ApplicationFormFieldDto, FieldType } from "@/types";
-import { Form, FormPallete, FormValidation } from "@/components/form-builder";
 import { useGetApplicationForm, useUpdateApplicationForm } from "@/lib/api/cohort";
+import { Form, FormPallete, FormValidation } from "@/components/form-builder";
+import type { ApplicationFormFieldDto, CreateApplicationFormDto, FieldType } from "@/types";
 import { Breadcrumb, Loader } from "@/components/shared";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatDate } from "@/lib";
-import { toast } from "sonner";
+
+const schema = Yup.object({
+  name: Yup.string().required("Name is required"),
+  description: Yup.string().optional(),
+});
 
 const Page = () => {
   const id = useParams().id as string;
@@ -23,35 +30,22 @@ const Page = () => {
   const form = formData?.data;
   const updateForm = useUpdateApplicationForm(id);
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [fields, setFields] = useState<ApplicationFormFieldDto[]>([]);
+  const prevFormDataRef = useRef<typeof formData>(undefined);
+
+  useEffect(() => {
+    if (formData?.data.fields && formData !== prevFormDataRef.current && fields.length === 0) {
+      prevFormDataRef.current = formData;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setFields(formData.data.fields);
+    }
+  }, [formData, fields.length]);
 
   const breadcrumbs = [
     { label: "Application Forms", href: "/admin/application-forms" },
     { label: "Edit Form", href: `/admin/application-forms/${id}` },
   ];
-
-  useEffect(() => {
-    if (form) {
-      setName(form.name || "");
-      setDescription(form.description || "");
-      setFields(
-        form.fields?.map((f) => ({
-          name: f.name,
-          type: f.type,
-          label: f.label,
-          placeholder: f.placeholder,
-          helper_text: f.helper_text,
-          options: f.options,
-          validation: f.validation,
-          order: f.order,
-          width: (f.width as 1 | 2 | 3 | 4) || 4,
-        })) || [],
-      );
-    }
-  }, [form]);
 
   const handleAddField = (type: FieldType) => {
     const field: ApplicationFormFieldDto = {
@@ -91,25 +85,27 @@ const Page = () => {
     setFields(newFields.map((f, i) => ({ ...f, order: i + 1 })));
   };
 
-  const handleSave = async () => {
-    if (!name.trim()) {
-      toast.error("Form name is required");
-      return;
-    }
-
-    try {
-      await updateForm.mutateAsync({
-        name,
-        description,
-        fields: fields.map((f, i) => ({ ...f, order: i + 1 })),
-      } as never);
-      toast.success("Form updated successfully");
-    } catch {
-      toast.error("Failed to update form");
-    }
-  };
-
   const selectedField = selectedIndex !== null ? fields[selectedIndex] : null;
+
+  const { handleChange, handleSubmit, values } = useFormik<CreateApplicationFormDto>({
+    initialValues: {
+      name: formData?.data.name || "",
+      description: formData?.data.description || "",
+      fields: formData?.data.fields || [],
+    },
+    onSubmit: (values) => {
+      const payload: CreateApplicationFormDto = {
+        ...values,
+        fields: fields.map((f, i) => ({ ...f, order: i + 1 })),
+      };
+      updateForm.mutateAsync(payload, {
+        onSuccess: () => {
+          router.push("/admin/application-forms");
+        },
+      });
+    },
+    validationSchema: schema,
+  });
 
   if (isPending) return <Loader />;
 
@@ -120,15 +116,12 @@ const Page = () => {
         <HugeiconsIcon icon={ArrowLeft01Icon} data-icon="inline-start" className="size-4" />
         Back to Forms
       </Button>
-
       <div className="flex w-full items-center justify-between">
         <div>
           <h3 className="text-foreground text-3xl font-semibold">Edit Application Form</h3>
           <p className="text-muted-foreground text-sm">Modify your application form template</p>
         </div>
       </div>
-
-      {/* Form Info */}
       <div className="bg-card rounded-xl border p-6">
         <div className="mb-4 flex items-center gap-3">
           <div className="bg-primary/10 flex size-10 items-center justify-center rounded-lg">
@@ -144,8 +137,7 @@ const Page = () => {
           </div>
         </div>
       </div>
-
-      <div className="w-full space-y-6">
+      <form className="w-full space-y-6" onSubmit={handleSubmit}>
         <div className="flex w-full items-start justify-between gap-6">
           <div className="flex-1 space-y-4">
             <div className="flex w-full items-center justify-between">
@@ -153,8 +145,8 @@ const Page = () => {
                 <Input
                   id="name"
                   name="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={values.name}
+                  onChange={handleChange}
                   placeholder="Enter form name"
                 />
               </div>
@@ -162,12 +154,7 @@ const Page = () => {
                 <Button type="button" size="sm" variant="outline" onClick={() => router.back()}>
                   Cancel
                 </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  disabled={updateForm.isPending || fields.length === 0}
-                  onClick={handleSave}
-                >
+                <Button disabled={updateForm.isPending || fields.length === 0} size="sm" type="submit">
                   {updateForm.isPending ? "Saving..." : "Save Form"}
                 </Button>
               </div>
@@ -175,8 +162,8 @@ const Page = () => {
             <Textarea
               id="description"
               name="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={values.description}
+              onChange={handleChange}
               placeholder="Describe the purpose of this form"
               className="min-h-20"
             />
@@ -200,14 +187,10 @@ const Page = () => {
           </div>
           <div className="sticky top-6 max-h-[calc(100vh-8rem)] self-start overflow-y-auto">
             <h4 className="mb-3 text-sm font-medium">Field Settings</h4>
-            <FormValidation
-              selected={selectedField}
-              selectedIndex={selectedIndex}
-              onUpdateField={handleUpdateField}
-            />
+            <FormValidation selected={selectedField} selectedIndex={selectedIndex} onUpdateField={handleUpdateField} />
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 };

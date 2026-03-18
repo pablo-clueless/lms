@@ -6,13 +6,33 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { StatusBadge } from "@/components/shared/status-badge";
 import { formatDate, getBasePathByRole, truncateText } from "@/lib";
+import { StatusBadge } from "@/components/shared/status-badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import type { Role, User } from "@/types";
 
 export const createColumns = (role: Role): ColumnDef<User>[] => {
   return [
+    {
+      id: "selection",
+      header: ({ table }) => (
+        <Checkbox
+          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
     {
       accessorKey: "name",
       header: "Name",
@@ -43,11 +63,7 @@ export const createColumns = (role: Role): ColumnDef<User>[] => {
       header: "Experience",
       cell: ({ row }) => {
         const years = row.original.tutor?.years_of_experience;
-        return (
-          <span className="text-sm">
-            {years ? `${years} ${years === 1 ? "year" : "years"}` : "—"}
-          </span>
-        );
+        return <span className="text-sm">{years ? `${years} ${years === 1 ? "year" : "years"}` : "—"}</span>;
       },
     },
     {
@@ -65,9 +81,7 @@ export const createColumns = (role: Role): ColumnDef<User>[] => {
                 {s}
               </span>
             ))}
-            {specialities.length > 2 && (
-              <span className="text-xs text-neutral-500">+{specialities.length - 2}</span>
-            )}
+            {specialities.length > 2 && <span className="text-xs text-neutral-500">+{specialities.length - 2}</span>}
           </div>
         );
       },
@@ -94,12 +108,7 @@ export const createColumns = (role: Role): ColumnDef<User>[] => {
             >
               View
             </Link>
-            <Link
-              className="block w-full rounded px-2 py-1.5 text-sm hover:bg-neutral-100"
-              href={`${getBasePathByRole(role)}/tutors/${row.original.id}/edit`}
-            >
-              Edit
-            </Link>
+            <button className="flex w-full items-start rounded px-2 py-1.5 text-sm hover:bg-neutral-100">Delete</button>
           </PopoverContent>
         </Popover>
       ),

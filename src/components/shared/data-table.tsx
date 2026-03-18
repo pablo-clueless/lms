@@ -77,7 +77,7 @@ export const DataTable = <TData, TValue>({
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id} className="text-primary-500 text-sm font-medium">
+                  <TableHead key={header.id} className="text-foreground text-sm font-medium">
                     {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 );
@@ -91,7 +91,7 @@ export const DataTable = <TData, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
-                className="data-[state=selected]:bg-primary-50/25 data-[state=selected]:text-secondary-200 h-14"
+                className="text-foreground h-14 data-[state=selected]:bg-gray-200 dark:data-[state=selected]:bg-gray-700"
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id} className="whitespace-nowrap">

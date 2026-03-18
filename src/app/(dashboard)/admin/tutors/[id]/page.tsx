@@ -13,6 +13,8 @@ import {
   Edit02Icon,
   Clock01Icon,
   Award01Icon,
+  Add01Icon,
+  Delete02Icon,
 } from "@hugeicons/core-free-icons";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -54,6 +56,14 @@ const TIMEZONES = [
   { label: "Asia/Dubai (GST)", value: "Asia/Dubai" },
 ];
 
+const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+interface AvailabilitySlot {
+  day: string;
+  start_time: string;
+  end_time: string;
+}
+
 interface EditFormState {
   name: string;
   email: string;
@@ -65,6 +75,7 @@ interface EditFormState {
   timezone: string;
   years_of_experience: string;
   specialities: string;
+  availability: AvailabilitySlot[];
 }
 
 const Page = () => {
@@ -87,6 +98,7 @@ const Page = () => {
     timezone: "",
     years_of_experience: "",
     specialities: "",
+    availability: [],
   });
 
   const breadcrumbs = [
@@ -107,9 +119,35 @@ const Page = () => {
         timezone: user.tutor?.timezone || "",
         years_of_experience: user.tutor?.years_of_experience?.toString() || "",
         specialities: user.tutor?.specialities?.join(", ") || "",
+        availability:
+          user.tutor?.availability?.map((slot) => ({
+            day: slot.day,
+            start_time: slot.start_time,
+            end_time: slot.end_time,
+          })) || [],
       });
     }
     setEditOpen(true);
+  };
+
+  const addAvailabilitySlot = () => {
+    setEditForm({
+      ...editForm,
+      availability: [...editForm.availability, { day: "Monday", start_time: "09:00", end_time: "17:00" }],
+    });
+  };
+
+  const removeAvailabilitySlot = (index: number) => {
+    setEditForm({
+      ...editForm,
+      availability: editForm.availability.filter((_, i) => i !== index),
+    });
+  };
+
+  const updateAvailabilitySlot = (index: number, field: keyof AvailabilitySlot, value: string) => {
+    const newAvailability = [...editForm.availability];
+    newAvailability[index] = { ...newAvailability[index], [field]: value };
+    setEditForm({ ...editForm, availability: newAvailability });
   };
 
   const handleUpdate = async () => {
@@ -127,6 +165,7 @@ const Page = () => {
         timezone: editForm.timezone,
         years_of_experience: editForm.years_of_experience ? parseInt(editForm.years_of_experience, 10) : undefined,
         specialities: editForm.specialities ? editForm.specialities.split(",").map((s) => s.trim()) : [],
+        availability: editForm.availability,
       },
     } as never);
     setEditOpen(false);
@@ -155,8 +194,6 @@ const Page = () => {
         <HugeiconsIcon icon={ArrowLeft01Icon} data-icon="inline-start" className="size-4" />
         Back to Tutors
       </Button>
-
-      {/* Tutor Header */}
       <div className="bg-card relative overflow-hidden rounded-xl border">
         <div className="bg-primary/10 h-24" />
         <div className="px-6 pb-6">
@@ -186,18 +223,15 @@ const Page = () => {
           </div>
         </div>
       </div>
-
-      {/* Bio Section */}
       {user?.tutor?.bio && (
         <div className="bg-card rounded-xl border p-6">
-          <h3 className="mb-2 text-lg font-semibold">About</h3>
+          <h3 className="text-foreground mb-2 text-lg font-semibold">About</h3>
           <p className="text-muted-foreground text-sm">{user.tutor.bio}</p>
         </div>
       )}
-
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="bg-card space-y-4 rounded-xl border p-6">
-          <h3 className="text-lg font-semibold">Account Information</h3>
+          <h3 className="text-foreground text-lg font-semibold">Account Information</h3>
           <div className="space-y-4">
             <InfoItem icon={Mail01Icon} label="Email Address" value={user?.email} />
             <InfoItem icon={UserIcon} label="Role" value="Tutor" />
@@ -206,7 +240,7 @@ const Page = () => {
           </div>
         </div>
         <div className="bg-card space-y-4 rounded-xl border p-6">
-          <h3 className="text-lg font-semibold">Professional Information</h3>
+          <h3 className="text-foreground text-lg font-semibold">Professional Information</h3>
           <div className="space-y-4">
             <InfoItem
               icon={Award01Icon}
@@ -235,10 +269,8 @@ const Page = () => {
             </div>
           </div>
         </div>
-
-        {/* Personal Information */}
         <div className="bg-card space-y-4 rounded-xl border p-6">
-          <h3 className="text-lg font-semibold">Personal Information</h3>
+          <h3 className="text-foreground text-lg font-semibold">Personal Information</h3>
           <div className="space-y-4">
             <InfoItem icon={Call02Icon} label="Phone Number" value={user?.profile?.phone} />
             <InfoItem icon={UserIcon} label="Gender" value={user?.profile?.gender} />
@@ -254,10 +286,8 @@ const Page = () => {
             />
           </div>
         </div>
-
-        {/* Availability */}
         <div className="bg-card space-y-4 rounded-xl border p-6">
-          <h3 className="text-lg font-semibold">Availability</h3>
+          <h3 className="text-foreground text-lg font-semibold">Availability</h3>
           {user?.tutor?.availability && user.tutor.availability.length > 0 ? (
             <div className="space-y-2">
               {user.tutor.availability.map((slot: Availability) => (
@@ -274,8 +304,6 @@ const Page = () => {
           )}
         </div>
       </div>
-
-      {/* Edit Dialog */}
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
@@ -314,10 +342,7 @@ const Page = () => {
               </div>
               <div className="space-y-1.5">
                 <label className="text-sm font-medium">Gender</label>
-                <Select
-                  value={editForm.gender}
-                  onValueChange={(value) => setEditForm({ ...editForm, gender: value })}
-                >
+                <Select value={editForm.gender} onValueChange={(value) => setEditForm({ ...editForm, gender: value })}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select gender" />
                   </SelectTrigger>
@@ -382,6 +407,62 @@ const Page = () => {
               onChange={(e) => setEditForm({ ...editForm, specialities: e.target.value })}
               placeholder="React, Node.js, Python (comma separated)"
             />
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium">Availability</label>
+                <Button type="button" variant="outline" size="sm" onClick={addAvailabilitySlot}>
+                  <HugeiconsIcon icon={Add01Icon} className="size-4" />
+                  Add Slot
+                </Button>
+              </div>
+              {editForm.availability.length === 0 ? (
+                <p className="text-muted-foreground text-sm">No availability slots. Click "Add Slot" to add one.</p>
+              ) : (
+                <div className="space-y-3">
+                  {editForm.availability.map((slot, index) => (
+                    <div key={index} className="flex items-center gap-2 rounded-lg border p-3">
+                      <Select
+                        value={slot.day}
+                        onValueChange={(value) => updateAvailabilitySlot(index, "day", value)}
+                      >
+                        <SelectTrigger className="w-32">
+                          <SelectValue placeholder="Day" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {DAYS_OF_WEEK.map((day) => (
+                            <SelectItem key={day} value={day}>
+                              {day}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        type="time"
+                        value={slot.start_time}
+                        onChange={(e) => updateAvailabilitySlot(index, "start_time", e.target.value)}
+                        className="w-28"
+                      />
+                      <span className="text-muted-foreground text-sm">to</span>
+                      <Input
+                        type="time"
+                        value={slot.end_time}
+                        onChange={(e) => updateAvailabilitySlot(index, "end_time", e.target.value)}
+                        className="w-28"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeAvailabilitySlot(index)}
+                        className="text-destructive hover:text-destructive shrink-0"
+                      >
+                        <HugeiconsIcon icon={Delete02Icon} className="size-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditOpen(false)}>

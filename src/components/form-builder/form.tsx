@@ -13,6 +13,7 @@ import {
   TelephoneIcon,
   TextIcon,
   TextNumberSignIcon,
+  ToggleOnIcon,
   Upload01Icon,
 } from "@hugeicons/core-free-icons";
 import {
@@ -58,6 +59,7 @@ const FIELD_ICONS: Record<FieldType, typeof InputShortTextIcon> = {
   RADIO: RadioButtonIcon,
   TEXTAREA: TextIcon,
   FILE: Upload01Icon,
+  TOGGLE: ToggleOnIcon,
 };
 
 const FIELD_LABELS: Record<FieldType, string> = {
@@ -71,6 +73,7 @@ const FIELD_LABELS: Record<FieldType, string> = {
   RADIO: "Radio",
   TEXTAREA: "Textarea",
   FILE: "File Upload",
+  TOGGLE: "Toggle",
 };
 
 const getWidthStyle = (width: 1 | 2 | 3 | 4) => {
@@ -99,14 +102,14 @@ const FieldCard = ({ field, isSelected, isDragging, dragHandleProps }: FieldCard
   return (
     <div
       className={cn(
-        "group relative cursor-pointer rounded-lg border bg-card p-4 transition-all",
+        "group bg-card relative cursor-pointer rounded-lg border p-4 transition-all",
         isSelected ? "border-primary ring-primary/20 ring-2" : "hover:border-primary/50",
         isDragging && "shadow-lg",
       )}
     >
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="touch-none cursor-grab active:cursor-grabbing" {...dragHandleProps}>
+          <div className="cursor-grab touch-none active:cursor-grabbing" {...dragHandleProps}>
             <HugeiconsIcon icon={DragDropVerticalIcon} className="text-muted-foreground size-4" />
           </div>
           <HugeiconsIcon icon={Icon} className="text-muted-foreground size-4" />
@@ -183,7 +186,7 @@ const SortableField = ({ field, index, isSelected, onSelect, onRemove }: Sortabl
     <div ref={setNodeRef} style={style} onClick={onSelect}>
       <div
         className={cn(
-          "group relative cursor-pointer rounded-lg border bg-card p-4 transition-all h-full",
+          "group bg-card relative h-full cursor-pointer rounded-lg border p-4 transition-all",
           isSelected ? "border-primary ring-primary/20 ring-2" : "hover:border-primary/50",
         )}
       >
@@ -191,7 +194,7 @@ const SortableField = ({ field, index, isSelected, onSelect, onRemove }: Sortabl
           <div className="flex items-center gap-2">
             <button
               type="button"
-              className="touch-none cursor-grab active:cursor-grabbing"
+              className="cursor-grab touch-none active:cursor-grabbing"
               {...attributes}
               {...listeners}
             >

@@ -46,12 +46,13 @@ const applicantApi = {
   submitApplication: (data: SubmitApplicationInput) =>
     apiClient.post<HttpResponse<{ applicant: Applicant }>>("/applicants/submit", data),
   resendToken: (id: string) => apiClient.post<HttpResponse<{ message: string }>>(`/applicants/${id}/resend-token`, {}),
-  getApplicants: (params: PaginationParams) => apiClient.get<PaginatedResponse<Applicant>>("/applicants", { params }),
+  getApplicants: (params: PaginationParams) =>
+    apiClient.get<PaginatedResponse<Applicant>>("/applicants", params as Record<string, unknown>),
   getApplicant: (id: string) => apiClient.get<HttpResponse<Applicant>>(`/applicants/${id}`),
   updateApplicantStatus: (id: string, status: ApplicantStatus) =>
     apiClient.put<HttpResponse<{ message: string }>>(`/applicants/${id}/status`, { status }),
   getCohortApplicants: (cohortId: string, params: PaginationParams) =>
-    apiClient.get<PaginatedResponse<Applicant>>(`/cohorts/${cohortId}/applicants`, { params }),
+    apiClient.get<PaginatedResponse<Applicant>>(`/cohorts/${cohortId}/applicants`, params as Record<string, unknown>),
 };
 
 export const useValidateToken = (token: string) =>

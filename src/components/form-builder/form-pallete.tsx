@@ -11,6 +11,7 @@ import {
   TelephoneIcon,
   TextIcon,
   TextNumberSignIcon,
+  ToggleOnIcon,
 } from "@hugeicons/core-free-icons";
 
 import type { FieldType } from "@/types";
@@ -36,6 +37,7 @@ const FIELDS: Field[] = [
   { label: "radio", icon: RadioButtonIcon, type: "RADIO" },
   { label: "textarea", icon: TextIcon, type: "TEXTAREA" },
   { label: "file", icon: InputShortTextIcon, type: "FILE" },
+  { label: "toggle", icon: ToggleOnIcon, type: "TOGGLE" },
 ];
 
 export const FormPallete = ({ onAddField }: Props) => {

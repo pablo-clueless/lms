@@ -4,6 +4,14 @@ import { RefreshIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DataTable, Loader, Pagination, Breadcrumb } from "@/components/shared";
+import { useGetApplicants, useUpdateApplicantStatus } from "@/lib/api/applicant";
+import type { Applicant, ApplicantStatus, PaginationParams } from "@/types";
+import { StatusBadge } from "@/components/shared/status-badge";
+import { createApplicantColumns } from "@/config/columns";
+import { Button } from "@/components/ui/button";
+import { cn, formatDate } from "@/lib";
 import {
   Dialog,
   DialogContent,
@@ -12,19 +20,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DataTable, Loader, Pagination, Breadcrumb } from "@/components/shared";
-import { useGetApplicants, useUpdateApplicantStatus } from "@/lib/api/applicant";
-import { StatusBadge } from "@/components/shared/status-badge";
-import { createApplicantColumns } from "@/config/columns";
-import type { Applicant, ApplicantStatus, PaginationParams } from "@/types";
-import { Button } from "@/components/ui/button";
-import { cn, formatDate } from "@/lib";
 
 const breadcrumbs = [{ label: "Applications", href: "/admin/applications" }];
 
 const initialParams: PaginationParams = {
-  order: "asc",
   page: 1,
   per_page: 10,
   search: "",
@@ -47,10 +46,10 @@ const STATUS_UPDATE_OPTIONS: { label: string; value: ApplicantStatus }[] = [
 ];
 
 const Page = () => {
-  const [params, setParams] = useState(initialParams);
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<ApplicantStatus | "">("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [params, setParams] = useState(initialParams);
 
   const columns = createApplicantColumns("ADMIN", {
     onReview: (applicant: Applicant) => {

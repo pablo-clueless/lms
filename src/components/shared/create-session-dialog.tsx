@@ -131,7 +131,7 @@ export const CreateSessionDialog = ({
                   value={session.type}
                   onValueChange={(value: SessionType) => setSession({ ...session, type: value })}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -149,7 +149,7 @@ export const CreateSessionDialog = ({
                   value={session.course_id}
                   onValueChange={(value) => setSession({ ...session, course_id: value })}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select course" />
                   </SelectTrigger>
                   <SelectContent>
@@ -167,7 +167,7 @@ export const CreateSessionDialog = ({
                   value={session.cohort_id}
                   onValueChange={(value) => setSession({ ...session, cohort_id: value })}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select cohort" />
                   </SelectTrigger>
                   <SelectContent>
@@ -182,7 +182,7 @@ export const CreateSessionDialog = ({
               <div className="space-y-2">
                 <label className="text-sm font-medium">Tutor</label>
                 <Select value={session.tutor_id} onValueChange={(value) => setSession({ ...session, tutor_id: value })}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select tutor" />
                   </SelectTrigger>
                   <SelectContent>

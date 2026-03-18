@@ -26,7 +26,8 @@ export type FieldType =
   | "SELECT"
   | "CHECKBOX"
   | "RADIO"
-  | "FILE";
+  | "FILE"
+  | "TOGGLE";
 
 export interface FormFieldOption {
   label: string;
@@ -54,7 +55,7 @@ export interface ApplicationFormField {
   options?: FormFieldOption[];
   validation: FieldValidation;
   order: number;
-  width: number;
+  width: 1 | 2 | 3 | 4;
   created_at: string;
   updated_at: string;
 }
@@ -64,7 +65,7 @@ export interface ApplicationForm {
   tenant_id: string;
   name: string;
   description: string;
-  fields?: ApplicationFormField[];
+  fields: ApplicationFormField[];
   created_at: string;
   updated_at: string;
 }
@@ -112,6 +113,18 @@ export interface Term {
   status: TermStatus;
   created_at: string;
   updated_at: string;
+}
+
+export interface CreateCohortDto {
+  name: string;
+  description: string;
+  application_start_date: string;
+  application_end_date: string;
+  start_date: string;
+  end_date: string;
+  max_students: number;
+  application_form_id: string;
+  track_ids: string[];
 }
 
 export interface CreateApplicationFormDto {

@@ -47,6 +47,15 @@ export interface Tenant {
   updated_at: string;
 }
 
+export interface TTenant {
+  id: string;
+  name: string;
+  slug: string;
+  logo: string;
+  primary_color: string;
+  secondary_color: string;
+}
+
 export interface CreateTenantDto {
   name: string;
   slug: string;

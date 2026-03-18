@@ -4,6 +4,7 @@ import type {
   ApplicationForm,
   Cohort,
   CreateApplicationFormDto,
+  CreateCohortDto,
   HttpResponse,
   PaginatedResponse,
   PaginationParams,
@@ -24,7 +25,7 @@ const cohortKeys = {
 const cohortApi = {
   getCohorts: (params: PaginationParams) => apiClient.get<PaginatedResponse<Cohort>>("/cohorts", { params }),
   getCohort: (id: string) => apiClient.get<HttpResponse<Cohort>>(`/cohorts/${id}`),
-  createCohort: (data: Partial<Cohort>) => apiClient.post<HttpResponse<Cohort>>("/cohorts", data),
+  createCohort: (data: CreateCohortDto) => apiClient.post<HttpResponse<Cohort>>("/cohorts", data),
   updateCohort: (id: string, data: Partial<Cohort>) => apiClient.put<HttpResponse<Cohort>>(`/cohorts/${id}`, data),
   deleteCohort: (id: string) => apiClient.delete<HttpResponse<unknown>>(`/cohorts/${id}`),
   getCohortApplicationForm: (id: string) =>
@@ -46,7 +47,7 @@ export const useGetCohortApplicationForm = (id: string) =>
 export const useCreateCohort = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<Cohort>) => cohortApi.createCohort(data),
+    mutationFn: (data: CreateCohortDto) => cohortApi.createCohort(data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: cohortKeys.getCohorts() }),
   });
 };
@@ -133,7 +134,7 @@ const applicationFormApi = {
   getApplicationForm: (id: string) => apiClient.get<HttpResponse<ApplicationForm>>(`/application-forms/${id}`),
   createApplicationForm: (data: Partial<CreateApplicationFormDto>) =>
     apiClient.post<HttpResponse<ApplicationForm>>("/application-forms", data),
-  updateApplicationForm: (id: string, data: Partial<ApplicationForm>) =>
+  updateApplicationForm: (id: string, data: Partial<CreateApplicationFormDto>) =>
     apiClient.put<HttpResponse<ApplicationForm>>(`/application-forms/${id}`, data),
   deleteApplicationForm: (id: string) => apiClient.delete<HttpResponse<unknown>>(`/application-forms/${id}`),
 };
@@ -161,7 +162,7 @@ export const useCreateApplicationForm = () => {
 export const useUpdateApplicationForm = (id: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<ApplicationForm>) => applicationFormApi.updateApplicationForm(id, data),
+    mutationFn: (data: Partial<CreateApplicationFormDto>) => applicationFormApi.updateApplicationForm(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: applicationFormKeys.getApplicationForm(id) });
       queryClient.invalidateQueries({ queryKey: applicationFormKeys.getApplicationForms() });

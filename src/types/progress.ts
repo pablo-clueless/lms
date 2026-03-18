@@ -72,3 +72,15 @@ export interface Session {
   created_at: string;
   updated_at: string;
 }
+
+export interface CreateSessionDto {
+  course_id: string;
+  cohort_id: string;
+  tutor_id: string;
+  title: string;
+  description: string;
+  type: SessionType;
+  meeting_link: string;
+  start_time: string;
+  end_time: string;
+}

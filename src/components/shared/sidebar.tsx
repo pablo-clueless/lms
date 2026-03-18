@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { type RouteConfig, getRoleRoutes } from "@/config/routes";
 import { useGlobalStore, useUserStore } from "@/store/core";
-import { cn, getInitials } from "@/lib";
+import { cn, getInitials, normalize } from "@/lib";
 import { Button } from "../ui/button";
 import type { Role } from "@/types";
 
@@ -127,7 +127,7 @@ export const Sidebar = ({ role }: Props) => {
       >
         <motion.nav className="space-y-1" layout>
           {ROUTES.map((route, index) => {
-            const isActive = pathname === route.href;
+            const isActive = normalize(pathname) === route.href;
             const hasChildren = role === "SUPER_ADMIN" && route.children && route.children.length > 0;
 
             return (
