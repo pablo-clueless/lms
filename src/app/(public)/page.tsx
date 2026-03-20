@@ -156,6 +156,10 @@ const COMPLIANCES = [
   },
 ];
 
+function reverseIndex(length: number, index: number) {
+  return length - 1 - index;
+}
+
 const Page = () => {
   return (
     <>
@@ -225,7 +229,6 @@ const Page = () => {
                 billing.
               </p>
             </motion.div>
-
             <motion.div
               className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
               variants={staggerContainer}
@@ -235,7 +238,7 @@ const Page = () => {
               {FEATURES.map((feature, index) => (
                 <motion.div
                   key={index}
-                  className="group border-border bg-card hover:border-primary/50 rounded-xl border p-6 transition-all hover:shadow-lg"
+                  className="group border-border bg-card hover:border-primary/50 rounded-md border p-6 transition-all duration-500 hover:shadow-lg"
                   variants={fadeInUp}
                 >
                   <div className="bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground mb-4 flex h-12 w-12 items-center justify-center rounded-lg transition-colors">
@@ -304,14 +307,13 @@ const Page = () => {
                 Pay only for what you use. No hidden fees, no setup costs.
               </p>
             </motion.div>
-
             <motion.div
               className="mx-auto max-w-lg"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <div className="border-primary bg-card relative overflow-hidden rounded-2xl border-2 p-8 shadow-xl">
+              <div className="border-primary bg-card relative overflow-hidden rounded-md border-2 p-8 shadow-xl">
                 <div className="bg-primary text-primary-foreground absolute top-4 right-4 rounded-full px-3 py-1 text-xs font-medium">
                   Postpaid
                 </div>
@@ -381,7 +383,19 @@ const Page = () => {
                       </div>
                     ))}
                   </div>
-                  <div className="bg-primary aspect-video rounded-xl"></div>
+                  <div className="relative aspect-video">
+                    {[...Array(3)].map((_, index) => (
+                      <motion.div
+                        className="bg-primary/50 absolute top-1/2 left-1/2 size-full -translate-x-1/2 -translate-y-1/2 rounded-md"
+                        initial={{ rotate: 0 }}
+                        key={index}
+                        transition={{ duration: 0.5 * index }}
+                        whileInView={{ rotate: `${reverseIndex(1, index) * -15}deg` }}
+                      >
+                        <span className="text-background">{index + 1}</span>
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
               </motion.div>
             </div>

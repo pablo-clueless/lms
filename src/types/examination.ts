@@ -1,4 +1,4 @@
-import type { QuestionType } from "./assessment";
+import type { QuestionDto, QuestionType } from "./assessment";
 
 export type ExaminationStatus = "DRAFT" | "SCHEDULED" | "IN_PROGRESS" | "COMPLETED" | "ARCHIVED";
 export type ExaminationSubmissionStatus = "NOT_STARTED" | "IN_PROGRESS" | "SUBMITTED" | "GRADED" | "PUBLISHED";
@@ -75,4 +75,18 @@ export interface ExaminationSubmission {
   graded_at?: Date;
   graded_by?: string;
   results_published_to_student: boolean;
+}
+
+export interface CreateExaminationDto {
+  course_id: string;
+  title: string;
+  description: string;
+  instructions: string;
+  questions: QuestionDto[];
+  time_limit_minutes: number;
+  passing_score: number;
+  shuffle_questions: boolean;
+  shuffle_options: boolean;
+  enable_proctoring: boolean;
+  allow_backtrack: boolean;
 }

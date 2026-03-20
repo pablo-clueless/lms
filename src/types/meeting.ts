@@ -34,3 +34,13 @@ export interface Meeting {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface CreateMeetingDto {
+  title: string;
+  description: string;
+  class_id: string;
+  course_id: string;
+  scheduled_start: string;
+  scheduled_end: string;
+  max_participants: number;
+}

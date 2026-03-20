@@ -66,7 +66,7 @@ const RoleCard = ({ role, count, icon, color }: RoleCardProps) => (
     </div>
     <div>
       <p className="text-muted-foreground text-sm">{role}</p>
-      <p className="text-2xl font-semibold">{count}</p>
+      <h4 className="text-2xl font-semibold">{count}</h4>
     </div>
   </div>
 );
@@ -95,7 +95,6 @@ const Page = () => {
         <div className="absolute -right-10 -bottom-10 size-40 rounded-full bg-white/10 dark:bg-black/50" />
         <div className="absolute -top-5 -right-5 size-20 rounded-full bg-white/10 dark:bg-black/50" />
       </div>
-
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-x-4">
           <Select defaultValue="current">
@@ -117,7 +116,6 @@ const Page = () => {
           {isFetching ? "Refreshing..." : "Refresh"}
         </Button>
       </div>
-
       <div className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Users"
@@ -150,7 +148,6 @@ const Page = () => {
           subtitle="Academic sessions"
         />
       </div>
-
       <div className="bg-card w-full rounded-xl border p-6">
         <div className="mb-4">
           <h5 className="text-lg font-semibold">Users by Role</h5>
@@ -297,7 +294,7 @@ const Page = () => {
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">School Name</p>
-                <p className="font-medium">{tenantInfo.name}</p>
+                <h4 className="font-medium">{tenantInfo.name}</h4>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -306,7 +303,7 @@ const Page = () => {
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">School Type</p>
-                <p className="font-medium capitalize">{tenantInfo.school_type?.toLowerCase() || "N/A"}</p>
+                <h4 className="font-medium capitalize">{tenantInfo.school_type?.toLowerCase() || "N/A"}</h4>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -334,7 +331,7 @@ const Page = () => {
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">Status</p>
-                <p className="font-medium">{tenantInfo.status}</p>
+                <h4 className="font-medium">{tenantInfo.status}</h4>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -343,7 +340,7 @@ const Page = () => {
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">Contact Email</p>
-                <p className="truncate font-medium">{tenantInfo.contact_email || "N/A"}</p>
+                <h4 className="truncate font-medium">{tenantInfo.contact_email || "N/A"}</h4>
               </div>
             </div>
           </div>

@@ -182,12 +182,12 @@ const Page = () => {
                     {index + 1}
                   </div>
                   <div>
-                    <p className="text-foreground font-medium">{tenant.name}</p>
+                    <h4 className="text-foreground font-medium">{tenant.name}</h4>
                     <p className="text-muted-foreground text-xs">{tenant.status}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-emerald-600">{tenant.school_type}%</p>
+                  <p className="text-sm font-semibold text-emerald-600">{tenant.school_type}</p>
                   <p className="text-muted-foreground text-xs">Activity</p>
                 </div>
               </div>
@@ -225,7 +225,9 @@ const Page = () => {
             </div>
             <div>
               <p className="text-muted-foreground text-sm">Uptime</p>
-              <p className="text-foreground text-2xl font-semibold">{dashboard?.system_metrics.uptime_seconds || 0}s</p>
+              <h4 className="text-foreground text-2xl font-semibold">
+                {dashboard?.system_metrics.uptime_seconds || 0}s
+              </h4>
             </div>
           </div>
           <div className="flex items-center gap-4 rounded-lg border p-4">
@@ -234,9 +236,9 @@ const Page = () => {
             </div>
             <div>
               <p className="text-muted-foreground text-sm">Avg Response Time</p>
-              <p className="text-foreground text-2xl font-semibold">
+              <h4 className="text-foreground text-2xl font-semibold">
                 {(dashboard?.system_metrics.avg_latency_ms || 0).toFixed(2)}ms
-              </p>
+              </h4>
             </div>
           </div>
           <div className="flex items-center gap-4 rounded-lg border p-4">
@@ -245,9 +247,9 @@ const Page = () => {
             </div>
             <div>
               <p className="text-muted-foreground text-sm">Active Connections</p>
-              <p className="text-foreground text-2xl font-semibold">
+              <h4 className="text-foreground text-2xl font-semibold">
                 {dashboard?.system_metrics.active_connections || 0}
-              </p>
+              </h4>
             </div>
           </div>
           <div className="flex items-center gap-4 rounded-lg border p-4">
@@ -267,9 +269,9 @@ const Page = () => {
             </div>
             <div>
               <p className="text-muted-foreground text-sm">Error Rate</p>
-              <p className="text-foreground text-2xl font-semibold">
+              <h4 className="text-foreground text-2xl font-semibold">
                 {(dashboard?.system_metrics.error_rate || 0).toFixed(2)}%
-              </p>
+              </h4>
             </div>
           </div>
         </div>

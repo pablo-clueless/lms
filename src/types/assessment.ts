@@ -1,6 +1,6 @@
 export type AssessmentType = "QUIZ" | "ASSIGNMENT";
 export type AssessmentStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
-export type QuestionType = "MULTIPLE_CHOICE" | "MULTIPLE_ANSWER" | "TRUE_FALSE" | "SHORT_ANSWER" | "ESSAY";
+export type QuestionType = "MULTIPLE_CHOICE" | "MULTIPLE_ANSWER" | "boolean_FALSE" | "SHORT_ANSWER" | "ESSAY";
 export type SubmissionStatus = "NOT_STARTED" | "IN_PROGRESS" | "SUBMITTED" | "LATE" | "GRADED";
 
 export interface Question {
@@ -106,15 +106,29 @@ export interface SubmissionAnswer {
 
 export interface CreateAssessmentDto {
   title: string;
+  description: string;
   instructions: string;
-  questions: Question[];
-  time_limit?: number;
-  due_date?: Date;
-  availability_start: Date;
-  availability_end: Date;
-  status: AssessmentStatus;
-  allow_late_submission?: boolean;
-  allow_retake?: boolean;
-  passing_percentage?: number;
-  late_penalty_percentage?: number;
+  questions: QuestionDto;
+  time_limit_minutes: number;
+  max_attempts: number;
+  passing_score: number;
+  shuffle_questions: boolean;
+  shuffle_options: boolean;
+  show_results: boolean;
+  availability_start: string;
+  availability_end: string;
+}
+
+export interface QuestionDto {
+  type: QuestionType;
+  text: string;
+  options: OptionDto[];
+  correct_answer: string;
+  points: number;
+  explanation: string;
+}
+
+export interface OptionDto {
+  text: string;
+  is_correct: boolean;
 }

@@ -121,14 +121,11 @@ export const Sidebar = ({ role }: Props) => {
       variants={sidebarVariants}
     >
       <motion.div
-        className={cn(
-          "flex h-full w-full flex-col justify-between gap-y-10 overflow-y-auto",
-          isCollapsed ? "px-2" : "px-4",
-        )}
+        className={cn("flex h-full w-full flex-col justify-between", isCollapsed ? "px-2" : "px-4")}
         layout
         transition={{ duration: 0.2 }}
       >
-        <motion.nav className="space-y-1" layout>
+        <motion.nav className="h-[calc(100%-68px)] space-y-1 overflow-y-auto" layout>
           {ROUTES.map((route, index) => {
             const isActive = normalize(pathname) === route.href;
             const hasChildren = role === "SUPER_ADMIN" && route.children && route.children.length > 0;
@@ -147,7 +144,7 @@ export const Sidebar = ({ role }: Props) => {
           })}
         </motion.nav>
         <motion.div
-          className={cn("flex items-center border-t py-4", isCollapsed ? "justify-center" : "justify-between")}
+          className={cn("flex h-17 items-center border-t", isCollapsed ? "justify-center" : "justify-between")}
         >
           {!isCollapsed && (
             <motion.div className="flex max-w-45 items-center gap-x-2">

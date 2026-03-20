@@ -24,3 +24,9 @@ export interface Term {
   activated_at?: Date;
   completed_at?: Date;
 }
+
+export interface CreateTermDto {
+  name: TermOrdinal;
+  start_date: string;
+  end_date: string;
+}

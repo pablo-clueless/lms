@@ -16,3 +16,15 @@ export interface Timetable {
   updated_at: Date;
   archived_at?: Date;
 }
+
+export interface CreateTimeTable {
+  class_id: string;
+  term_id: string;
+  config: {
+    periods_per_day: number;
+    period_duration_minutes: number;
+    break_duration_minutes: number;
+    start_time: string;
+    days: string[];
+  };
+}

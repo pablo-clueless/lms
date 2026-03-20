@@ -14,3 +14,11 @@ export interface Class {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface CreateClassDto {
+  name: string;
+  grade_level: string;
+  section: string;
+  capacity: number;
+  form_tutor_id: string;
+}

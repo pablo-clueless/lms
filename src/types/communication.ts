@@ -78,3 +78,13 @@ export interface Notification {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface CreateEmailDto {
+  subject: string;
+  body: string;
+  html_body: string;
+  recipient_scope: RecipientScope;
+  target_class_id?: string;
+  target_course_id?: string;
+  specific_user_ids?: string[];
+}

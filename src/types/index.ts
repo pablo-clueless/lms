@@ -13,6 +13,7 @@ export * from "./meeting";
 export * from "./period";
 export * from "./progress";
 export * from "./session";
+export * from "./setting";
 export * from "./tenant";
 export * from "./term";
 export * from "./timetable";
