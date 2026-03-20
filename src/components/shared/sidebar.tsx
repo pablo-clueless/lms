@@ -121,7 +121,10 @@ export const Sidebar = ({ role }: Props) => {
       variants={sidebarVariants}
     >
       <motion.div
-        className={cn("flex h-full w-full flex-col justify-between", isCollapsed ? "px-2" : "px-4")}
+        className={cn(
+          "flex h-full w-full flex-col justify-between gap-y-10 overflow-y-auto",
+          isCollapsed ? "px-2" : "px-4",
+        )}
         layout
         transition={{ duration: 0.2 }}
       >
@@ -129,7 +132,6 @@ export const Sidebar = ({ role }: Props) => {
           {ROUTES.map((route, index) => {
             const isActive = normalize(pathname) === route.href;
             const hasChildren = role === "SUPER_ADMIN" && route.children && route.children.length > 0;
-
             return (
               <motion.div
                 key={route.href}
@@ -154,10 +156,10 @@ export const Sidebar = ({ role }: Props) => {
                 <AvatarFallback>{getInitials(`${user?.first_name || ""} ${user?.last_name || ""}`)}</AvatarFallback>
               </Avatar>
               <div className="max-w-35">
-                <h5 className="text-xs font-medium">
+                <h5 className="text-foreground truncate text-xs font-medium">
                   {user?.first_name} {user?.last_name}
                 </h5>
-                <p className="text-[10px] text-gray-600">{user?.email}</p>
+                <p className="truncate text-[10px] text-gray-400">{user?.email}</p>
               </div>
             </motion.div>
           )}

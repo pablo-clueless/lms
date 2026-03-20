@@ -119,31 +119,36 @@ export interface NotificationPreferences {
   email_enabled: boolean;
 }
 
-export interface UpdateUserDto {
-  name?: string;
-  email?: string;
-  role?: Role;
-  status?: UserStatus;
-}
-
-export interface UpdateUserProfileDto {
-  phone?: string;
-  gender?: string;
-  date_of_birth?: string;
-  avatar?: string;
-  bio?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  postal_code?: string;
-}
-
-export interface CreateUserDto {
+export interface InviteUserDto {
   email: string;
-  password: string;
+  role: Role;
   first_name: string;
   last_name: string;
   middle_name: string;
-  invitation_token: string;
+  phone: string;
+}
+
+export interface UpdateMeDto {
+  first_name: string;
+  last_name: string;
+  middle_name: string;
+  phone: string;
+  profile_photo: string;
+  notification_preferences: NotificationPreferences[];
+}
+
+export interface UpdateUserDto {
+  first_name?: string;
+  last_name?: string;
+  middle_name?: string;
+  phone?: string;
+  profile_photo?: string;
+  status?: UserStatus;
+  permissions?: string[];
+}
+
+export interface UserQueries {
+  role?: Role | (string & {});
+  search?: string;
+  status?: UserStatus | (string & {});
 }

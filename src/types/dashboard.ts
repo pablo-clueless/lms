@@ -36,6 +36,15 @@ export interface SuperAdminDashboardResponse {
       wait_count: number;
       wait_duration_ms: number;
     };
+    billing_metrics: {
+      total_revenue: number;
+      mrr: number;
+      upcoming_payments: number;
+      late_payments: number;
+      upcoming_count: number;
+      late_count: number;
+      recent_invoices: [];
+    };
   };
 }
 

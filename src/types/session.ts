@@ -10,5 +10,19 @@ export interface Session {
   description: string;
   created_at: Date;
   updated_at: Date;
-  archived_at: Date;
+  archived_at?: Date;
+}
+
+export interface CreateSessionDto {
+  label: string;
+  start_year: number;
+  end_year: number;
+  description: string;
+  status: SessionStatus;
+}
+
+export interface UpdateSessionDto {
+  label?: string;
+  description?: string;
+  status?: SessionStatus;
 }

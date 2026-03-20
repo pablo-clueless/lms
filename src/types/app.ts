@@ -1,5 +1,3 @@
-import type { Role } from "./user";
-
 export type Maybe<T> = T | null;
 
 export type Undefined<T> = T | undefined;
@@ -19,26 +17,25 @@ export interface HttpError {
   };
 }
 
+export type QueryParams = Record<string, string>;
+
 export interface PaginationParams {
-  order?: "asc" | "desc";
+  limit?: number;
   page?: number;
-  per_page?: number;
-  role?: Role;
-  search?: string;
-  sort_by?: string;
   status?: string;
 }
 
-export interface PaginatedResponse<T> {
-  data: T[];
-  meta: {
-    has_next: boolean;
-    has_prev: boolean;
-    page: number;
-    page_size: number;
-    total: number;
-    total_pages: number;
+export interface PaginatedResponse<T extends object> {
+  K: T[];
+  pagination: {
+    count: number;
+    has_more: boolean;
   };
+}
+
+export interface Pagination {
+  count: number;
+  has_more: boolean;
 }
 
 export interface HttpResponse<T> {

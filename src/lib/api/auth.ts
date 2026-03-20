@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateUserDto, SigninDto, SigninResponse, User } from "@/types";
+import type { RegisterDto, SigninDto, SigninResponse, User } from "@/types";
 import { apiClient } from "../api-client";
 
 const keys = {
@@ -13,7 +13,7 @@ const keys = {
 
 const authApi = {
   login: (body: SigninDto) => apiClient.post<SigninResponse>("/public/auth/login", body),
-  register: (body: CreateUserDto) => apiClient.post<User>("/public/auth/register", body),
+  register: (body: RegisterDto) => apiClient.post<User>("/public/auth/register", body),
   forgot_password: (body: { email: string }) => apiClient.post<null>("/public/auth/password-reset", body),
   reset_password: () => apiClient.post<null>("/public/auth/"),
 };
@@ -22,7 +22,7 @@ export function useLogin() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: keys.login(),
-    mutationFn: (body: SigninDto) => authApi.login(body),
+    mutationFn: authApi.login,
     onSuccess: (data) => {
       queryClient.setQueryData(keys.login(), data);
     },
@@ -33,7 +33,7 @@ export function useRegister() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: keys.register(),
-    mutationFn: (body: CreateUserDto) => authApi.register(body),
+    mutationFn: authApi.register,
     onSuccess: (data) => {
       queryClient.setQueryData(keys.register(), data);
     },
@@ -44,7 +44,7 @@ export function useForgotPassword() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: keys.forgot_password(),
-    mutationFn: (body: { email: string }) => authApi.forgot_password(body),
+    mutationFn: authApi.forgot_password,
     onSuccess: (data) => {
       queryClient.setQueryData(keys.forgot_password(), data);
     },

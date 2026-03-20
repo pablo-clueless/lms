@@ -46,7 +46,10 @@ const clearAuthAndRedirect = () => {
 
 const client = axios.create({
   baseURL,
-  headers: { "Content-Type": "application/json" },
+  headers: {
+    "Content-Type": "application/json",
+    "Idempotency-Key": "",
+  },
 });
 
 client.interceptors.request.use((config) => {
@@ -60,12 +63,10 @@ client.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-    // For non-401 errors, just reject without signing out
     if (error.response?.status !== 401) {
       return Promise.reject(error);
     }
 
-    // Check if this is a login/auth endpoint - don't try to refresh for auth failures on login
     const isAuthEndpoint = originalRequest.url?.includes("/auth/");
     if (isAuthEndpoint) {
       return Promise.reject(error);
@@ -73,23 +74,18 @@ client.interceptors.response.use(
 
     const refresh_token = Cookies.get("REFRESH_TOKEN");
 
-    // No refresh token available - only redirect if we had a token before (session expired)
-    // Don't redirect for unauthenticated requests that never had a token
     if (!refresh_token) {
       const hadToken = Cookies.get("ACCESS_TOKEN");
       if (hadToken) {
-        // User was logged in but token expired and no refresh token
         clearAuthAndRedirect();
       }
       return Promise.reject(error);
     }
 
-    // Already retried this request - don't retry again, but don't sign out either
     if (originalRequest._retry) {
       return Promise.reject(error);
     }
 
-    // If already refreshing, queue this request
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
         failedQueue.push({

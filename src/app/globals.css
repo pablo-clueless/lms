@@ -185,6 +185,7 @@
   h4,
   h5,
   h6 {
+    color: var(--color-foreground);
     font-family: var(--font-serif);
   }
 

@@ -1,5 +1,14 @@
 import type { Role, User } from "./user";
 
+export interface RegisterDto {
+  email: string;
+  password: string;
+  first_name: string;
+  last_name: string;
+  middle_name: string;
+  invitation_token: string;
+}
+
 export interface SigninDto {
   email: string;
   password: string;
