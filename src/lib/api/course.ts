@@ -28,7 +28,8 @@ interface ListCourseResponse {
 
 const courseApi = {
   create: (body: CreateCourseDto) => apiClient.post<Course>("/courses", body),
-  list: (params?: PaginationParams & CourseQueries) => apiClient.get<ListCourseResponse>("/courses", params as QueryParams),
+  list: (params?: PaginationParams & CourseQueries) =>
+    apiClient.get<ListCourseResponse>("/courses", params as QueryParams),
   get: (id: string) => apiClient.get<Course>(`/courses/${id}`),
   update: (payload: UpdateCourse) => apiClient.put<Course>(`/courses/${payload.id}`, payload.body),
   delete: (id: string) => apiClient.delete<void>(`/courses/${id}`),

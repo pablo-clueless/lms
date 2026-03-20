@@ -26,11 +26,13 @@ interface ListEmailResponse {
 }
 
 const communicationApi = {
-  listEmails: (params?: EmailQueries) => apiClient.get<ListEmailResponse>("/communications/emails", params as QueryParams),
+  listEmails: (params?: EmailQueries) =>
+    apiClient.get<ListEmailResponse>("/communications/emails", params as QueryParams),
   getEmail: (id: string) => apiClient.get<Email>(`/communications/emails/${id}`),
   compose: (body: CreateEmailDto) => apiClient.post<Email>("/communications/emails", body),
   send: (id: string) => apiClient.post<Email>(`/communications/emails/${id}/send`),
-  schedule: (id: string, body: ScheduleEmailDto) => apiClient.post<Email>(`/communications/emails/${id}/schedule`, body),
+  schedule: (id: string, body: ScheduleEmailDto) =>
+    apiClient.post<Email>(`/communications/emails/${id}/schedule`, body),
   delete: (id: string) => apiClient.delete<void>(`/communications/emails/${id}`),
 };
 

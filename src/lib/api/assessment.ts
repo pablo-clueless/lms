@@ -21,7 +21,8 @@ interface ListAssignmentResponse {
 
 const assessmentApi = {
   listQuizzes: (courseId: string) => apiClient.get<ListQuizResponse>(`/courses/${courseId}/quizzes`),
-  createQuiz: (courseId: string, body: CreateAssessmentDto) => apiClient.post<Quiz>(`/courses/${courseId}/quizzes`, body),
+  createQuiz: (courseId: string, body: CreateAssessmentDto) =>
+    apiClient.post<Quiz>(`/courses/${courseId}/quizzes`, body),
   listAssignments: (courseId: string) => apiClient.get<ListAssignmentResponse>(`/courses/${courseId}/assignments`),
   createAssignment: (courseId: string, body: CreateAssessmentDto) =>
     apiClient.post<Assignment>(`/courses/${courseId}/assignments`, body),

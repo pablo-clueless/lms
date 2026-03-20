@@ -35,7 +35,8 @@ const termApi = {
   update: (payload: UpdateTerm) =>
     apiClient.put<Term>(`/sessions/${payload.sessionId}/terms/${payload.termId}`, payload.body),
   delete: (params: TermParams) => apiClient.delete<void>(`/sessions/${params.sessionId}/terms/${params.termId}`),
-  activate: (params: TermParams) => apiClient.post<Term>(`/sessions/${params.sessionId}/terms/${params.termId}/activate`),
+  activate: (params: TermParams) =>
+    apiClient.post<Term>(`/sessions/${params.sessionId}/terms/${params.termId}/activate`),
 };
 
 export function useCreateTerm(sessionId: string) {

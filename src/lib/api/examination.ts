@@ -38,8 +38,7 @@ interface ListSubmissionResponse {
 }
 
 const examinationApi = {
-  list: (params?: ExaminationQueries) =>
-    apiClient.get<ListExaminationResponse>("/examinations", params as QueryParams),
+  list: (params?: ExaminationQueries) => apiClient.get<ListExaminationResponse>("/examinations", params as QueryParams),
   get: (id: string) => apiClient.get<Examination>(`/examinations/${id}`),
   create: (body: CreateExaminationDto) => apiClient.post<Examination>("/examinations", body),
   update: (payload: UpdateExamination) => apiClient.put<Examination>(`/examinations/${payload.id}`, payload.body),

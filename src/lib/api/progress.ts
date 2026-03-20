@@ -27,14 +27,12 @@ interface ComputeGradesResponse {
 
 const progressApi = {
   get: (id: string) => apiClient.get<Progress>(`/progress/${id}`),
-  getStudentProgress: (studentId: string) =>
-    apiClient.get<ListProgressResponse>(`/progress/students/${studentId}`),
+  getStudentProgress: (studentId: string) => apiClient.get<ListProgressResponse>(`/progress/students/${studentId}`),
   computeGrades: (courseId: string) =>
     apiClient.post<ComputeGradesResponse>(`/progress/courses/${courseId}/compute-grades`),
   getReportCard: (studentId: string, params?: ReportCardQueries) =>
     apiClient.get<ReportCard>(`/progress/report-cards/students/${studentId}`, params as QueryParams),
-  generateReportCard: (studentId: string) =>
-    apiClient.post<ReportCard>(`/progress/report-cards/students/${studentId}`),
+  generateReportCard: (studentId: string) => apiClient.post<ReportCard>(`/progress/report-cards/students/${studentId}`),
 };
 
 export function useGetProgress(id: string) {
