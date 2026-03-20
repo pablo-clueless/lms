@@ -150,11 +150,13 @@ export const Sidebar = ({ role }: Props) => {
           {!isCollapsed && (
             <motion.div className="flex max-w-45 items-center gap-x-2">
               <Avatar>
-                <AvatarImage src={user?.profile?.avatar || ""} />
-                <AvatarFallback>{getInitials(user?.name)}</AvatarFallback>
+                <AvatarImage src={user?.profile_photo || ""} />
+                <AvatarFallback>{getInitials(`${user?.first_name || ""} ${user?.last_name || ""}`)}</AvatarFallback>
               </Avatar>
               <div className="max-w-35">
-                <h5 className="text-xs font-medium">{user?.name}</h5>
+                <h5 className="text-xs font-medium">
+                  {user?.first_name} {user?.last_name}
+                </h5>
                 <p className="text-[10px] text-gray-600">{user?.email}</p>
               </div>
             </motion.div>

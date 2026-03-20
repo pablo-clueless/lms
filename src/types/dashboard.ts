@@ -1,39 +1,39 @@
+import type { Tenant } from "./tenant";
+
 export interface SuperAdminDashboardResponse {
   role: "SUPER_ADMIN";
-  super_admin: {
-    tenant_stats: {
-      total: number;
-      active: number;
-      inactive: number;
+  dashboard: {
+    total_tenants: number;
+    active_tenants: number;
+    suspended_tenants: number;
+    total_users: number;
+    users_by_role: {
+      ADMIN: number;
+      STUDENT: number;
+      SUPER_ADMIN: number;
+      TUTOR: number;
     };
+    recent_tenants: Tenant[];
     user_growth: {
-      date: string;
       count: number;
+      date: string;
     }[];
-    revenue: {
-      mrr: number;
-      upcoming_renewals: number;
-      total_revenue: number;
-    };
-    resource_usage: {
-      storage_used_gb: number;
-      storage_limit_gb: number;
-      bandwidth_used_gb: number;
-      total_users: 2;
-      total_courses: number;
-    };
-    top_tenants: {
-      tenant_id: string;
-      tenant_name: string;
-      active_users: number;
-      course_count: number;
-      activity_rate: number;
-    }[];
-    system_health: {
-      uptime_percent: number;
-      avg_response_time_ms: number;
-      active_connections: number;
+    system_metrics: {
+      uptime_seconds: number;
+      uptime_formatted: string;
+      total_requests: number;
+      error_count: number;
       error_rate: number;
+      avg_latency_ms: number;
+      active_connections: number;
+    };
+    db_stats: {
+      max_open_connections: number;
+      open_connections: number;
+      in_use: number;
+      idle: number;
+      wait_count: number;
+      wait_duration_ms: number;
     };
   };
 }

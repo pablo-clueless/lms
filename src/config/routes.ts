@@ -6,6 +6,7 @@ import {
   QuizIcon,
   Certificate01Icon,
   ChartLineData01Icon,
+  ComputerVideoIcon,
   Notification03Icon,
   Setting07Icon,
   User03Icon,
@@ -15,10 +16,13 @@ import {
   ManagerIcon,
   UserAccountIcon,
   Mail01Icon,
-  FileEditIcon,
-  Folder01Icon,
   SecurityCheckIcon,
   FileSearchIcon,
+  Clock01Icon,
+  CheckListIcon,
+  MoneyReceiveSquareIcon,
+  PresentationBarChart01Icon,
+  CalendarCheckIn01Icon,
 } from "@hugeicons/core-free-icons";
 import type { Role } from "@/types";
 
@@ -36,9 +40,19 @@ const STUDENT_ROUTES: RouteConfig[] = [
     icon: DashboardSquare03Icon,
   },
   {
+    name: "My Class",
+    href: "/student/class",
+    icon: UserGroup02Icon,
+  },
+  {
     name: "Courses",
     href: "/student/courses",
     icon: Book02Icon,
+  },
+  {
+    name: "Timetable",
+    href: "/student/timetable",
+    icon: Clock01Icon,
   },
   {
     name: "Assignments",
@@ -54,6 +68,11 @@ const STUDENT_ROUTES: RouteConfig[] = [
     name: "Examinations",
     href: "/student/examinations",
     icon: Certificate01Icon,
+  },
+  {
+    name: "Meetings",
+    href: "/student/meetings",
+    icon: ComputerVideoIcon,
   },
   {
     name: "Progress",
@@ -84,14 +103,19 @@ const TUTOR_ROUTES: RouteConfig[] = [
     icon: DashboardSquare03Icon,
   },
   {
-    name: "Tracks",
-    href: "/tutor/tracks",
-    icon: Folder01Icon,
+    name: "My Classes",
+    href: "/tutor/classes",
+    icon: UserGroup02Icon,
   },
   {
     name: "Courses",
     href: "/tutor/courses",
     icon: Book02Icon,
+  },
+  {
+    name: "Timetable",
+    href: "/tutor/timetable",
+    icon: Clock01Icon,
   },
   {
     name: "Assignments",
@@ -109,19 +133,29 @@ const TUTOR_ROUTES: RouteConfig[] = [
     icon: Certificate01Icon,
   },
   {
-    name: "Sessions",
-    href: "/tutor/sessions",
-    icon: Calendar03Icon,
+    name: "Meetings",
+    href: "/tutor/meetings",
+    icon: ComputerVideoIcon,
+  },
+  {
+    name: "Attendance",
+    href: "/tutor/attendance",
+    icon: CheckListIcon,
   },
   {
     name: "Students",
     href: "/tutor/students",
-    icon: UserGroup02Icon,
+    icon: UserAccountIcon,
   },
   {
     name: "Progress",
     href: "/tutor/progress",
     icon: ChartLineData01Icon,
+  },
+  {
+    name: "Communications",
+    href: "/tutor/communications",
+    icon: Mail01Icon,
   },
   {
     name: "Notifications",
@@ -147,34 +181,29 @@ const ADMIN_ROUTES: RouteConfig[] = [
     icon: DashboardSquare03Icon,
   },
   {
-    name: "Application Forms",
-    href: "/admin/application-forms",
-    icon: FileEditIcon,
-  },
-  {
-    name: "Applications",
-    href: "/admin/applications",
-    icon: FileSearchIcon,
-  },
-  {
-    name: "Cohorts",
-    href: "/admin/cohorts",
-    icon: UserGroup02Icon,
-  },
-  {
     name: "Sessions",
     href: "/admin/sessions",
     icon: Calendar03Icon,
   },
   {
-    name: "Tracks",
-    href: "/admin/tracks",
-    icon: Folder01Icon,
+    name: "Terms",
+    href: "/admin/terms",
+    icon: CalendarCheckIn01Icon,
+  },
+  {
+    name: "Classes",
+    href: "/admin/classes",
+    icon: UserGroup02Icon,
   },
   {
     name: "Courses",
     href: "/admin/courses",
     icon: Book02Icon,
+  },
+  {
+    name: "Timetables",
+    href: "/admin/timetables",
+    icon: Clock01Icon,
   },
   {
     name: "Admins",
@@ -192,9 +221,24 @@ const ADMIN_ROUTES: RouteConfig[] = [
     icon: UserGroup02Icon,
   },
   {
+    name: "Assessments",
+    href: "/admin/assessments",
+    icon: Task01Icon,
+  },
+  {
     name: "Progress",
     href: "/admin/progress",
     icon: ChartLineData01Icon,
+  },
+  {
+    name: "Reports",
+    href: "/admin/reports",
+    icon: PresentationBarChart01Icon,
+  },
+  {
+    name: "Communications",
+    href: "/admin/communications",
+    icon: Mail01Icon,
   },
   {
     name: "Notifications",
@@ -202,9 +246,9 @@ const ADMIN_ROUTES: RouteConfig[] = [
     icon: Notification03Icon,
   },
   {
-    name: "Communications",
-    href: "/admin/communications",
-    icon: Mail01Icon,
+    name: "Billing",
+    href: "/admin/billing",
+    icon: MoneyReceiveSquareIcon,
   },
   {
     name: "Settings",
@@ -228,37 +272,36 @@ const SUPER_ADMIN_ROUTES: RouteConfig[] = [
     name: "Tenants",
     href: "/superadmin/tenants",
     icon: OfficeIcon,
-    children: [],
   },
   {
     name: "Users",
     href: "/superadmin/users",
     icon: UserGroup02Icon,
-    children: [],
   },
   {
     name: "Permissions",
     href: "/superadmin/permissions",
     icon: SecurityCheckIcon,
-    children: [],
+  },
+  {
+    name: "Billing",
+    href: "/superadmin/billing",
+    icon: MoneyReceiveSquareIcon,
   },
   {
     name: "Audit Logs",
     href: "/superadmin/audit-logs",
     icon: FileSearchIcon,
-    children: [],
   },
   {
-    name: "System Configurations",
-    href: "/superadmin/system-configurations",
+    name: "System Config",
+    href: "/superadmin/system-config",
     icon: Setting07Icon,
-    children: [],
   },
   {
     name: "Profile",
     href: "/superadmin/profile",
     icon: User03Icon,
-    children: [],
   },
 ];
 

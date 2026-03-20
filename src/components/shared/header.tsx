@@ -4,13 +4,12 @@ import { Moon01Icon, Notification02Icon, PanelLeftIcon, Sun01Icon } from "@hugei
 import { HugeiconsIcon } from "@hugeicons/react";
 
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { useGlobalStore, useUserStore } from "@/store/core";
+import { useGlobalStore } from "@/store/core";
 import { Input } from "../ui/input";
 import { cn } from "@/lib";
 
 export const Header = () => {
   const { isCollapsed, setIsCollapsed, setTheme, theme } = useGlobalStore();
-  const { tenant, user } = useUserStore();
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -29,13 +28,7 @@ export const Header = () => {
             className={cn("size-4 transition-all duration-500", isCollapsed && "rotate-180")}
           />
         </button>
-        {user?.role !== "SUPER_ADMIN" ? (
-          <div>
-            <h3 className="text-2xl font-bold">{tenant?.name}</h3>
-          </div>
-        ) : (
-          <h3 className="text-2xl font-bold">ArcLMS</h3>
-        )}
+        <h3 className="text-2xl font-bold">ArcLMS</h3>
       </div>
       <div className="flex items-center gap-x-4">
         <Input type="search" placeholder="Search..." wrapperClassName="w-75" />

@@ -1,14 +1,7 @@
-import { Breadcrumb } from "@/components/shared";
-
-const breadcrumbs = [{ label: "Assignments", href: "/superadmin/assignments" }];
+import { PagePlaceholder } from "@/components/shared";
 
 const Page = () => {
-  return (
-    <div className="space-y-6 p-6">
-      <Breadcrumb items={breadcrumbs} />
-      <div></div>
-    </div>
-  );
+  return <PagePlaceholder title="Settings" description="Manage your notification preferences and account settings." />;
 };
 
 export default Page;

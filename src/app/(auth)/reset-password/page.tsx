@@ -34,7 +34,7 @@ const Page = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
-  const [tokenData, setTokenData] = useState<{ email: string; expiresAt: number } | null>(null);
+  const [_tokenData, setTokenData] = useState<{ email: string; expiresAt: number } | null>(null);
   const [isValidatingToken, setIsValidatingToken] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState<Step>("form");

@@ -18,7 +18,7 @@ import {
 } from "@hugeicons/core-free-icons";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useGetTutorDashboardQuery } from "@/lib/api/dashboard";
+import { useGetTutorDashboard } from "@/lib/api/dashboard";
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/shared";
 import { useUserStore } from "@/store/core";
@@ -70,11 +70,9 @@ const StatCard = ({
 
 const Page = () => {
   const { user } = useUserStore();
-  const { data, isFetching, isPending, refetch } = useGetTutorDashboardQuery();
+  const { data, isFetching, isPending, refetch } = useGetTutorDashboard();
 
   if (isPending) return <Loader isFullScreen />;
-
-  const dashboardData = data?.data;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -85,7 +83,7 @@ const Page = () => {
     <div className="space-y-6 p-6">
       <div className="from-primary to-primary/80 relative overflow-hidden rounded-xl bg-linear-to-r p-8">
         <div className="relative z-10">
-          <h3 className="text-primary-foreground text-3xl font-semibold">Welcome back, {user?.name}</h3>
+          <h3 className="text-primary-foreground text-3xl font-semibold">Welcome back, {user?.first_name}</h3>
           <p className="text-primary-foreground/70 mt-2">Here&apos;s an overview of your teaching activities today.</p>
         </div>
         <div className="absolute -right-10 -bottom-10 size-40 rounded-full bg-white/10 dark:bg-black/50" />
@@ -117,24 +115,20 @@ const Page = () => {
       </div>
 
       <div className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Active Students" value={dashboardData?.active_students || 0} icon={UserMultiple02Icon} />
-        <StatCard
-          title="Pending Assignments"
-          value={dashboardData?.grading_queue.pending_assignments || 0}
-          icon={Task01Icon}
-        />
-        <StatCard title="Pending Quizzes" value={dashboardData?.grading_queue.pending_quizzes || 0} icon={QuizIcon} />
-        <StatCard title="Pending Exams" value={dashboardData?.grading_queue.pending_exams || 0} icon={TestTube01Icon} />
+        <StatCard title="Active Students" value={data?.active_students || 0} icon={UserMultiple02Icon} />
+        <StatCard title="Pending Assignments" value={data?.grading_queue.pending_assignments || 0} icon={Task01Icon} />
+        <StatCard title="Pending Quizzes" value={data?.grading_queue.pending_quizzes || 0} icon={QuizIcon} />
+        <StatCard title="Pending Exams" value={data?.grading_queue.pending_exams || 0} icon={TestTube01Icon} />
       </div>
 
-      {dashboardData?.grading_queue.oldest_pending_days && dashboardData.grading_queue.oldest_pending_days > 3 && (
+      {data?.grading_queue.oldest_pending_days && data.grading_queue.oldest_pending_days > 3 && (
         <div className="flex items-center gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
           <HugeiconsIcon icon={AlertCircleIcon} className="size-5 text-amber-600" />
           <div>
             <p className="font-medium text-amber-700">Grading Attention Needed</p>
             <p className="text-sm text-amber-600">
-              You have submissions waiting for {dashboardData.grading_queue.oldest_pending_days} days. Consider
-              reviewing your grading queue.
+              You have submissions waiting for {data.grading_queue.oldest_pending_days} days. Consider reviewing your
+              grading queue.
             </p>
           </div>
         </div>
@@ -157,7 +151,7 @@ const Page = () => {
                   <p className="text-muted-foreground text-xs">Written submissions</p>
                 </div>
               </div>
-              <span className="text-2xl font-semibold">{dashboardData?.grading_queue.pending_assignments || 0}</span>
+              <span className="text-2xl font-semibold">{data?.grading_queue.pending_assignments || 0}</span>
             </div>
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div className="flex items-center gap-3">
@@ -169,7 +163,7 @@ const Page = () => {
                   <p className="text-muted-foreground text-xs">Auto-graded + manual review</p>
                 </div>
               </div>
-              <span className="text-2xl font-semibold">{dashboardData?.grading_queue.pending_quizzes || 0}</span>
+              <span className="text-2xl font-semibold">{data?.grading_queue.pending_quizzes || 0}</span>
             </div>
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div className="flex items-center gap-3">
@@ -181,11 +175,11 @@ const Page = () => {
                   <p className="text-muted-foreground text-xs">Final assessments</p>
                 </div>
               </div>
-              <span className="text-2xl font-semibold">{dashboardData?.grading_queue.pending_exams || 0}</span>
+              <span className="text-2xl font-semibold">{data?.grading_queue.pending_exams || 0}</span>
             </div>
             <div className="flex items-center justify-between border-t pt-3">
               <span className="text-muted-foreground text-sm">Total Pending</span>
-              <span className="text-xl font-semibold">{dashboardData?.grading_queue.total || 0}</span>
+              <span className="text-xl font-semibold">{data?.grading_queue.total || 0}</span>
             </div>
           </div>
         </div>
@@ -206,7 +200,7 @@ const Page = () => {
                   <p className="text-muted-foreground text-xs">From your students</p>
                 </div>
               </div>
-              <span className="text-2xl font-semibold">{dashboardData?.discussion_activity.new_posts || 0}</span>
+              <span className="text-2xl font-semibold">{data?.discussion_activity.new_posts || 0}</span>
             </div>
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div className="flex items-center gap-3">
@@ -218,9 +212,7 @@ const Page = () => {
                   <p className="text-muted-foreground text-xs">Awaiting your reply</p>
                 </div>
               </div>
-              <span className="text-2xl font-semibold">
-                {dashboardData?.discussion_activity.pending_responses || 0}
-              </span>
+              <span className="text-2xl font-semibold">{data?.discussion_activity.pending_responses || 0}</span>
             </div>
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div className="flex items-center gap-3">
@@ -232,7 +224,7 @@ const Page = () => {
                   <p className="text-muted-foreground text-xs">Direct messages</p>
                 </div>
               </div>
-              <span className="text-2xl font-semibold">{dashboardData?.discussion_activity.unread_messages || 0}</span>
+              <span className="text-2xl font-semibold">{data?.discussion_activity.unread_messages || 0}</span>
             </div>
           </div>
         </div>
@@ -245,7 +237,7 @@ const Page = () => {
             <p className="text-muted-foreground text-sm">Students who may need additional support</p>
           </div>
           <div className="space-y-3">
-            {dashboardData?.at_risk_students.map((student) => (
+            {data?.at_risk_students.map((student) => (
               <div
                 key={student.student_id}
                 className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4 transition-colors"
@@ -274,7 +266,7 @@ const Page = () => {
                 </div>
               </div>
             ))}
-            {(!dashboardData?.at_risk_students || dashboardData.at_risk_students.length === 0) && (
+            {(!data?.at_risk_students || data.at_risk_students.length === 0) && (
               <p className="text-muted-foreground py-8 text-center text-sm">No at-risk students identified</p>
             )}
           </div>
@@ -288,25 +280,19 @@ const Page = () => {
           <div className="grid grid-cols-2 gap-4">
             <div className="rounded-lg border p-4 text-center">
               <p className="text-muted-foreground text-sm">Average Score</p>
-              <p className="text-3xl font-semibold">{dashboardData?.score_distribution.average_score || 0}%</p>
+              <p className="text-3xl font-semibold">{data?.score_distribution.average_score || 0}%</p>
             </div>
             <div className="rounded-lg border p-4 text-center">
               <p className="text-muted-foreground text-sm">Pass Rate</p>
-              <p className="text-3xl font-semibold text-emerald-600">
-                {dashboardData?.score_distribution.pass_rate || 0}%
-              </p>
+              <p className="text-3xl font-semibold text-emerald-600">{data?.score_distribution.pass_rate || 0}%</p>
             </div>
             <div className="rounded-lg border p-4 text-center">
               <p className="text-muted-foreground text-sm">Highest Score</p>
-              <p className="text-2xl font-semibold text-emerald-600">
-                {dashboardData?.score_distribution.highest_score || 0}%
-              </p>
+              <p className="text-2xl font-semibold text-emerald-600">{data?.score_distribution.highest_score || 0}%</p>
             </div>
             <div className="rounded-lg border p-4 text-center">
               <p className="text-muted-foreground text-sm">Lowest Score</p>
-              <p className="text-2xl font-semibold text-red-600">
-                {dashboardData?.score_distribution.lowest_score || 0}%
-              </p>
+              <p className="text-2xl font-semibold text-red-600">{data?.score_distribution.lowest_score || 0}%</p>
             </div>
           </div>
         </div>
@@ -319,7 +305,7 @@ const Page = () => {
             <p className="text-muted-foreground text-sm">Courses you&apos;re teaching</p>
           </div>
           <div className="space-y-3">
-            {dashboardData?.my_courses.map((course) => (
+            {data?.my_courses.map((course) => (
               <div
                 key={course.course_id}
                 className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4 transition-colors"
@@ -346,7 +332,7 @@ const Page = () => {
                 </div>
               </div>
             ))}
-            {(!dashboardData?.my_courses || dashboardData.my_courses.length === 0) && (
+            {(!data?.my_courses || data.my_courses.length === 0) && (
               <p className="text-muted-foreground py-8 text-center text-sm">No courses assigned</p>
             )}
           </div>
@@ -358,7 +344,7 @@ const Page = () => {
             <p className="text-muted-foreground text-sm">Student feedback on your courses</p>
           </div>
           <div className="space-y-3">
-            {dashboardData?.course_ratings.map((course) => (
+            {data?.course_ratings.map((course) => (
               <div
                 key={course.course_id}
                 className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4 transition-colors"
@@ -394,7 +380,7 @@ const Page = () => {
                 </div>
               </div>
             ))}
-            {(!dashboardData?.course_ratings || dashboardData.course_ratings.length === 0) && (
+            {(!data?.course_ratings || data.course_ratings.length === 0) && (
               <p className="text-muted-foreground py-8 text-center text-sm">No ratings available</p>
             )}
           </div>
@@ -407,7 +393,7 @@ const Page = () => {
           <p className="text-muted-foreground text-sm">Deadlines and scheduled events</p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {dashboardData?.upcoming_events.map((event, index) => (
+          {data?.upcoming_events.map((event, index) => (
             <div key={index} className="hover:bg-muted/50 rounded-lg border p-4 transition-colors">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
@@ -428,7 +414,7 @@ const Page = () => {
               </div>
             </div>
           ))}
-          {(!dashboardData?.upcoming_events || dashboardData.upcoming_events.length === 0) && (
+          {(!data?.upcoming_events || data.upcoming_events.length === 0) && (
             <p className="text-muted-foreground col-span-full py-8 text-center text-sm">No upcoming events</p>
           )}
         </div>

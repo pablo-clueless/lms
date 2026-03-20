@@ -10,12 +10,10 @@ export const Navbar = () => {
           <h3 className="text-2xl font-bold">ArcLMS</h3>
         </Link>
         <div className="flex items-center gap-x-4">
-          <Button asChild size="sm">
-            <Link href="/signin">Login</Link>
+          <Button asChild>
+            <Link href="/signin">Sign In</Link>
           </Button>
-          <Button size="sm" variant="outline">
-            Contact Support
-          </Button>
+          <Button variant="outline">Contact Support</Button>
         </div>
       </div>
     </nav>

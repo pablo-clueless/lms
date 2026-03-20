@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 
-import type { Maybe, SigninResponse, TTenant, User } from "@/types";
+import type { Maybe, SigninResponse, User } from "@/types";
 import { createPersistMiddleware } from "../middleware";
 
 interface SignInOptions {
@@ -20,7 +20,6 @@ interface UserStore {
   isHydrated: boolean;
   signin: (payload: SigninResponse, options?: SignInOptions) => void;
   signout: (options?: SignOutOptions) => void;
-  tenant: Maybe<TTenant>;
   update: (user: User) => void;
   user: Maybe<User>;
 }
@@ -30,7 +29,6 @@ const initialState: UserStore = {
   isHydrated: false,
   signin: () => {},
   signout: () => {},
-  tenant: null,
   update: () => {},
   user: null,
 };
@@ -49,7 +47,7 @@ export const useUserStore = createPersistMiddleware<UserStore>("USER_STORE", (se
       const accessToken = Cookies.get("ACCESS_TOKEN");
       const refreshToken = Cookies.get("REFRESH_TOKEN");
       if (!accessToken && !refreshToken && get().user) {
-        set({ user: null, tenant: null, isHydrated: true });
+        set({ user: null, isHydrated: true });
       } else {
         set({ isHydrated: true });
       }
@@ -58,16 +56,16 @@ export const useUserStore = createPersistMiddleware<UserStore>("USER_STORE", (se
   isHydrated: false,
   signin: (payload, options) => {
     try {
-      const cookieOptions = getCookieOptions(options?.expiresIn || payload.tokens.expires_at);
-      Cookies.set("ACCESS_TOKEN", payload.tokens.access_token, cookieOptions);
-      if (payload.tokens.refresh_token) {
+      const cookieOptions = getCookieOptions(options?.expiresIn || new Date(payload.token_pair.expires_at).getTime());
+      Cookies.set("ACCESS_TOKEN", payload.token_pair.access_token, cookieOptions);
+      if (payload.token_pair.refresh_token) {
         const refreshCookieOptions = {
           ...cookieOptions,
           expires: options?.remember ? 30 : 7,
         };
-        Cookies.set("REFRESH_TOKEN", payload.tokens.refresh_token, refreshCookieOptions);
+        Cookies.set("REFRESH_TOKEN", payload.token_pair.refresh_token, refreshCookieOptions);
       }
-      set({ user: payload.user, tenant: payload.tenant, isHydrated: true });
+      set({ user: payload.user, isHydrated: true });
     } catch (error) {
       if (process.env.NODE_ENV === "development") console.error("Sign in error:", error);
       throw new Error("Failed to sign in user");
@@ -76,7 +74,7 @@ export const useUserStore = createPersistMiddleware<UserStore>("USER_STORE", (se
   signout: (options) => {
     try {
       if (options?.soft) {
-        set({ user: null, tenant: null });
+        set({ user: null });
         if (typeof window !== "undefined") {
           window.location.href = "/signin";
         }

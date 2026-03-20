@@ -1,47 +1,63 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { HttpResponse, RefreshDto, RefreshResponse, SigninDto, SigninResponse, SignupDto } from "@/types";
+import type { CreateUserDto, SigninDto, SigninResponse, User } from "@/types";
 import { apiClient } from "../api-client";
 
-const authKeys = {
+const keys = {
   all: ["auth"] as const,
-  signin: () => [...authKeys.all, "signin"] as const,
-  signup: () => [...authKeys.all, "signup"] as const,
-  refresh: () => [...authKeys.all, "refresh"] as const,
+  login: () => [...keys.all, "login"] as const,
+  register: () => [...keys.all, "register"] as const,
+  forgot_password: () => [...keys.all, "forgot-password"] as const,
+  reset_password: () => [...keys.all, "reset-password"] as const,
 };
 
 const authApi = {
-  signin: (body: SigninDto) => apiClient.post<HttpResponse<SigninResponse>>("/auth/signin", body),
-  signup: (body: SignupDto) => apiClient.post<HttpResponse<unknown>>("/auth/signup", body),
-  refresh: (body: RefreshDto) => apiClient.post<HttpResponse<RefreshResponse>>("/auth/refresh", body),
+  login: (body: SigninDto) => apiClient.post<SigninResponse>("/public/auth/login", body),
+  register: (body: CreateUserDto) => apiClient.post<User>("/public/auth/register", body),
+  forgot_password: (body: { email: string }) => apiClient.post<null>("/public/auth/password-reset", body),
+  reset_password: () => apiClient.post<null>("/public/auth/"),
 };
 
-export const useSignin = () => {
+export function useLogin() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: authApi.signin,
+    mutationKey: keys.login(),
+    mutationFn: (body: SigninDto) => authApi.login(body),
     onSuccess: (data) => {
-      queryClient.setQueryData(authKeys.signin(), data);
+      queryClient.setQueryData(keys.login(), data);
     },
   });
-};
+}
 
-export const useSignup = () => {
+export function useRegister() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: authApi.signup,
+    mutationKey: keys.register(),
+    mutationFn: (body: CreateUserDto) => authApi.register(body),
     onSuccess: (data) => {
-      queryClient.setQueryData(authKeys.signup(), data);
+      queryClient.setQueryData(keys.register(), data);
     },
   });
-};
+}
 
-export const useRefresh = () => {
+export function useForgotPassword() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: authApi.refresh,
+    mutationKey: keys.forgot_password(),
+    mutationFn: (body: { email: string }) => authApi.forgot_password(body),
     onSuccess: (data) => {
-      queryClient.setQueryData(authKeys.refresh(), data);
+      queryClient.setQueryData(keys.forgot_password(), data);
     },
   });
-};
+}
+
+export function useResetPassword() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: keys.reset_password(),
+    mutationFn: () => authApi.reset_password(),
+    onSuccess: (data) => {
+      queryClient.setQueryData(keys.reset_password(), data);
+    },
+  });
+}

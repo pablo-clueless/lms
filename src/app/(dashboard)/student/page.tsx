@@ -17,7 +17,7 @@ import {
 } from "@hugeicons/core-free-icons";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useGetStudentDashboardQuery } from "@/lib/api/dashboard";
+import { useGetStudentDashboard } from "@/lib/api/dashboard";
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/shared";
 import { useUserStore } from "@/store/core";
@@ -69,11 +69,9 @@ const StatCard = ({
 
 const Page = () => {
   const { user } = useUserStore();
-  const { data, isFetching, isPending, refetch } = useGetStudentDashboardQuery();
+  const { data, isFetching, isPending, refetch } = useGetStudentDashboard();
 
   if (isPending) return <Loader isFullScreen />;
-
-  const dashboardData = data?.data;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -108,7 +106,7 @@ const Page = () => {
     <div className="space-y-6 p-6">
       <div className="from-primary to-primary/80 relative overflow-hidden rounded-xl bg-linear-to-r p-8">
         <div className="relative z-10">
-          <h3 className="text-primary-foreground text-3xl font-semibold">Welcome back, {user?.name}</h3>
+          <h3 className="text-primary-foreground text-3xl font-semibold">Welcome back, {user?.first_name}</h3>
           <p className="text-primary-foreground/70 mt-2">Keep up the great work on your learning journey!</p>
         </div>
         <div className="absolute -right-10 -bottom-10 size-40 rounded-full bg-white/10 dark:bg-black/50" />
@@ -140,18 +138,18 @@ const Page = () => {
       </div>
 
       <div className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Overall Progress" value={`${dashboardData?.overall_progress || 0}%`} icon={Target01Icon} />
-        <StatCard title="Average Score" value={`${dashboardData?.average_score || 0}%`} icon={Medal01Icon} />
+        <StatCard title="Overall Progress" value={`${data?.overall_progress || 0}%`} icon={Target01Icon} />
+        <StatCard title="Average Score" value={`${data?.average_score || 0}%`} icon={Medal01Icon} />
         <StatCard
           title="Current Streak"
-          value={`${dashboardData?.learning_stats.current_streak_days || 0} days`}
+          value={`${data?.learning_stats.current_streak_days || 0} days`}
           icon={Fire03Icon}
-          subtitle={`Best: ${dashboardData?.learning_stats.longest_streak_days || 0} days`}
+          subtitle={`Best: ${data?.learning_stats.longest_streak_days || 0} days`}
         />
-        <StatCard title="Your Rank" value={`#${dashboardData?.rank || "-"}`} icon={Mortarboard01Icon} />
+        <StatCard title="Your Rank" value={`#${data?.rank || "-"}`} icon={Mortarboard01Icon} />
       </div>
 
-      {dashboardData?.continue_learning && (
+      {data?.continue_learning && (
         <div className="bg-card rounded-xl border p-6">
           <div className="mb-4">
             <h5 className="text-lg font-semibold">Continue Learning</h5>
@@ -163,16 +161,16 @@ const Page = () => {
                 <HugeiconsIcon icon={PlayIcon} className="text-primary size-8" />
               </div>
               <div>
-                <p className="text-lg font-semibold">{dashboardData.continue_learning.course_name}</p>
-                <p className="text-muted-foreground text-sm">{dashboardData.continue_learning.module_name}</p>
+                <p className="text-lg font-semibold">{data.continue_learning.course_name}</p>
+                <p className="text-muted-foreground text-sm">{data.continue_learning.module_name}</p>
                 <div className="mt-2 flex items-center gap-3">
                   <div className="bg-muted h-2 w-48 overflow-hidden rounded-full">
                     <div
                       className="bg-primary h-full transition-all"
-                      style={{ width: `${dashboardData.continue_learning.progress}%` }}
+                      style={{ width: `${data.continue_learning.progress}%` }}
                     />
                   </div>
-                  <span className="text-sm font-medium">{dashboardData.continue_learning.progress}%</span>
+                  <span className="text-sm font-medium">{data.continue_learning.progress}%</span>
                 </div>
               </div>
             </div>
@@ -193,24 +191,24 @@ const Page = () => {
           <div className="grid grid-cols-2 gap-4">
             <div className="rounded-lg border p-4 text-center">
               <p className="text-muted-foreground text-sm">Total Hours</p>
-              <p className="text-3xl font-semibold">{dashboardData?.learning_stats.total_hours || 0}</p>
+              <p className="text-3xl font-semibold">{data?.learning_stats.total_hours || 0}</p>
             </div>
             <div className="rounded-lg border p-4 text-center">
               <p className="text-muted-foreground text-sm">This Week</p>
-              <p className="text-3xl font-semibold">{dashboardData?.learning_stats.this_week_hours || 0}h</p>
-              {dashboardData?.learning_stats.this_week_hours !== undefined &&
-                dashboardData?.learning_stats.last_week_hours !== undefined && (
+              <p className="text-3xl font-semibold">{data?.learning_stats.this_week_hours || 0}h</p>
+              {data?.learning_stats.this_week_hours !== undefined &&
+                data?.learning_stats.last_week_hours !== undefined && (
                   <div
                     className={cn(
                       "mt-1 flex items-center justify-center gap-1 text-xs font-medium",
-                      dashboardData.learning_stats.this_week_hours >= dashboardData.learning_stats.last_week_hours
+                      data.learning_stats.this_week_hours >= data.learning_stats.last_week_hours
                         ? "text-emerald-600"
                         : "text-red-600",
                     )}
                   >
                     <HugeiconsIcon
                       icon={
-                        dashboardData.learning_stats.this_week_hours >= dashboardData.learning_stats.last_week_hours
+                        data.learning_stats.this_week_hours >= data.learning_stats.last_week_hours
                           ? ArrowUp01Icon
                           : ArrowDown01Icon
                       }
@@ -222,11 +220,11 @@ const Page = () => {
             </div>
             <div className="rounded-lg border p-4 text-center">
               <p className="text-muted-foreground text-sm">Avg Daily</p>
-              <p className="text-3xl font-semibold">{dashboardData?.learning_stats.avg_daily_minutes || 0}m</p>
+              <p className="text-3xl font-semibold">{data?.learning_stats.avg_daily_minutes || 0}m</p>
             </div>
             <div className="rounded-lg border p-4 text-center">
               <p className="text-muted-foreground text-sm">Best Streak</p>
-              <p className="text-3xl font-semibold">{dashboardData?.learning_stats.longest_streak_days || 0}</p>
+              <p className="text-3xl font-semibold">{data?.learning_stats.longest_streak_days || 0}</p>
               <p className="text-muted-foreground text-xs">days</p>
             </div>
           </div>
@@ -238,14 +236,14 @@ const Page = () => {
               <h5 className="text-lg font-semibold">Upcoming Deadlines</h5>
               <p className="text-muted-foreground text-sm">Don&apos;t miss these dates</p>
             </div>
-            {dashboardData?.unread_notifications && dashboardData.unread_notifications > 0 && (
+            {data?.unread_notifications && data.unread_notifications > 0 && (
               <div className="rounded-full bg-red-500 px-2 py-0.5 text-xs font-medium text-white">
-                {dashboardData.unread_notifications} new
+                {data.unread_notifications} new
               </div>
             )}
           </div>
           <div className="space-y-3">
-            {dashboardData?.upcoming_deadlines.slice(0, 4).map((deadline, index) => (
+            {data?.upcoming_deadlines.slice(0, 4).map((deadline, index) => (
               <div
                 key={index}
                 className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4 transition-colors"
@@ -284,7 +282,7 @@ const Page = () => {
                 </div>
               </div>
             ))}
-            {(!dashboardData?.upcoming_deadlines || dashboardData.upcoming_deadlines.length === 0) && (
+            {(!data?.upcoming_deadlines || data.upcoming_deadlines.length === 0) && (
               <p className="text-muted-foreground py-8 text-center text-sm">No upcoming deadlines</p>
             )}
           </div>
@@ -297,7 +295,7 @@ const Page = () => {
           <p className="text-muted-foreground text-sm">Your enrolled courses</p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {dashboardData?.course_progress.map((course) => (
+          {data?.course_progress.map((course) => (
             <div key={course.course_id} className="hover:bg-muted/50 rounded-lg border p-4 transition-colors">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
@@ -339,7 +337,7 @@ const Page = () => {
               </div>
             </div>
           ))}
-          {(!dashboardData?.course_progress || dashboardData.course_progress.length === 0) && (
+          {(!data?.course_progress || data.course_progress.length === 0) && (
             <p className="text-muted-foreground col-span-full py-8 text-center text-sm">No courses enrolled</p>
           )}
         </div>
@@ -352,7 +350,7 @@ const Page = () => {
             <p className="text-muted-foreground text-sm">Your latest assessment results</p>
           </div>
           <div className="space-y-3">
-            {dashboardData?.recent_grades.slice(0, 5).map((grade, index) => (
+            {data?.recent_grades.slice(0, 5).map((grade, index) => (
               <div
                 key={index}
                 className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4 transition-colors"
@@ -376,7 +374,7 @@ const Page = () => {
                 </div>
               </div>
             ))}
-            {(!dashboardData?.recent_grades || dashboardData.recent_grades.length === 0) && (
+            {(!data?.recent_grades || data.recent_grades.length === 0) && (
               <p className="text-muted-foreground py-8 text-center text-sm">No grades available yet</p>
             )}
           </div>
@@ -388,17 +386,15 @@ const Page = () => {
               <h5 className="text-lg font-semibold">Certificates</h5>
               <p className="text-muted-foreground text-sm">Your achievements</p>
             </div>
-            {dashboardData?.certificates.total !== undefined && dashboardData.certificates.total > 0 && (
+            {data?.certificates.total !== undefined && data.certificates.total > 0 && (
               <div className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-3 py-1">
                 <HugeiconsIcon icon={Medal01Icon} className="size-4 text-emerald-600" />
-                <span className="text-sm font-semibold text-emerald-600">
-                  {dashboardData.certificates.total} earned
-                </span>
+                <span className="text-sm font-semibold text-emerald-600">{data.certificates.total} earned</span>
               </div>
             )}
           </div>
           <div className="space-y-3">
-            {dashboardData?.certificates.recent.map((cert) => (
+            {data?.certificates.recent.map((cert) => (
               <div
                 key={cert.certificate_id}
                 className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4 transition-colors"
@@ -418,7 +414,7 @@ const Page = () => {
                 </Button>
               </div>
             ))}
-            {(!dashboardData?.certificates.recent || dashboardData.certificates.recent.length === 0) && (
+            {(!data?.certificates.recent || data.certificates.recent.length === 0) && (
               <div className="py-8 text-center">
                 <HugeiconsIcon icon={Medal01Icon} className="text-muted-foreground mx-auto size-12" />
                 <p className="text-muted-foreground mt-2 text-sm">Complete courses to earn certificates</p>

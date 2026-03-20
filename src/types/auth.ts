@@ -1,4 +1,3 @@
-import type { TTenant } from "./tenant";
 import type { Role, User } from "./user";
 
 export interface SigninDto {
@@ -19,11 +18,10 @@ export interface RefreshDto {
 }
 
 export interface SigninResponse {
-  tenant: TTenant;
-  tokens: {
+  token_pair: {
     access_token: string;
     refresh_token: string;
-    expires_at: number;
+    expires_at: Date;
   };
   user: User;
 }

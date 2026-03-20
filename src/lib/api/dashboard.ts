@@ -3,47 +3,46 @@ import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "../api-client";
 import type {
   AdminDashboardResponse,
-  HttpResponse,
   StudentDashboardResponse,
   SuperAdminDashboardResponse,
   TutorDashboardResponse,
 } from "@/types";
 
-const dashboardKeys = {
+const keys = {
   all: ["dashboard"] as const,
 };
 
 const dashboardApi = {
-  getSuperAdminDashboard: () => apiClient.get<HttpResponse<SuperAdminDashboardResponse>>("/dashboard"),
-  getAdminDashboard: () => apiClient.get<HttpResponse<AdminDashboardResponse>>("/dashboard"),
-  getTutorDashboard: () => apiClient.get<HttpResponse<TutorDashboardResponse>>("/dashboard"),
-  getStudentDashboard: () => apiClient.get<HttpResponse<StudentDashboardResponse>>("/dashboard"),
+  getSuperAdminDashboard: () => apiClient.get<SuperAdminDashboardResponse>("/dashboard"),
+  getAdminDashboard: () => apiClient.get<AdminDashboardResponse>("/dashboard"),
+  getTutorDashboard: () => apiClient.get<TutorDashboardResponse>("/dashboard"),
+  getStudentDashboard: () => apiClient.get<StudentDashboardResponse>("/dashboard"),
 };
 
-export const useGetSuperAdminDashboardQuery = () => {
+export function useGetSuperAdminDashboard() {
   return useQuery({
-    queryKey: dashboardKeys.all,
-    queryFn: dashboardApi.getSuperAdminDashboard,
+    queryKey: [...keys.all, "super-admin"],
+    queryFn: () => dashboardApi.getSuperAdminDashboard(),
   });
-};
+}
 
-export const useGetAdminDashboardQuery = () => {
+export function useGetAdminDashboard() {
   return useQuery({
-    queryKey: dashboardKeys.all,
-    queryFn: dashboardApi.getAdminDashboard,
+    queryKey: [...keys.all, "admin"],
+    queryFn: () => dashboardApi.getAdminDashboard(),
   });
-};
+}
 
-export const useGetTutorDashboardQuery = () => {
+export function useGetTutorDashboard() {
   return useQuery({
-    queryKey: dashboardKeys.all,
-    queryFn: dashboardApi.getTutorDashboard,
+    queryKey: [...keys.all, "tutor"],
+    queryFn: () => dashboardApi.getTutorDashboard(),
   });
-};
+}
 
-export const useGetStudentDashboardQuery = () => {
+export function useGetStudentDashboard() {
   return useQuery({
-    queryKey: dashboardKeys.all,
-    queryFn: dashboardApi.getStudentDashboard,
+    queryKey: [...keys.all, "student"],
+    queryFn: () => dashboardApi.getStudentDashboard(),
   });
-};
+}

@@ -20,7 +20,7 @@ import {
 
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useGetAdminDashboardQuery } from "@/lib/api/dashboard";
+import { useGetAdminDashboard } from "@/lib/api/dashboard";
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/shared";
 import { useUserStore } from "@/store/core";
@@ -96,22 +96,22 @@ const completionChartConfig = {
 
 const Page = () => {
   const { user } = useUserStore();
-  const { data, isFetching, isPending, refetch } = useGetAdminDashboardQuery();
+  const { data, isFetching, isPending, refetch } = useGetAdminDashboard();
 
   if (isPending) return <Loader isFullScreen />;
 
-  const dashboardData = data?.data.admin;
+  const dashboard = data?.admin;
 
-  const enrollmentPercentage = dashboardData
-    ? Math.round((dashboardData.enrollment.active_students / dashboardData.enrollment.total_seats) * 100)
+  const enrollmentPercentage = dashboard
+    ? Math.round((dashboard.enrollment.active_students / dashboard.enrollment.total_seats) * 100)
     : 0;
 
-  const completionData = dashboardData
+  const completionData = dashboard
     ? [
-        { name: "Completed", value: dashboardData.course_completion.total_completed, fill: "hsl(142 76% 36%)" },
+        { name: "Completed", value: dashboard.course_completion.total_completed, fill: "hsl(142 76% 36%)" },
         {
           name: "In Progress",
-          value: dashboardData.course_completion.total_started - dashboardData.course_completion.total_completed,
+          value: dashboard.course_completion.total_started - dashboard.course_completion.total_completed,
           fill: "hsl(var(--primary))",
         },
       ]
@@ -121,7 +121,7 @@ const Page = () => {
     <div className="space-y-6 p-6">
       <div className="from-primary to-primary/80 relative overflow-hidden rounded-xl bg-linear-to-r p-8">
         <div className="relative z-10">
-          <h3 className="text-primary-foreground text-3xl font-semibold">Welcome back, {user?.name}</h3>
+          <h3 className="text-primary-foreground text-3xl font-semibold">Welcome back, {user?.first_name}</h3>
           <p className="text-primary-foreground/70 mt-2">
             Here&apos;s what&apos;s happening with your learning platform today.
           </p>
@@ -157,27 +157,27 @@ const Page = () => {
       <div className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Students"
-          value={dashboardData?.total_students || 0}
+          value={dashboard?.total_students || 0}
           icon={UserMultiple02Icon}
           trend={{ value: 12, isPositive: true }}
         />
         <StatCard
           title="Total Tutors"
-          value={dashboardData?.total_tutors || 0}
+          value={dashboard?.total_tutors || 0}
           icon={TeacherIcon}
           iconBgColor="bg-purple-500/10"
           iconColor="text-purple-500"
         />
         <StatCard
           title="Total Courses"
-          value={dashboardData?.total_courses || 0}
+          value={dashboard?.total_courses || 0}
           icon={Book02Icon}
           iconBgColor="bg-blue-500/10"
           iconColor="text-blue-500"
         />
         <StatCard
           title="Active Terms"
-          value={dashboardData?.active_terms || 0}
+          value={dashboard?.active_terms || 0}
           icon={Calendar03Icon}
           iconBgColor="bg-amber-500/10"
           iconColor="text-amber-500"
@@ -192,25 +192,25 @@ const Page = () => {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <ActionCard
             title="Unassigned Students"
-            value={dashboardData?.pending_actions.unassigned_students || 0}
+            value={dashboard?.pending_actions.unassigned_students || 0}
             icon={UserAdd01Icon}
             color="text-amber-500"
           />
           <ActionCard
             title="Pending Approvals"
-            value={dashboardData?.pending_actions.pending_approvals || 0}
+            value={dashboard?.pending_actions.pending_approvals || 0}
             icon={Clock01Icon}
             color="text-blue-500"
           />
           <ActionCard
             title="Pending Applications"
-            value={dashboardData?.pending_actions.pending_applications || 0}
+            value={dashboard?.pending_actions.pending_applications || 0}
             icon={Task01Icon}
             color="text-purple-500"
           />
           <ActionCard
             title="Ungraded Submissions"
-            value={dashboardData?.pending_actions.ungraded_submissions || 0}
+            value={dashboard?.pending_actions.ungraded_submissions || 0}
             icon={AlertCircleIcon}
             color="text-red-500"
           />
@@ -228,7 +228,7 @@ const Page = () => {
               <div className="flex items-center justify-between text-sm">
                 <span>Seat Utilization</span>
                 <span className="font-medium">
-                  {dashboardData?.enrollment.active_students || 0} / {dashboardData?.enrollment.total_seats || 0} seats
+                  {dashboard?.enrollment.active_students || 0} / {dashboard?.enrollment.total_seats || 0} seats
                 </span>
               </div>
               <div className="bg-muted h-3 overflow-hidden rounded-full">
@@ -245,7 +245,7 @@ const Page = () => {
                 />
               </div>
               <p className="text-muted-foreground text-xs">
-                {dashboardData?.enrollment.seats_remaining || 0} seats remaining
+                {dashboard?.enrollment.seats_remaining || 0} seats remaining
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4 pt-2">
@@ -256,7 +256,7 @@ const Page = () => {
                   </div>
                   <div>
                     <p className="text-muted-foreground text-xs">New This Month</p>
-                    <p className="text-xl font-semibold">{dashboardData?.enrollment.new_this_month || 0}</p>
+                    <p className="text-xl font-semibold">{dashboard?.enrollment.new_this_month || 0}</p>
                   </div>
                 </div>
               </div>
@@ -267,7 +267,7 @@ const Page = () => {
                   </div>
                   <div>
                     <p className="text-muted-foreground text-xs">Churned This Month</p>
-                    <p className="text-xl font-semibold">{dashboardData?.enrollment.churned_this_month || 0}</p>
+                    <p className="text-xl font-semibold">{dashboard?.enrollment.churned_this_month || 0}</p>
                   </div>
                 </div>
               </div>
@@ -297,7 +297,7 @@ const Page = () => {
                   <div className="size-3 rounded-full bg-emerald-500" />
                   <span className="text-sm">Completed</span>
                 </div>
-                <span className="font-semibold">{dashboardData?.course_completion.total_completed || 0}</span>
+                <span className="font-semibold">{dashboard?.course_completion.total_completed || 0}</span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -305,21 +305,21 @@ const Page = () => {
                   <span className="text-sm">In Progress</span>
                 </div>
                 <span className="font-semibold">
-                  {(dashboardData?.course_completion.total_started || 0) -
-                    (dashboardData?.course_completion.total_completed || 0)}
+                  {(dashboard?.course_completion.total_started || 0) -
+                    (dashboard?.course_completion.total_completed || 0)}
                 </span>
               </div>
               <div className="border-t pt-3">
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground text-sm">Completion Rate</span>
                   <span className="text-lg font-semibold text-emerald-500">
-                    {dashboardData?.course_completion.completion_rate || 0}%
+                    {dashboard?.course_completion.completion_rate || 0}%
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground text-sm">Avg. Time to Complete</span>
                   <span className="font-medium">
-                    {dashboardData?.course_completion.avg_time_to_complete_days || 0} days
+                    {dashboard?.course_completion.avg_time_to_complete_days || 0} days
                   </span>
                 </div>
               </div>
@@ -337,7 +337,7 @@ const Page = () => {
             </div>
           </div>
           <div className="space-y-3">
-            {dashboardData?.tutor_performance.map((tutor) => (
+            {dashboard?.tutor_performance.map((tutor) => (
               <div
                 key={tutor.tutor_id}
                 className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4 transition-colors"
@@ -375,7 +375,7 @@ const Page = () => {
                 </div>
               </div>
             ))}
-            {(!dashboardData?.tutor_performance || dashboardData.tutor_performance.length === 0) && (
+            {(!dashboard?.tutor_performance || dashboard.tutor_performance.length === 0) && (
               <p className="text-muted-foreground py-8 text-center text-sm">No tutor data available</p>
             )}
           </div>
@@ -389,7 +389,7 @@ const Page = () => {
             </div>
           </div>
           <div className="space-y-3">
-            {dashboardData?.popular_courses.map((course, index) => (
+            {dashboard?.popular_courses.map((course, index) => (
               <div
                 key={course.course_id}
                 className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4 transition-colors"
@@ -418,7 +418,7 @@ const Page = () => {
                 </div>
               </div>
             ))}
-            {(!dashboardData?.popular_courses || dashboardData.popular_courses.length === 0) && (
+            {(!dashboard?.popular_courses || dashboard.popular_courses.length === 0) && (
               <p className="text-muted-foreground py-8 text-center text-sm">No course data available</p>
             )}
           </div>

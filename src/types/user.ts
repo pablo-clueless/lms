@@ -1,5 +1,3 @@
-import type { Tenant } from "./tenant";
-
 export type ApplicationStatus =
   | "REVIEWING"
   | "ADMITTED"
@@ -97,18 +95,28 @@ export interface Student {
 export interface User {
   id: string;
   tenant_id?: string;
-  tenant?: Tenant;
-  name: string;
-  email: string;
   role: Role;
+  email: string;
+  first_name: string;
+  last_name: string;
+  middle_name: string;
+  profile_photo: string;
+  phone: string;
   status: UserStatus;
-  last_login_at?: string;
-  permissions?: string[];
-  profile?: Profile;
-  tutor?: Tutor;
-  student?: Student;
-  created_at: string;
-  updated_at: string;
+  permissions: string[];
+  notification_preferences: NotificationPreferences[];
+  last_login_at: Date;
+  deactivated_at: Date;
+  deactivation_reason: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface NotificationPreferences {
+  event_type: string;
+  in_app_enabled: boolean;
+  push_enabled: boolean;
+  email_enabled: boolean;
 }
 
 export interface UpdateUserDto {
@@ -131,80 +139,11 @@ export interface UpdateUserProfileDto {
   postal_code?: string;
 }
 
-export type CreateUserDto =
-  | {
-      name: string;
-      email: string;
-      password: string;
-      role: "ADMIN";
-      tenant_id: string;
-      permissions: string[];
-      profile?: {
-        phone: string;
-        gender: string;
-        date_of_birth: string;
-        avatar: string;
-        bio: string;
-        address: string;
-        city: string;
-        state: string;
-        country: string;
-        postal_code: string;
-      };
-    }
-  | {
-      name: string;
-      email: string;
-      password: string;
-      role: "TUTOR";
-      tenant_id: string;
-      profile?: {
-        phone?: string;
-        gender?: string;
-        date_of_birth?: string;
-        avatar?: string;
-        bio?: string;
-        address?: string;
-        city?: string;
-        state?: string;
-        country?: string;
-        postal_code?: string;
-      };
-      tutor?: {
-        bio?: string;
-        headline?: string;
-        timezone?: string;
-        years_of_experience?: number;
-        status?: TutorStatus;
-        specialities?: string[];
-        availability: {
-          day: string;
-          start_time: string;
-          end_time: string;
-        }[];
-      };
-    }
-  | {
-      name: string;
-      email: string;
-      password: string;
-      role: "STUDENT";
-      tenant_id: string;
-      profile?: {
-        phone?: string;
-        gender?: string;
-        date_of_birth?: string;
-        avatar?: string;
-        bio?: string;
-        address?: string;
-        city?: string;
-        state?: string;
-        country?: string;
-        postal_code?: string;
-      };
-      student?: {
-        student_number: string;
-        enrollment_date: string;
-        graduation_date?: string;
-      };
-    };
+export interface CreateUserDto {
+  email: string;
+  password: string;
+  first_name: string;
+  last_name: string;
+  middle_name: string;
+  invitation_token: string;
+}

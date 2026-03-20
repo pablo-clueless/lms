@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { SigninDto } from "@/types/auth";
 import { useUserStore } from "@/store/core";
-import { useSignin } from "@/lib/api/auth";
+import { useLogin } from "@/lib/api/auth";
 import { getBasePathByRole } from "@/lib";
 import { toast } from "sonner";
 
@@ -25,7 +25,7 @@ const schema = Yup.object().shape({
 });
 
 const Page = () => {
-  const { isPending, mutateAsync } = useSignin();
+  const { isPending, mutateAsync } = useLogin();
   const { signin } = useUserStore();
   const router = useRouter();
 
@@ -34,9 +34,9 @@ const Page = () => {
     onSubmit: (values) => {
       mutateAsync(values)
         .then((response) => {
-          signin(response.data, { remember: true, expiresIn: response.data.tokens.expires_at });
+          signin(response, { remember: true });
           toast.success("Signed in successfully");
-          const path = getBasePathByRole(response.data.user.role);
+          const path = getBasePathByRole(response.user.role);
           setTimeout(() => {
             router.replace(path);
           }, 200);
