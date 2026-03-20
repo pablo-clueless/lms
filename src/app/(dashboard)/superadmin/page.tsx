@@ -6,12 +6,10 @@ import {
   Building06Icon,
   UserMultiple02Icon,
   MoneyBag02Icon,
-  CloudIcon,
   Activity01Icon,
   ArrowUp01Icon,
   ArrowDown01Icon,
   RefreshIcon,
-  Book02Icon,
   WifiConnected01Icon,
   Timer01Icon,
   AlertCircleIcon,
@@ -19,11 +17,11 @@ import {
 
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useGetSuperAdminDashboardQuery } from "@/lib/api/dashboard";
+import { useGetSuperAdminDashboard } from "@/lib/api/dashboard";
+import { cn, formatCurrency, formatNumber } from "@/lib";
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/shared";
 import { useUserStore } from "@/store/core";
-import { cn, formatCurrency } from "@/lib";
 
 const chartConfig = {
   count: { label: "Users", color: "var(--chart-2)" },
@@ -63,28 +61,19 @@ const StatCard = ({ title, value, icon, trend, subtitle }: StatCardProps) => (
   </div>
 );
 
-const formatNumber = (num: number) => {
-  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-  if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-  return num.toString();
-};
-
 const Page = () => {
   const { user } = useUserStore();
-  const { data, isFetching, isPending, refetch } = useGetSuperAdminDashboardQuery();
+  const { data, isFetching, isPending, refetch } = useGetSuperAdminDashboard();
 
   if (isPending) return <Loader isFullScreen />;
 
-  const dashboardData = data?.data.super_admin;
-  const storagePercentage = dashboardData
-    ? Math.round((dashboardData.resource_usage.storage_used_gb / dashboardData.resource_usage.storage_limit_gb) * 100)
-    : 0;
+  const dashboard = data?.dashboard;
 
   return (
     <div className="space-y-6 p-6">
       <div className="from-primary to-primary/80 relative overflow-hidden rounded-xl bg-linear-to-r p-8">
         <div className="relative z-10">
-          <h3 className="text-primary-foreground text-3xl font-semibold">Welcome back, {user?.name}</h3>
+          <h3 className="text-primary-foreground text-3xl font-semibold">Welcome back, {user?.first_name}</h3>
           <p className="text-primary-foreground/70 mt-2">Let&apos;s see what&apos;s happening in your system today.</p>
         </div>
         <div className="absolute -right-10 -bottom-10 size-40 rounded-full bg-white/10 dark:bg-black/50" />
@@ -116,25 +105,25 @@ const Page = () => {
       <div className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Tenants"
-          value={dashboardData?.tenant_stats.total || 0}
+          value={dashboard?.total_tenants || 0}
           icon={Building06Icon}
           trend={{ value: 12, isPositive: true }}
         />
         <StatCard
           title="Active Tenants"
-          value={dashboardData?.tenant_stats.active || 0}
+          value={dashboard?.active_tenants || 0}
           icon={Building06Icon}
-          subtitle={`${Math.round(((dashboardData?.tenant_stats.active || 0) / (dashboardData?.tenant_stats.total || 1)) * 100)}% of total`}
+          subtitle={`${Math.round((0 / 1) * 100)}% of total`}
         />
         <StatCard
-          title="Inactive Tenants"
-          value={dashboardData?.tenant_stats.inactive || 0}
+          title="Suspended Tenants"
+          value={dashboard?.suspended_tenants || 0}
           icon={Building06Icon}
           subtitle="Requires attention"
         />
         <StatCard
           title="Total Users"
-          value={formatNumber(dashboardData?.resource_usage.total_users || 0)}
+          value={formatNumber(dashboard?.total_users || 0)}
           icon={UserMultiple02Icon}
           trend={{ value: 8, isPositive: true }}
         />
@@ -142,21 +131,12 @@ const Page = () => {
       <div className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           title="Monthly Recurring Revenue"
-          value={formatCurrency(dashboardData?.revenue.mrr || 0)}
+          value={formatCurrency(0)}
           icon={MoneyBag02Icon}
           trend={{ value: 15, isPositive: true }}
         />
-        <StatCard
-          title="Total Revenue"
-          value={formatCurrency(dashboardData?.revenue.total_revenue || 0)}
-          icon={MoneyBag02Icon}
-        />
-        <StatCard
-          title="Upcoming Renewals"
-          value={dashboardData?.revenue.upcoming_renewals || 0}
-          icon={MoneyBag02Icon}
-          subtitle="In the next 30 days"
-        />
+        <StatCard title="Total Revenue" value={formatCurrency(0)} icon={MoneyBag02Icon} />
+        <StatCard title="Upcoming Renewals" value={0} icon={MoneyBag02Icon} subtitle="In the next 30 days" />
       </div>
       <div className="bg-card w-full rounded-xl border p-6">
         <div className="mb-6 flex items-center justify-between">
@@ -166,7 +146,7 @@ const Page = () => {
           </div>
         </div>
         <ChartContainer className="h-72 w-full" config={chartConfig}>
-          <BarChart accessibilityLayer data={dashboardData?.user_growth || []}>
+          <BarChart accessibilityLayer data={dashboard?.user_growth || []}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <XAxis
               dataKey="date"
@@ -174,7 +154,7 @@ const Page = () => {
               axisLine={false}
               tickFormatter={(value) => {
                 const date = new Date(value);
-                return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                return date.toLocaleDateString("en-NG", { month: "short", day: "numeric" });
               }}
             />
             <YAxis domain={[0, 100]} tickLine={false} axisLine={false} />
@@ -192,9 +172,9 @@ const Page = () => {
             </div>
           </div>
           <div className="space-y-3">
-            {dashboardData?.top_tenants.map((tenant, index) => (
+            {dashboard?.recent_tenants.map((tenant, index) => (
               <div
-                key={tenant.tenant_id}
+                key={tenant.id}
                 className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4 transition-colors"
               >
                 <div className="flex items-center gap-3">
@@ -202,78 +182,34 @@ const Page = () => {
                     {index + 1}
                   </div>
                   <div>
-                    <p className="text-foreground font-medium">{tenant.tenant_name}</p>
-                    <p className="text-muted-foreground text-xs">
-                      {tenant.active_users} users · {tenant.course_count} courses
-                    </p>
+                    <p className="text-foreground font-medium">{tenant.name}</p>
+                    <p className="text-muted-foreground text-xs">{tenant.status}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-emerald-600">{tenant.activity_rate}%</p>
+                  <p className="text-sm font-semibold text-emerald-600">{tenant.school_type}%</p>
                   <p className="text-muted-foreground text-xs">Activity</p>
                 </div>
               </div>
             ))}
-            {(!dashboardData?.top_tenants || dashboardData.top_tenants.length === 0) && (
+            {(!dashboard?.recent_tenants || dashboard.recent_tenants.length === 0) && (
               <p className="text-muted-foreground py-8 text-center text-sm">No tenant data available</p>
             )}
           </div>
         </div>
         <div className="bg-card w-full space-y-4 rounded-xl border p-6">
           <div>
-            <h5 className="text-foreground text-lg font-semibold">Resource Usage</h5>
+            <h5 className="text-foreground text-lg font-semibold">Users By Role</h5>
             <p className="text-muted-foreground text-sm">Platform resource consumption</p>
           </div>
           <div className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <HugeiconsIcon icon={CloudIcon} className="text-muted-foreground size-4" />
-                  <span className="text-foreground">Storage</span>
+            {dashboard?.users_by_role &&
+              Object.entries(dashboard.users_by_role).map(([user, count]) => (
+                <div className="flex items-center justify-between" key={user}>
+                  <p className="capitalize">{user.replace(/_/g, " ").toLowerCase()}</p>
+                  <h5 className="capitalize">{count}</h5>
                 </div>
-                <span className="text-foreground font-medium">
-                  {dashboardData?.resource_usage.storage_used_gb || 0} GB /{" "}
-                  {dashboardData?.resource_usage.storage_limit_gb || 0} GB
-                </span>
-              </div>
-              <div className="bg-muted h-2 overflow-hidden rounded-full">
-                <div
-                  className={cn(
-                    "h-full transition-all",
-                    storagePercentage > 80 ? "bg-red-500" : storagePercentage > 60 ? "bg-amber-500" : "bg-primary",
-                  )}
-                  style={{ width: `${storagePercentage}%` }}
-                />
-              </div>
-            </div>
-            <div className="flex items-center justify-between rounded-lg border p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex size-10 items-center justify-center rounded-lg bg-blue-500/10">
-                  <HugeiconsIcon icon={Activity01Icon} className="size-5 text-blue-500" />
-                </div>
-                <div>
-                  <p className="text-foreground text-sm font-medium">Bandwidth Used</p>
-                  <p className="text-muted-foreground text-xs">This month</p>
-                </div>
-              </div>
-              <p className="text-foreground text-xl font-semibold">
-                {dashboardData?.resource_usage.bandwidth_used_gb || 0} GB
-              </p>
-            </div>
-            <div className="flex items-center justify-between rounded-lg border p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex size-10 items-center justify-center rounded-lg bg-purple-500/10">
-                  <HugeiconsIcon icon={Book02Icon} className="size-5 text-purple-500" />
-                </div>
-                <div>
-                  <p className="text-foreground text-sm font-medium">Total Courses</p>
-                  <p className="text-muted-foreground text-xs">Across all tenants</p>
-                </div>
-              </div>
-              <p className="text-foreground text-xl font-semibold">
-                {dashboardData?.resource_usage.total_courses || 0}
-              </p>
-            </div>
+              ))}
           </div>
         </div>
       </div>
@@ -289,9 +225,7 @@ const Page = () => {
             </div>
             <div>
               <p className="text-muted-foreground text-sm">Uptime</p>
-              <p className="text-foreground text-2xl font-semibold">
-                {dashboardData?.system_health.uptime_percent || 0}%
-              </p>
+              <p className="text-foreground text-2xl font-semibold">{dashboard?.system_metrics.uptime_seconds || 0}s</p>
             </div>
           </div>
           <div className="flex items-center gap-4 rounded-lg border p-4">
@@ -301,7 +235,7 @@ const Page = () => {
             <div>
               <p className="text-muted-foreground text-sm">Avg Response Time</p>
               <p className="text-foreground text-2xl font-semibold">
-                {dashboardData?.system_health.avg_response_time_ms || 0}ms
+                {(dashboard?.system_metrics.avg_latency_ms || 0).toFixed(2)}ms
               </p>
             </div>
           </div>
@@ -312,7 +246,7 @@ const Page = () => {
             <div>
               <p className="text-muted-foreground text-sm">Active Connections</p>
               <p className="text-foreground text-2xl font-semibold">
-                {dashboardData?.system_health.active_connections || 0}
+                {dashboard?.system_metrics.active_connections || 0}
               </p>
             </div>
           </div>
@@ -320,20 +254,22 @@ const Page = () => {
             <div
               className={cn(
                 "flex size-12 items-center justify-center rounded-lg",
-                (dashboardData?.system_health.error_rate || 0) > 5 ? "bg-red-500/10" : "bg-emerald-500/10",
+                0 > 5 ? "bg-red-500/10" : "bg-emerald-500/10",
               )}
             >
               <HugeiconsIcon
                 icon={AlertCircleIcon}
                 className={cn(
                   "size-6",
-                  (dashboardData?.system_health.error_rate || 0) > 5 ? "text-red-500" : "text-emerald-500",
+                  dashboard?.system_metrics.error_rate || 0 > 5 ? "text-red-500" : "text-emerald-500",
                 )}
               />
             </div>
             <div>
               <p className="text-muted-foreground text-sm">Error Rate</p>
-              <p className="text-foreground text-2xl font-semibold">{dashboardData?.system_health.error_rate || 0}%</p>
+              <p className="text-foreground text-2xl font-semibold">
+                {(dashboard?.system_metrics.error_rate || 0).toFixed(2)}%
+              </p>
             </div>
           </div>
         </div>
