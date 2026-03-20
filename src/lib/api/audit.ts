@@ -33,7 +33,7 @@ const auditApi = {
     apiClient.get<ListAuditLogResponse>("/audit/logs", params as QueryParams),
   get: (id: string) => apiClient.get<AuditLog>(`/audit/logs/${id}`),
   getResourceTrail: (params: ResourceAuditQueries) =>
-    apiClient.get<{ data: AuditLog[] }>("/audit/logs/resource", params as QueryParams),
+    apiClient.get<{ data: AuditLog[] }>("/audit/logs/resource", params as unknown as QueryParams),
 };
 
 export function useGetAuditLogs(params?: PaginationParams & AuditLogQueries) {

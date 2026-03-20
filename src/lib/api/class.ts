@@ -19,7 +19,7 @@ const keys = {
 
 interface ListClassResponse {
   pagination: Pagination;
-  data: Class[];
+  classes: Class[];
 }
 
 const classApi = {

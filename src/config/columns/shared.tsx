@@ -79,7 +79,8 @@ export const DateTimeCell = ({ date, fallback = "N/A" }: DateCellProps) => {
 interface ActionItem {
   label: string;
   icon: IconSvgElement;
-  onClick: () => void;
+  href?: string;
+  onClick?: () => void;
   variant?: "default" | "danger";
 }
 
@@ -96,19 +97,33 @@ export const ActionCell = ({ actions }: ActionCellProps) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-56 p-1">
-        {actions.map((action, index) => (
-          <button
-            key={index}
-            onClick={action.onClick}
-            className={cn(
-              "flex w-full items-center gap-x-2 rounded-md px-2.5 py-2 text-xs hover:bg-gray-100",
-              action.variant === "danger" && "text-red-600 hover:bg-red-50",
-            )}
-          >
-            <HugeiconsIcon className="size-4" icon={action.icon} />
-            <span>{action.label}</span>
-          </button>
-        ))}
+        {actions.map((action, index) =>
+          action.href ? (
+            <a
+              key={index}
+              href={action.href}
+              className={cn(
+                "flex w-full items-center gap-x-2 rounded-md px-2.5 py-2 text-xs hover:bg-gray-100",
+                action.variant === "danger" && "text-red-600 hover:bg-red-50",
+              )}
+            >
+              <HugeiconsIcon className="size-4" icon={action.icon} />
+              <span>{action.label}</span>
+            </a>
+          ) : (
+            <button
+              key={index}
+              onClick={action.onClick}
+              className={cn(
+                "flex w-full items-center gap-x-2 rounded-md px-2.5 py-2 text-xs hover:bg-gray-100",
+                action.variant === "danger" && "text-red-600 hover:bg-red-50",
+              )}
+            >
+              <HugeiconsIcon className="size-4" icon={action.icon} />
+              <span>{action.label}</span>
+            </button>
+          ),
+        )}
       </PopoverContent>
     </Popover>
   );

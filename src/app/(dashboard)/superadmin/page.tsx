@@ -65,7 +65,7 @@ const Page = () => {
   const { user } = useUserStore();
   const { data, isFetching, isPending, refetch } = useGetSuperAdminDashboard();
 
-  if (isPending) return <Loader isFullScreen />;
+  if (isPending) return <Loader />;
 
   const dashboard = data?.dashboard;
 
@@ -128,16 +128,18 @@ const Page = () => {
           trend={{ value: 8, isPositive: true }}
         />
       </div>
-      <div className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <StatCard
-          title="Monthly Recurring Revenue"
-          value={formatCurrency(0)}
-          icon={MoneyBag02Icon}
-          trend={{ value: 15, isPositive: true }}
-        />
-        <StatCard title="Total Revenue" value={formatCurrency(0)} icon={MoneyBag02Icon} />
-        <StatCard title="Upcoming Renewals" value={0} icon={MoneyBag02Icon} subtitle="In the next 30 days" />
-      </div>
+      {dashboard?.billing_metrics !== null && (
+        <div className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <StatCard
+            title="Monthly Recurring Revenue"
+            value={formatCurrency(0)}
+            icon={MoneyBag02Icon}
+            trend={{ value: 15, isPositive: true }}
+          />
+          <StatCard title="Total Revenue" value={formatCurrency(0)} icon={MoneyBag02Icon} />
+          <StatCard title="Upcoming Renewals" value={0} icon={MoneyBag02Icon} subtitle="In the next 30 days" />
+        </div>
+      )}
       <div className="bg-card w-full rounded-xl border p-6">
         <div className="mb-6 flex items-center justify-between">
           <div>

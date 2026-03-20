@@ -75,7 +75,7 @@ const Page = () => {
   const { user } = useUserStore();
   const { data, isFetching, isPending, refetch } = useGetAdminDashboard();
 
-  if (isPending) return <Loader isFullScreen />;
+  if (isPending) return <Loader />;
 
   const dashboard = data?.dashboard;
   const tenantInfo = dashboard?.tenant_info;

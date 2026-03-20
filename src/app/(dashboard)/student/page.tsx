@@ -71,7 +71,7 @@ const Page = () => {
   const { user } = useUserStore();
   const { data, isFetching, isPending, refetch } = useGetStudentDashboard();
 
-  if (isPending) return <Loader isFullScreen />;
+  if (isPending) return <Loader />;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

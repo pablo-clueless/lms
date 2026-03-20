@@ -24,7 +24,7 @@ const Page = () => {
 
   const { data, isFetching, isPending, refetch } = useGetSystemConfigs(values);
 
-  if (isPending) return <Loader isFullScreen />;
+  if (isPending) return <Loader />;
 
   return (
     <div className="space-y-6 p-6">
@@ -32,7 +32,7 @@ const Page = () => {
       <div className="flex w-full items-center justify-between">
         <div className="w-fit space-y-1">
           <h3 className="text-3xl">System Configurations</h3>
-          <p className="text-sm font-medium text-gray-600"></p>
+          <p className="text-sm font-medium text-gray-600">Configure system-wide settings and parameters</p>
         </div>
         <div className="flex items-center gap-x-4">
           <Button disabled={isFetching} onClick={() => refetch()} variant="outline" size="sm">

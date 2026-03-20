@@ -22,7 +22,6 @@ import {
   CheckListIcon,
   MoneyReceiveSquareIcon,
   PresentationBarChart01Icon,
-  CalendarCheckIn01Icon,
 } from "@hugeicons/core-free-icons";
 
 import type { Permission } from "./permissions";
@@ -218,12 +217,6 @@ const ADMIN_ROUTES: RouteConfig[] = [
     permissions: ["sessions:read"],
   },
   {
-    name: "Terms",
-    href: "/admin/terms",
-    icon: CalendarCheckIn01Icon,
-    permissions: ["terms:read"],
-  },
-  {
     name: "Classes",
     href: "/admin/classes",
     icon: UserGroup02Icon,
@@ -258,12 +251,6 @@ const ADMIN_ROUTES: RouteConfig[] = [
     href: "/admin/students",
     icon: UserGroup02Icon,
     permissions: [],
-  },
-  {
-    name: "Assessments",
-    href: "/admin/assessments",
-    icon: Task01Icon,
-    permissions: ["assessments:read"],
   },
   {
     name: "Progress",

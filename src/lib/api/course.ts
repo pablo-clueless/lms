@@ -23,7 +23,7 @@ const keys = {
 
 interface ListCourseResponse {
   pagination: Pagination;
-  data: Course[];
+  courses: Course[];
 }
 
 const courseApi = {

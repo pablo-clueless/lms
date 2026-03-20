@@ -48,7 +48,11 @@ export const termColumns: ColumnDef<Term>[] = [
     cell: ({ row }) => (
       <ActionCell
         actions={[
-          { label: "View Details", icon: ActionIcons.View, onClick: () => console.log("View", row.original.id) },
+          {
+            label: "View Details",
+            icon: ActionIcons.View,
+            href: `/admin/sessions/${row.original.session_id}/terms/${row.original.id}`,
+          },
           { label: "Edit", icon: ActionIcons.Edit, onClick: () => console.log("Edit", row.original.id) },
           {
             label: "Delete",

@@ -25,7 +25,7 @@ const keys = {
 };
 
 interface ListTermResponse {
-  data: Term[];
+  terms: Term[];
 }
 
 const termApi = {
