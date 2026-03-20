@@ -34,8 +34,9 @@ export const useProtectedRoutes = ({ permissions, redirectTo, roles }: UseProtec
       return Boolean(hasRoleAccess);
     }
     const permissionSet = new Set(user.permissions);
+    const hasAllPermissions = permissions?.some((p) => p === "*:*");
     const hasPermissionAccess = permissions?.some((p) => permissionSet.has(p));
-    return Boolean(hasRoleAccess || hasPermissionAccess);
+    return Boolean(hasRoleAccess || hasAllPermissions || hasPermissionAccess);
   }, [user, roles, permissions]);
 
   const checkAccess = useCallback(() => {

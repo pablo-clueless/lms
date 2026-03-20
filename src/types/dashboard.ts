@@ -1,3 +1,4 @@
+import type { Session } from "./session";
 import type { Tenant } from "./tenant";
 
 export interface SuperAdminDashboardResponse {
@@ -46,45 +47,20 @@ export interface QuickActions {
 
 export interface AdminDashboardResponse {
   role: "ADMIN";
-  admin: {
-    enrollment: {
-      active_students: number;
-      total_seats: number;
-      seats_remaining: number;
-      new_this_month: number;
-      churned_this_month: number;
+  dashboard: {
+    tenant_info: Tenant;
+    total_users: number;
+    users_by_role: {
+      ADMIN: number;
+      STUDENT: number;
+      TUTOR: number;
     };
-    course_completion: {
-      total_started: number;
-      total_completed: number;
-      completion_rate: number;
-      avg_time_to_complete_days: number;
-    };
-    tutor_performance: {
-      tutor_id: string;
-      tutor_name: string;
-      avg_grading_time_days: number;
-      avg_course_rating: number;
-      student_count: number;
-      pending_grading: number;
-    }[];
-    popular_courses: {
-      course_id: string;
-      course_name: string;
-      enroll_count: number;
-      view_count: number;
-      completion_rate: number;
-    }[];
-    pending_actions: {
-      unassigned_students: number;
-      pending_approvals: number;
-      pending_applications: number;
-      ungraded_submissions: number;
-    };
-    total_students: number;
-    total_tutors: number;
+    total_classes: number;
     total_courses: number;
-    active_terms: number;
+    total_sessions: number;
+    active_session: Session;
+    total_enrollments: number;
+    active_enrollments: number;
   };
 }
 

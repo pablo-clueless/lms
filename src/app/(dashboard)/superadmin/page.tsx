@@ -157,7 +157,7 @@ const Page = () => {
                 return date.toLocaleDateString("en-NG", { month: "short", day: "numeric" });
               }}
             />
-            <YAxis domain={[0, 100]} tickLine={false} axisLine={false} />
+            <YAxis domain={[0, 500]} tickLine={false} axisLine={false} />
             <ChartTooltip content={<ChartTooltipContent />} />
             <Bar dataKey="count" fill="var(--chart-2)" radius={[4, 4, 0, 0]} barSize={32} />
           </BarChart>

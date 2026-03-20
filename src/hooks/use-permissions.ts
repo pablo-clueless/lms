@@ -17,6 +17,7 @@ export const usePermissions = ({ mode, permissions, user }: Props): boolean => {
     if (!user) return false;
     if (!user.role) return false;
     if (!user.permissions?.length) return false;
+    if (user.permissions.some((p) => p === "*:*")) return true;
     const permissionSet = new Set(user.permissions.map((permission) => permission));
     switch (mode) {
       case "any":
