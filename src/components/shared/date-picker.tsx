@@ -1,6 +1,7 @@
 "use client";
 
-import { RiCalendar2Line } from "@remixicon/react";
+import { Calendar01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { format } from "date-fns";
 
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -63,7 +64,7 @@ export const DatePicker = (props: Props) => {
                 )}
               >
                 <span className="truncate">{fromDisplay || placeholderFrom}</span>
-                <RiCalendar2Line className="size-4 shrink-0 text-neutral-500" />
+                <HugeiconsIcon className="size-4 shrink-0 text-neutral-500" icon={Calendar01Icon} />
               </button>
               <span className="text-neutral-400">-</span>
               <button
@@ -77,7 +78,7 @@ export const DatePicker = (props: Props) => {
                 )}
               >
                 <span className="truncate">{toDisplay || placeholderTo}</span>
-                <RiCalendar2Line className="size-4 shrink-0 text-neutral-500" />
+                <HugeiconsIcon className="size-4 shrink-0 text-neutral-500" icon={Calendar01Icon} />
               </button>
             </div>
           </PopoverTrigger>
@@ -116,7 +117,7 @@ export const DatePicker = (props: Props) => {
             )}
           >
             <span className="truncate">{displayValue || placeholder}</span>
-            <RiCalendar2Line className="size-4 shrink-0 text-neutral-500" />
+            <HugeiconsIcon className="size-4 shrink-0 text-neutral-500" icon={Calendar01Icon} />
           </button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-3" align="start">
