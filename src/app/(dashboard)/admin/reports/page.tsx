@@ -1,6 +1,6 @@
 "use client";
 
-import { DataTable, Breadcrumb, Loader, Pagination } from "@/components/shared";
+import { DataTable, Breadcrumb } from "@/components/shared";
 import { reportCardColumns } from "@/config/columns";
 import { Button } from "@/components/ui/button";
 import { useHandler } from "@/hooks";

@@ -18,7 +18,7 @@ const keys = {
 };
 
 interface ListNotificationResponse {
-  data: Notification[];
+  notifications: Notification[];
   pagination: Pagination;
   unread_count: number;
 }

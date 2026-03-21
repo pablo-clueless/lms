@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateMeetingDto, Meeting, QueryParams } from "@/types";
+import type { CreateMeetingDto, Meeting, Pagination, QueryParams } from "@/types";
 import { apiClient } from "../api-client";
 
 type UpdateMeeting = {
@@ -24,7 +24,8 @@ const keys = {
 };
 
 interface ListMeetingResponse {
-  data: Meeting[];
+  meetings: Meeting[];
+  pagination: Pagination;
 }
 
 interface JoinMeetingResponse {

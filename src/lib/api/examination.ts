@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateExaminationDto, Examination, ExaminationSubmission, QueryParams } from "@/types";
+import type { CreateExaminationDto, Examination, ExaminationSubmission, Pagination, QueryParams } from "@/types";
 import { apiClient } from "../api-client";
 
 type UpdateExamination = {
@@ -30,7 +30,8 @@ const keys = {
 };
 
 interface ListExaminationResponse {
-  data: Examination[];
+  examinations: Examination[];
+  pagination: Pagination;
 }
 
 interface ListSubmissionResponse {

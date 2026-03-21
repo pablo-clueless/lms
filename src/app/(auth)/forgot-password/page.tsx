@@ -34,7 +34,7 @@ const Page = () => {
   const router = useRouter();
 
   const [otpExpiryTime, setOtpExpiryTime] = useState<number | null>(null);
-  const [_resetToken, setResetToken] = useState<string | null>(null);
+  const [, setResetToken] = useState<string | null>(null);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState<Step>("email");

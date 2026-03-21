@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateEmailDto, Email, QueryParams } from "@/types";
+import type { CreateEmailDto, Email, Pagination, QueryParams } from "@/types";
 import { apiClient } from "../api-client";
 
 interface EmailQueries {
@@ -22,7 +22,8 @@ const keys = {
 };
 
 interface ListEmailResponse {
-  data: Email[];
+  emails: Email[];
+  pagination: Pagination;
 }
 
 const communicationApi = {

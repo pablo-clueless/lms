@@ -1,7 +1,9 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StatusBadge, DateCell, ActionCell, ActionIcons } from "./shared";
 import type { Tenant } from "@/types";
+import { getInitials } from "@/lib";
 
 export const tenantColumns: ColumnDef<Tenant>[] = [
   {
@@ -9,9 +11,10 @@ export const tenantColumns: ColumnDef<Tenant>[] = [
     header: "School",
     cell: ({ row }) => (
       <div className="flex items-center gap-x-3">
-        {row.original.logo && (
-          <img src={row.original.logo} alt={row.original.name} className="size-8 rounded-full object-cover" />
-        )}
+        <Avatar className="size-8">
+          <AvatarImage src={row.original.logo} />
+          <AvatarFallback>{getInitials(row.original.name)}</AvatarFallback>
+        </Avatar>
         <div className="flex flex-col">
           <span className="font-medium">{row.original.name}</span>
           <span className="text-xs text-gray-500">{row.original.contact_email}</span>

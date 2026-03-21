@@ -26,8 +26,8 @@ const keys = {
 };
 
 interface ListEnrollmentResponse {
+  enrollments: Enrollment[];
   pagination: Pagination;
-  data: Enrollment[];
 }
 
 const enrollmentApi = {
