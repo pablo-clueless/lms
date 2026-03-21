@@ -167,7 +167,6 @@ const Page = () => {
     offset: ["start start", "end end"],
   });
 
-  // Calculate scroll distance dynamically based on content width
   const [scrollDistance, setScrollDistance] = useState(1000);
 
   useEffect(() => {
@@ -175,7 +174,6 @@ const Page = () => {
       if (scrollContainerRef.current) {
         const containerWidth = scrollContainerRef.current.scrollWidth;
         const viewportWidth = window.innerWidth;
-        // Distance needed to show all cards with some padding
         const distance = Math.max(0, containerWidth - viewportWidth + 120);
         setScrollDistance(distance);
       }
@@ -239,7 +237,7 @@ const Page = () => {
             >
               {STATS.map((stat, index) => (
                 <motion.div key={index} className="text-center" variants={fadeInUp}>
-                  <p className="text-primary text-3xl font-bold lg:text-4xl">{stat.value}</p>
+                  <h3 className="text-primary text-3xl font-bold lg:text-4xl">{stat.value}</h3>
                   <p className="text-muted-foreground mt-1 text-sm">{stat.label}</p>
                 </motion.div>
               ))}
