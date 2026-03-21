@@ -1,7 +1,8 @@
 "use client";
 
+import { useRef, useState, useEffect } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import {
   Calendar03Icon,
@@ -142,7 +143,7 @@ const COMPLIANCES = [
   {
     icon: DashboardSquare01Icon,
     label: "Multi-Tenant Isolation",
-    description: "Each school&apos;s data is logically isolated. No cross-tenant access possible.",
+    description: "Each school's data is logically isolated. No cross-tenant access possible.",
   },
   {
     icon: PresentationBarChart01Icon,
@@ -156,11 +157,41 @@ const COMPLIANCES = [
   },
 ];
 
-function reverseIndex(length: number, index: number) {
-  return length - 1 - index;
-}
-
 const Page = () => {
+  const [activeComplianceIndex, setActiveComplianceIndex] = useState(0);
+  const featuresRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: featuresRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Calculate scroll distance dynamically based on content width
+  const [scrollDistance, setScrollDistance] = useState(1000);
+
+  useEffect(() => {
+    const calculateScrollDistance = () => {
+      if (scrollContainerRef.current) {
+        const containerWidth = scrollContainerRef.current.scrollWidth;
+        const viewportWidth = window.innerWidth;
+        // Distance needed to show all cards with some padding
+        const distance = Math.max(0, containerWidth - viewportWidth + 120);
+        setScrollDistance(distance);
+      }
+    };
+
+    calculateScrollDistance();
+    window.addEventListener("resize", calculateScrollDistance);
+    return () => window.removeEventListener("resize", calculateScrollDistance);
+  }, []);
+
+  const featuresX = useTransform(scrollYProgress, [0, 1], [0, -scrollDistance]);
+
+  const handleCardClick = () => {
+    setActiveComplianceIndex((prev) => (prev + 1) % COMPLIANCES.length);
+  };
+
   return (
     <>
       <Navbar />
@@ -215,40 +246,47 @@ const Page = () => {
             </motion.div>
           </div>
         </section>
-        <section className="py-20 lg:py-32">
-          <div className="container mx-auto">
-            <motion.div
-              className="mb-16 text-center"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Everything You Need to Run Your School</h2>
-              <p className="text-muted-foreground mx-auto max-w-2xl">
-                A comprehensive suite of tools designed specifically for Nigerian schools, from academic management to
-                billing.
-              </p>
-            </motion.div>
-            <motion.div
-              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
-              variants={staggerContainer}
-              initial="initial"
-              whileInView="animate"
-            >
-              {FEATURES.map((feature, index) => (
-                <motion.div
-                  key={index}
-                  className="group border-border bg-card hover:border-primary/50 rounded-md border p-6 transition-all duration-500 hover:shadow-lg"
-                  variants={fadeInUp}
-                >
-                  <div className="bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground mb-4 flex h-12 w-12 items-center justify-center rounded-lg transition-colors">
-                    <HugeiconsIcon icon={feature.icon} size={24} />
-                  </div>
-                  <h3 className="mb-2 font-semibold">{feature.title}</h3>
-                  <p className="text-muted-foreground text-sm">{feature.description}</p>
-                </motion.div>
-              ))}
-            </motion.div>
+        <section ref={featuresRef} className="relative h-[120vh]">
+          <div className="sticky top-0 flex h-screen flex-col justify-center gap-y-20 overflow-hidden">
+            <div className="container mx-auto">
+              <motion.div
+                className="mb-12 text-center"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1 }}
+              >
+                <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Everything You Need to Run Your School</h2>
+                <p className="text-muted-foreground mx-auto max-w-2xl">
+                  A comprehensive suite of tools designed specifically for Nigerian schools, from academic management to
+                  billing.
+                </p>
+              </motion.div>
+            </div>
+            <div className="relative w-full overflow-hidden">
+              <motion.div
+                ref={scrollContainerRef}
+                className="flex gap-6 px-4 sm:px-6 lg:px-8 xl:px-12"
+                style={{ x: featuresX }}
+              >
+                {FEATURES.map((feature, index) => (
+                  <motion.div
+                    key={index}
+                    className="group border-border bg-card w-[320px] shrink-0 rounded-xl border p-6 shadow-sm transition-all duration-500 sm:w-[360px] sm:p-8"
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.05 }}
+                    viewport={{ once: true }}
+                  >
+                    <div className="bg-primary/10 text-primary mb-6 flex h-14 w-14 items-center justify-center rounded-xl">
+                      <HugeiconsIcon icon={feature.icon} size={28} />
+                    </div>
+                    <h3 className="mb-3 text-xl font-semibold">{feature.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+                  </motion.div>
+                ))}
+                <div className="w-[60px] shrink-0" />
+              </motion.div>
+            </div>
           </div>
         </section>
         <section className="bg-muted/30 py-20 lg:py-32">
@@ -360,42 +398,71 @@ const Page = () => {
           <div className="container mx-auto">
             <div className="grid items-center gap-12">
               <motion.div
+                className="flex flex-col items-center gap-y-10"
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Enterprise-Grade Security & Compliance</h2>
-                <p className="text-muted-foreground mb-8">
-                  Your data is protected with industry-leading security measures. We take privacy and compliance
-                  seriously.
-                </p>
-                <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
-                  <div className="space-y-6">
-                    {COMPLIANCES.map((comp, index) => (
-                      <div className="flex gap-4" key={index}>
-                        <div className="bg-primary/10 text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
-                          <HugeiconsIcon icon={comp.icon} size={20} />
-                        </div>
-                        <div>
-                          <h3 className="mb-1 font-semibold">{comp.label}</h3>
-                          <p className="text-muted-foreground text-sm">{comp.description}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="relative aspect-video">
-                    {[...Array(3)].map((_, index) => (
-                      <motion.div
-                        className="bg-primary/50 absolute top-1/2 left-1/2 size-full -translate-x-1/2 -translate-y-1/2 rounded-md"
-                        initial={{ rotate: 0 }}
+                <div>
+                  <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Enterprise-Grade Security & Compliance</h2>
+                  <p className="text-muted-foreground mb-8">
+                    Your data is protected with industry-leading security measures. We take privacy and compliance
+                    seriously.
+                  </p>
+                </div>
+                <div className="relative mx-auto aspect-2/1 w-full max-w-3xl cursor-pointer" onClick={handleCardClick}>
+                  <AnimatePresence mode="popLayout">
+                    {COMPLIANCES.map((comp, index) => {
+                      const position = (index - activeComplianceIndex + COMPLIANCES.length) % COMPLIANCES.length;
+                      const isActive = position === 0;
+
+                      return (
+                        <motion.div
+                          key={comp.label}
+                          className="bg-background absolute inset-0 flex items-center gap-6 rounded-xl border p-8 shadow-lg"
+                          initial={{ scale: 0.9, y: 40, opacity: 0 }}
+                          animate={{
+                            scale: 1 - position * 0.05,
+                            y: position * 16,
+                            zIndex: COMPLIANCES.length - position,
+                            opacity: position < 3 ? 1 - position * 0.2 : 0,
+                          }}
+                          exit={{ scale: 1.05, y: -20, opacity: 0 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 300,
+                            damping: 25,
+                          }}
+                          style={{ pointerEvents: isActive ? "auto" : "none" }}
+                        >
+                          <div className="bg-primary/10 text-primary flex h-14 w-14 shrink-0 items-center justify-center rounded-xl">
+                            <HugeiconsIcon icon={comp.icon} size={28} />
+                          </div>
+                          <div>
+                            <h3 className="mb-1 text-lg font-semibold">{comp.label}</h3>
+                            <p className="text-muted-foreground">{comp.description}</p>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </AnimatePresence>
+                  <div className="absolute -bottom-10 left-1/2 flex -translate-x-1/2 gap-2">
+                    {COMPLIANCES.map((_, index) => (
+                      <button
                         key={index}
-                        transition={{ duration: 0.5 * index }}
-                        whileInView={{ rotate: `${reverseIndex(1, index) * -15}deg` }}
-                      >
-                        <span className="text-background">{index + 1}</span>
-                      </motion.div>
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveComplianceIndex(index);
+                        }}
+                        className={`h-2 w-2 rounded-full transition-all ${
+                          index === activeComplianceIndex ? "bg-primary w-6" : "bg-muted-foreground/30"
+                        }`}
+                      />
                     ))}
                   </div>
+                  <p className="text-muted-foreground absolute -bottom-16 left-1/2 -translate-x-1/2 text-sm">
+                    Click to cycle through
+                  </p>
                 </div>
               </motion.div>
             </div>
@@ -410,7 +477,7 @@ const Page = () => {
               transition={{ duration: 0.5 }}
             >
               <div className="relative z-10">
-                <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Ready to Transform Your School?</h2>
+                <h2 className="text-background mb-4 text-3xl font-bold sm:text-4xl">Ready to Transform Your School?</h2>
                 <p className="mx-auto mb-8 max-w-2xl opacity-90">
                   Join hundreds of Nigerian schools already using ArcLMS to streamline their academic operations. Get
                   started in minutes.
