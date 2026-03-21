@@ -1,4 +1,5 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
+import { v4 as uuidv4 } from "uuid";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 
@@ -44,17 +45,26 @@ const clearAuthAndRedirect = () => {
   }
 };
 
+interface RequestConfigWithIdempotency extends InternalAxiosRequestConfig {
+  _idempotencyKey?: string;
+}
+
 const client = axios.create({
   baseURL,
   headers: {
     "Content-Type": "application/json",
-    "Idempotency-Key": "",
   },
 });
 
-client.interceptors.request.use((config) => {
+client.interceptors.request.use((config: RequestConfigWithIdempotency) => {
   const token = Cookies.get("ACCESS_TOKEN");
   if (token) config.headers["Authorization"] = `Bearer ${token}`;
+
+  if (!config._idempotencyKey) {
+    config._idempotencyKey = uuidv4();
+  }
+  config.headers["Idempotency-Key"] = config._idempotencyKey;
+
   return config;
 });
 
