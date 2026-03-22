@@ -1,6 +1,10 @@
 "use client";
 
+import { Copy01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import React from "react";
+
+import { copyValue } from "@/lib";
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -75,9 +79,14 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             <h2 className="text-center text-xl font-medium">
               Something went wrong. Our developers are working on fixing this
             </h2>
-            <p className="text-center text-sm text-neutral-600">
-              {this.state.error?.message || "An unexpected error occurred."}
-            </p>
+            <div className="flex items-center gap-x-4">
+              <p className="text-center text-sm text-neutral-600">
+                {this.state.error?.message || "An unexpected error occurred."}
+              </p>
+              <button onClick={() => copyValue(this.state.error?.message)}>
+                <HugeiconsIcon className="size-4" icon={Copy01Icon} />
+              </button>
+            </div>
             <div className="mt-2 flex gap-4">
               <button
                 className="rounded-md bg-neutral-200 px-4 py-2 transition-colors hover:bg-neutral-300"

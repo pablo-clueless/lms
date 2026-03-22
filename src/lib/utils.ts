@@ -135,7 +135,7 @@ export function normalize(path: string): string {
   return `/${firstPart}/${secondPart}`;
 }
 
-export function copyString(value?: string) {
+export function copyValue(value?: string) {
   if (!value) return;
   navigator.clipboard
     .writeText(value)

@@ -4,7 +4,7 @@ import "./globals.css";
 
 import { ErrorBoundary, QueryProvider } from "@/components/providers";
 import { Toaster } from "@/components/ui/sonner";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib";
 
 const hedvig = Hedvig_Letters_Serif({ subsets: ["latin"], variable: "--font-serif" });
 const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });

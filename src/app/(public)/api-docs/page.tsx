@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { Footer, Navbar } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
@@ -54,81 +53,70 @@ const methodColors: Record<string, string> = {
 
 const Page = () => {
   return (
-    <>
-      <Navbar />
-      <main>
-        {/* Hero Section */}
-        <section className="border-b py-20">
-          <div className="container mx-auto">
-            <div className="mx-auto max-w-2xl text-center">
-              <span className="bg-primary/10 text-primary mb-4 inline-block rounded-full px-4 py-1.5 text-sm font-medium">
-                API Reference
-              </span>
-              <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl">ArcLMS REST API</h1>
-              <p className="text-muted-foreground mb-8 text-lg">
-                Integrate ArcLMS with your existing systems. Our RESTful API provides programmatic access to all
-                platform features.
-              </p>
-              <div className="flex justify-center gap-4">
-                <Button>Get API Key</Button>
-                <Button variant="outline">View on Postman</Button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Base URL */}
-        <section className="border-b py-8">
-          <div className="container mx-auto">
-            <div className="flex flex-col items-center gap-4 sm:flex-row">
-              <span className="text-sm font-medium">Base URL:</span>
-              <code className="bg-muted rounded-lg px-4 py-2 text-sm">https://api.arclms.com/v1</code>
-            </div>
-          </div>
-        </section>
-
-        {/* Endpoints */}
-        <section className="py-20">
-          <div className="container mx-auto">
-            <div className="space-y-12">
-              {endpoints.map((section, index) => (
-                <div key={index}>
-                  <h2 className="mb-4 text-xl font-bold">{section.category}</h2>
-                  <div className="overflow-hidden rounded-xl border">
-                    {section.items.map((endpoint, endpointIndex) => (
-                      <div
-                        key={endpointIndex}
-                        className="hover:bg-muted/50 flex items-center gap-4 border-b p-4 last:border-b-0"
-                      >
-                        <span className={`rounded px-2 py-1 text-xs font-bold ${methodColors[endpoint.method]}`}>
-                          {endpoint.method}
-                        </span>
-                        <code className="flex-1 text-sm">{endpoint.path}</code>
-                        <span className="text-muted-foreground text-sm">{endpoint.description}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Help CTA */}
-        <section className="bg-muted/30 border-t py-16">
-          <div className="container mx-auto text-center">
-            <h2 className="mb-4 text-2xl font-bold">Need Help Integrating?</h2>
-            <p className="text-muted-foreground mx-auto mb-8 max-w-xl">
-              Our developer support team can help you build your integration.
+    <main>
+      <section className="border-b py-20">
+        <div className="container mx-auto">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="bg-primary/10 text-primary mb-4 inline-block rounded-full px-4 py-1.5 text-sm font-medium">
+              API Reference
+            </span>
+            <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl">ArcLMS REST API</h1>
+            <p className="text-muted-foreground mb-8 text-lg">
+              Integrate ArcLMS with your existing systems. Our RESTful API provides programmatic access to all platform
+              features.
             </p>
-            <Button variant="outline" asChild>
-              <Link href="/contact">Contact Developer Support</Link>
-            </Button>
+            <div className="flex justify-center gap-4">
+              <Button>Get API Key</Button>
+              <Button variant="outline">View on Postman</Button>
+            </div>
           </div>
-        </section>
-      </main>
-      <Footer />
-    </>
+        </div>
+      </section>
+      <section className="border-b py-8">
+        <div className="container mx-auto">
+          <div className="flex flex-col items-center gap-4 sm:flex-row">
+            <span className="text-sm font-medium">Base URL:</span>
+            <code className="bg-muted rounded-lg px-4 py-2 text-sm">https://api.arclms.com/v1</code>
+          </div>
+        </div>
+      </section>
+      <section className="py-20">
+        <div className="container mx-auto">
+          <div className="space-y-12">
+            {endpoints.map((section, index) => (
+              <div key={index}>
+                <h2 className="mb-4 text-xl font-bold">{section.category}</h2>
+                <div className="overflow-hidden rounded-xl border">
+                  {section.items.map((endpoint, endpointIndex) => (
+                    <div
+                      key={endpointIndex}
+                      className="hover:bg-muted/50 flex items-center gap-4 border-b p-4 last:border-b-0"
+                    >
+                      <span className={`rounded px-2 py-1 text-xs font-bold ${methodColors[endpoint.method]}`}>
+                        {endpoint.method}
+                      </span>
+                      <code className="flex-1 text-sm">{endpoint.path}</code>
+                      <span className="text-muted-foreground text-sm">{endpoint.description}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="bg-muted/30 border-t py-16">
+        <div className="container mx-auto text-center">
+          <h2 className="mb-4 text-2xl font-bold">Need Help Integrating?</h2>
+          <p className="text-muted-foreground mx-auto mb-8 max-w-xl">
+            Our developer support team can help you build your integration.
+          </p>
+          <Button variant="outline" asChild>
+            <Link href="/contact">Contact Developer Support</Link>
+          </Button>
+        </div>
+      </section>
+    </main>
   );
 };
 

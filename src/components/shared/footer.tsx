@@ -53,7 +53,7 @@ export const Footer = () => {
         <div className="grid gap-8 lg:grid-cols-6">
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block">
-              <h2 className="text-4xl font-bold">ArcLMS</h2>
+              <h2 className="text-background text-4xl font-bold">ArcLMS</h2>
             </Link>
             <p className="text-muted-foreground mt-4 max-w-xs text-sm">
               The complete learning management system built specifically for Nigerian primary and secondary schools.

@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { Footer, Navbar } from "@/components/shared";
-
 export const metadata: Metadata = {
   title: "Blog | ArcLMS",
   description: "Insights, updates, and best practices for Nigerian schools.",
@@ -56,7 +54,6 @@ const posts = [
 const Page = () => {
   return (
     <>
-      <Navbar />
       <main>
         {/* Hero Section */}
         <section className="border-b py-20">
@@ -115,7 +112,6 @@ const Page = () => {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   );
 };

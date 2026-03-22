@@ -1,9 +1,8 @@
-import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 
 import { cn } from "@/lib";
 
-type StepProps = {
+export type StepProps = {
   index: number;
   label: string;
   description?: string;
@@ -28,7 +27,7 @@ export function Stepper({ current, steps, className, onStepChange, stepperClassN
           role="button"
           className={cn(
             "flex flex-1 flex-col gap-y-0.5 p-2",
-            current === index && "bg-primary-50/50 text-primary-600",
+            current === index && "bg-yellow-100 text-yellow-600",
             current < index && "bg-neutral-200 text-neutral-600",
             current > index && "bg-green-100 text-green-600",
             onStepChange ? "cursor-pointer" : "cursor-default",
@@ -36,11 +35,8 @@ export function Stepper({ current, steps, className, onStepChange, stepperClassN
           )}
         >
           <div className="flex items-center gap-x-2">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} />
-            <div className="flex items-center gap-x-2">
-              {icon && <HugeiconsIcon icon={icon} className="size-4" />}
-              <span className="text-sm font-medium">{label}</span>
-            </div>
+            {icon && <HugeiconsIcon icon={icon} className="size-4" />}
+            <span className="text-sm font-medium">{label}</span>
           </div>
           <span className="text-xs">{description}</span>
         </div>

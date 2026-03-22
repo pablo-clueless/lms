@@ -1,7 +1,7 @@
 import React from "react";
 
+import { NotificationProvider, WithAuth } from "@/components/providers";
 import { Header, Sidebar } from "@/components/shared";
-import { WithAuth } from "@/components/providers";
 
 interface Props {
   children: React.ReactNode;
@@ -9,15 +9,17 @@ interface Props {
 
 const DashboardLayout = ({ children }: Props) => {
   return (
-    <WithAuth roles={["ADMIN", "SUPER_ADMIN"]}>
-      <div className="h-screen w-screen overflow-hidden">
-        <Header />
-        <div className="flex h-[calc(100%-64px)] w-full items-start">
-          <Sidebar role="ADMIN" />
-          <main className="bg-background h-full flex-1 overflow-y-auto">{children}</main>
+    <NotificationProvider>
+      <WithAuth roles={["ADMIN", "SUPER_ADMIN"]}>
+        <div className="h-screen w-screen overflow-hidden">
+          <Header />
+          <div className="flex h-[calc(100%-64px)] w-full items-start">
+            <Sidebar role="ADMIN" />
+            <main className="bg-background h-full flex-1 overflow-y-auto">{children}</main>
+          </div>
         </div>
-      </div>
-    </WithAuth>
+      </WithAuth>
+    </NotificationProvider>
   );
 };
 
