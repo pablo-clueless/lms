@@ -40,13 +40,13 @@ const values = [
 
 const Page = () => {
   return (
-    <main>
+    <main className="bg-background">
       <section className="py-20 lg:py-32">
         <div className="container mx-auto text-center">
           <span className="bg-primary/10 text-primary mb-4 inline-block rounded-full px-4 py-1.5 text-sm font-medium">
             About Us
           </span>
-          <h1 className="mx-auto mb-6 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
+          <h1 className="text-foreground mx-auto mb-6 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
             Transforming Education in Nigerian Schools
           </h1>
           <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg">
@@ -55,12 +55,12 @@ const Page = () => {
           </p>
         </div>
       </section>
-      <section className="bg-muted/30 border-y py-12">
+      <section className="border-border bg-muted/30 border-y py-12">
         <div className="container mx-auto">
           <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <p className="text-primary text-3xl font-bold lg:text-4xl">{stat.value}</p>
+                <h3 className="text-primary text-3xl font-bold lg:text-4xl">{stat.value}</h3>
                 <p className="text-muted-foreground mt-1 text-sm">{stat.label}</p>
               </div>
             ))}
@@ -70,7 +70,7 @@ const Page = () => {
       <section className="py-20">
         <div className="container mx-auto">
           <div className="mx-auto max-w-3xl">
-            <h2 className="mb-6 text-3xl font-bold">Our Story</h2>
+            <h2 className="text-foreground mb-6 text-3xl font-bold">Our Story</h2>
             <div className="text-muted-foreground space-y-4">
               <p>
                 ArcLMS started in 2023 when our founders, experienced educators and technologists, noticed a gap in the
@@ -92,11 +92,11 @@ const Page = () => {
       </section>
       <section className="bg-muted/30 py-20">
         <div className="container mx-auto">
-          <h2 className="mb-12 text-center text-3xl font-bold">Our Values</h2>
+          <h2 className="text-foreground mb-12 text-center text-3xl font-bold">Our Values</h2>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {values.map((value, index) => (
               <div key={index} className="bg-card rounded-xl border p-6">
-                <h3 className="mb-2 text-lg font-semibold">{value.title}</h3>
+                <h3 className="text-foreground mb-2 text-lg font-semibold">{value.title}</h3>
                 <p className="text-muted-foreground text-sm">{value.description}</p>
               </div>
             ))}
@@ -105,7 +105,7 @@ const Page = () => {
       </section>
       <section className="py-20">
         <div className="container mx-auto text-center">
-          <h2 className="mb-4 text-3xl font-bold">Ready to Transform Your School?</h2>
+          <h2 className="text-foreground mb-4 text-3xl font-bold">Ready to Transform Your School?</h2>
           <p className="text-muted-foreground mx-auto mb-8 max-w-xl">
             Join hundreds of Nigerian schools already using ArcLMS.
           </p>

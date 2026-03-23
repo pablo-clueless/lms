@@ -13,7 +13,7 @@ import { cn } from "@/lib";
 const breadcrumbs = [{ label: "Classes", href: "/admin/classes" }];
 
 const initialParams = {
-  page: 0,
+  page: 1,
   limit: 20,
 };
 
@@ -44,12 +44,12 @@ const Page = () => {
         </div>
       </div>
       <div className="w-full space-y-4">
-        <DataTable columns={classColumns} data={data?.classes || []} />
+        <DataTable columns={classColumns("ADMIN")} data={data?.classes || []} />
         <Pagination
           onPageChange={(page) => handleChange("page", page)}
           page={values.page}
           pageSize={values.limit}
-          total={data?.pagination?.count || 0}
+          total={data?.pagination?.total || 0}
         />
       </div>
     </div>

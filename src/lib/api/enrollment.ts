@@ -3,6 +3,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Enrollment, Pagination, PaginationParams, QueryParams } from "@/types";
 import { apiClient } from "../api-client";
 
+export interface CreateEnrollmentDto {
+  email: string;
+  first_name: string;
+  last_name: string;
+  class_id: string;
+  middle_name?: string;
+  phone?: string;
+}
+
 interface EnrollStudentDto {
   student_id: string;
   class_id: string;
@@ -22,6 +31,7 @@ const keys = {
   list: () => [...keys.all, "get-enrollments"],
   get: (id: string) => [...keys.all, "get-enrollment", id],
   enroll: () => [...keys.all, "enroll-student"],
+  create: () => [...keys.all, "create-student"],
   transfer: () => [...keys.all, "transfer-student"],
 };
 
@@ -35,6 +45,7 @@ const enrollmentApi = {
     apiClient.get<ListEnrollmentResponse>("/enrollments", params as QueryParams),
   get: (id: string) => apiClient.get<Enrollment>(`/enrollments/${id}`),
   enroll: (body: EnrollStudentDto) => apiClient.post<Enrollment>("/enrollments", body),
+  create: (body: CreateEnrollmentDto) => apiClient.post<Enrollment>("/enrollments/create-student", body),
   transfer: (id: string, body: TransferStudentDto) => apiClient.post<Enrollment>(`/enrollments/${id}/transfer`, body),
 };
 
@@ -58,6 +69,17 @@ export function useEnrollStudent() {
   return useMutation({
     mutationKey: keys.enroll(),
     mutationFn: enrollmentApi.enroll,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: keys.list() });
+    },
+  });
+}
+
+export function useCreateEnrollment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: keys.create(),
+    mutationFn: enrollmentApi.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: keys.list() });
     },

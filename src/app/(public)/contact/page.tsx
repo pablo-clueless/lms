@@ -30,14 +30,14 @@ const contactInfo = [
 
 const Page = () => {
   return (
-    <main>
+    <main className="bg-background">
       <section className="py-20 lg:py-32">
         <div className="container mx-auto">
           <div className="mx-auto max-w-2xl text-center">
             <span className="bg-primary/10 text-primary mb-4 inline-block rounded-full px-4 py-1.5 text-sm font-medium">
               Contact Us
             </span>
-            <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl">Get in Touch</h1>
+            <h1 className="text-foreground mb-6 text-4xl font-bold tracking-tight sm:text-5xl">Get in Touch</h1>
             <p className="text-muted-foreground text-lg">
               Have questions about ArcLMS? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as
               soon as possible.
@@ -45,28 +45,28 @@ const Page = () => {
           </div>
           <div className="mt-16 grid gap-12 lg:grid-cols-2">
             <div className="bg-card rounded-2xl border p-8">
-              <h2 className="mb-6 text-xl font-semibold">Send us a message</h2>
+              <h2 className="text-foreground mb-6 text-xl font-semibold">Send us a message</h2>
               <form className="space-y-6">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="mb-2 block text-sm font-medium">First Name</label>
+                    <label className="text-foreground mb-2 block text-sm font-medium">First Name</label>
                     <Input placeholder="John" />
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-medium">Last Name</label>
+                    <label className="text-foreground mb-2 block text-sm font-medium">Last Name</label>
                     <Input placeholder="Doe" />
                   </div>
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-medium">Email</label>
+                  <label className="text-foreground mb-2 block text-sm font-medium">Email</label>
                   <Input type="email" placeholder="john@school.edu.ng" />
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-medium">School Name</label>
+                  <label className="text-foreground mb-2 block text-sm font-medium">School Name</label>
                   <Input placeholder="Your school name" />
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-medium">Message</label>
+                  <label className="text-foreground mb-2 block text-sm font-medium">Message</label>
                   <Textarea placeholder="How can we help you?" rows={5} />
                 </div>
                 <Button type="submit" className="w-full">
@@ -76,7 +76,7 @@ const Page = () => {
             </div>
             <div className="space-y-8">
               <div>
-                <h2 className="mb-6 text-xl font-semibold">Contact Information</h2>
+                <h2 className="text-foreground mb-6 text-xl font-semibold">Contact Information</h2>
                 <div className="space-y-4">
                   {contactInfo.map((item, index) => (
                     <div key={index} className="flex items-start gap-4">
@@ -90,7 +90,7 @@ const Page = () => {
                             {item.value}
                           </a>
                         ) : (
-                          <p className="font-medium">{item.value}</p>
+                          <p className="text-foreground font-medium">{item.value}</p>
                         )}
                       </div>
                     </div>
@@ -98,7 +98,7 @@ const Page = () => {
                 </div>
               </div>
               <div className="bg-muted/30 rounded-xl border p-6">
-                <h3 className="mb-2 font-semibold">Need immediate help?</h3>
+                <h3 className="text-foreground mb-2 font-semibold">Need immediate help?</h3>
                 <p className="text-muted-foreground mb-4 text-sm">
                   Our support team is available Monday to Friday, 8am to 6pm WAT.
                 </p>
@@ -107,7 +107,7 @@ const Page = () => {
                 </Button>
               </div>
               <div className="bg-muted/30 rounded-xl border p-6">
-                <h3 className="mb-2 font-semibold">For existing customers</h3>
+                <h3 className="text-foreground mb-2 font-semibold">For existing customers</h3>
                 <p className="text-muted-foreground mb-4 text-sm">
                   Access our help center for guides, FAQs, and support resources.
                 </p>

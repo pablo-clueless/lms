@@ -50,13 +50,13 @@ const solutions = [
 
 const Page = () => {
   return (
-    <main>
+    <main className="bg-background">
       <section className="py-20 lg:py-32">
         <div className="container mx-auto text-center">
           <span className="bg-primary/10 text-primary mb-4 inline-block rounded-full px-4 py-1.5 text-sm font-medium">
             Solutions
           </span>
-          <h1 className="mx-auto mb-6 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
+          <h1 className="text-foreground mx-auto mb-6 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
             Solutions for Every Role
           </h1>
           <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg">
@@ -73,13 +73,13 @@ const Page = () => {
                 <div className="bg-primary text-primary-foreground mb-4 flex h-14 w-14 items-center justify-center rounded-xl">
                   <HugeiconsIcon icon={solution.icon} className="size-7" />
                 </div>
-                <h2 className="mb-2 text-2xl font-bold">{solution.title}</h2>
+                <h2 className="text-foreground mb-2 text-2xl font-bold">{solution.title}</h2>
                 <p className="text-muted-foreground mb-6">{solution.description}</p>
                 <ul className="mb-6 space-y-2">
                   {solution.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-center gap-2 text-sm">
                       <div className="bg-primary h-1.5 w-1.5 rounded-full" />
-                      {feature}
+                      <span className="text-foreground">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -93,7 +93,7 @@ const Page = () => {
       </section>
       <section className="py-20">
         <div className="container mx-auto text-center">
-          <h2 className="mb-4 text-2xl font-bold">Ready to Get Started?</h2>
+          <h2 className="text-foreground mb-4 text-2xl font-bold">Ready to Get Started?</h2>
           <p className="text-muted-foreground mx-auto mb-8 max-w-xl">
             Start your free trial today and see how ArcLMS can transform your school.
           </p>

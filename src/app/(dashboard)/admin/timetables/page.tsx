@@ -3,6 +3,7 @@
 import { RefreshIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
+import { CreateTimeTable } from "@/components/admin/create-timetable";
 import { DataTable, Breadcrumb, Loader } from "@/components/shared";
 import { useGetTimetables } from "@/lib/api/timetable";
 import { timetableColumns } from "@/config/columns";
@@ -33,6 +34,7 @@ const Page = () => {
           <p className="text-sm font-medium text-gray-600">Manage class schedules and timetables</p>
         </div>
         <div className="flex items-center gap-x-4">
+          <CreateTimeTable />
           <Button disabled={isFetching} onClick={() => refetch()} variant="outline" size="sm">
             <HugeiconsIcon
               icon={RefreshIcon}
@@ -44,7 +46,7 @@ const Page = () => {
         </div>
       </div>
       <div className="w-full space-y-4">
-        <DataTable columns={timetableColumns} data={data?.data || []} />
+        <DataTable columns={timetableColumns("ADMIN")} data={data?.data || []} />
       </div>
     </div>
   );

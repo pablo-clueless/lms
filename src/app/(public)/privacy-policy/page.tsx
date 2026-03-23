@@ -1,10 +1,10 @@
+import { PagePlaceholder } from "@/components/shared";
+
 const Page = () => {
   return (
-    <>
-      <div className="">
-        <div className="container mx-auto"></div>
-      </div>
-    </>
+    <main className="bg-background">
+      <PagePlaceholder title="Privacy Policy" description="" />;
+    </main>
   );
 };
 

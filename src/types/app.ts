@@ -34,8 +34,12 @@ export interface PaginatedResponse<T extends object> {
 }
 
 export interface Pagination {
-  count: number;
-  has_more: boolean;
+  page: number;
+  limit: number;
+  total: number;
+  total_pages: number;
+  has_next: boolean;
+  has_previous: boolean;
 }
 
 export interface HttpResponse<T> {

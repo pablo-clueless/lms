@@ -13,9 +13,11 @@ import { cn } from "@/lib";
 const breadcrumbs = [{ label: "Courses", href: "/admin/courses" }];
 
 const initialParams = {
-  page: 0,
+  page: 1,
   limit: 20,
   class_id: "",
+  term_id: "",
+  tutor_id: "",
 };
 
 const Page = () => {
@@ -50,7 +52,7 @@ const Page = () => {
           onPageChange={(page) => handleChange("page", page)}
           page={values.page}
           pageSize={values.limit}
-          total={data?.pagination?.count || 0}
+          total={data?.pagination?.total || 0}
         />
       </div>
     </div>

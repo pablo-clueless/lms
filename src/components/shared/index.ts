@@ -14,4 +14,5 @@ export * from "./sidebar";
 export * from "./status-badge";
 export * from "./stepper";
 export * from "./tab-panel";
-export * from "./time-table";
+export * from "./theme-selector";
+export * from "./timetable";

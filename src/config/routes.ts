@@ -223,12 +223,6 @@ const ADMIN_ROUTES: RouteConfig[] = [
     permissions: ["classes:read"],
   },
   {
-    name: "Courses",
-    href: "/admin/courses",
-    icon: Book02Icon,
-    permissions: ["courses:read"],
-  },
-  {
     name: "Timetables",
     href: "/admin/timetables",
     icon: Clock01Icon,

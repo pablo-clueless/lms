@@ -1,3 +1,7 @@
+import type { Course } from "./course";
+import type { Class } from "./class";
+import type { User } from "./user";
+
 export type DayOfWeek = "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY";
 export type SwapRequestStatus = "PENDING" | "APPROVED" | "REJECTED" | "ESCALATED" | "CANCELLED";
 
@@ -5,14 +9,13 @@ export interface Period {
   id: string;
   tenant_id: string;
   timetable_id: string;
-  course_id: string;
-  tutor_id: string;
-  class_id: string;
+  course: Course;
+  tutor: User;
+  class: Class;
   day_of_week: DayOfWeek;
-  start_time: Date;
-  end_time: Date;
+  start_time: string;
+  end_time: string;
   period_number: number;
-  notes?: string;
   created_at: Date;
   updated_at: Date;
 }

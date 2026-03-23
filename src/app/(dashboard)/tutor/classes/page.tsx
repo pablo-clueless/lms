@@ -13,7 +13,7 @@ import { cn } from "@/lib";
 const breadcrumbs = [{ label: "My Classes", href: "/tutor/classes" }];
 
 const initialParams = {
-  page: 0,
+  page: 1,
   limit: 20,
 };
 
@@ -44,7 +44,7 @@ const Page = () => {
         </div>
       </div>
       <div className="w-full space-y-4">
-        <DataTable columns={classColumns} data={data?.classes || []} />
+        <DataTable columns={classColumns("TUTOR")} data={data?.classes || []} />
       </div>
     </div>
   );

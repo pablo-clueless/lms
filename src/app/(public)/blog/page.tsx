@@ -54,11 +54,11 @@ const posts = [
 const Page = () => {
   return (
     <>
-      <main>
+      <main className="bg-background">
         {/* Hero Section */}
         <section className="border-b py-20">
           <div className="container mx-auto text-center">
-            <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl">Blog</h1>
+            <h1 className="text-foreground mb-6 text-4xl font-bold tracking-tight sm:text-5xl">Blog</h1>
             <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
               Insights, updates, and best practices for Nigerian schools using ArcLMS.
             </p>
@@ -82,7 +82,7 @@ const Page = () => {
                       </span>
                       <span className="text-muted-foreground text-xs">{post.readTime}</span>
                     </div>
-                    <h2 className="group-hover:text-primary mb-2 text-lg font-semibold transition-colors">
+                    <h2 className="text-foreground group-hover:text-primary mb-2 text-lg font-semibold transition-colors">
                       <Link href="#">{post.title}</Link>
                     </h2>
                     <p className="text-muted-foreground mb-4 text-sm">{post.excerpt}</p>
@@ -97,7 +97,7 @@ const Page = () => {
         {/* Newsletter CTA */}
         <section className="bg-muted/30 border-t py-16">
           <div className="container mx-auto text-center">
-            <h2 className="mb-4 text-2xl font-bold">Stay Updated</h2>
+            <h2 className="text-foreground mb-4 text-2xl font-bold">Stay Updated</h2>
             <p className="text-muted-foreground mx-auto mb-8 max-w-xl">
               Subscribe to our newsletter for the latest updates and educational insights.
             </p>

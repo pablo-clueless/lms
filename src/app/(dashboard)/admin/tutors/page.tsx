@@ -4,6 +4,7 @@ import { RefreshIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
 import { DataTable, Breadcrumb, Loader, Pagination } from "@/components/shared";
+import { CreateTutor } from "@/components/admin/create-tutor";
 import { useGetUsers } from "@/lib/api/user";
 import { tutorColumns } from "@/config/columns";
 import { Button } from "@/components/ui/button";
@@ -13,9 +14,9 @@ import { cn } from "@/lib";
 const breadcrumbs = [{ label: "Tutors", href: "/admin/tutors" }];
 
 const initialParams = {
-  page: 0,
+  page: 1,
   limit: 20,
-  role: "TUTOR" as const,
+  role: "TUTOR",
   status: "",
   search: "",
 };
@@ -44,6 +45,7 @@ const Page = () => {
             />
             {isFetching ? "Refreshing..." : "Refresh"}
           </Button>
+          <CreateTutor />
         </div>
       </div>
       <div className="w-full space-y-4">
@@ -52,7 +54,7 @@ const Page = () => {
           onPageChange={(page) => handleChange("page", page)}
           page={values.page}
           pageSize={values.limit}
-          total={data?.pagination?.count || 0}
+          total={data?.pagination?.total || 0}
         />
       </div>
     </div>

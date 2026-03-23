@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 
 import { Breadcrumb, DataTable, Loader } from "@/components/shared";
+import { CreateTerm } from "@/components/admin/create-term";
 import { useGetSession } from "@/lib/api/session";
 import { termColumns } from "@/config/columns";
 import { useGetTerms } from "@/lib/api/term";
@@ -28,7 +29,9 @@ const Page = () => {
           <h3 className="text-3xl">{session?.label}</h3>
           <p className="text-sm font-medium text-gray-600">View and manage session information</p>
         </div>
-        <div className="flex items-center gap-x-4"></div>
+        <div className="flex items-center gap-x-4">
+          <CreateTerm sessionId={id} />
+        </div>
       </div>
       <div className="w-full space-y-4">
         <DataTable columns={termColumns} data={terms?.terms || []} />

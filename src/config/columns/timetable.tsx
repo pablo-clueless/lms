@@ -1,18 +1,19 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { StatusBadge, DateCell, DateTimeCell, ActionCell, ActionIcons } from "./shared";
-import type { Timetable } from "@/types";
+import type { Role, Timetable } from "@/types";
+import { getBasePathByRole } from "@/lib";
 
-export const timetableColumns: ColumnDef<Timetable>[] = [
+export const timetableColumns = (role: Role): ColumnDef<Timetable>[] => [
   {
-    accessorKey: "class_id",
+    accessorKey: "class.name",
     header: "Class",
-    cell: ({ row }) => <span>{row.original.class_id}</span>,
+    cell: ({ row }) => <span>{row.original.class.name}</span>,
   },
   {
-    accessorKey: "term_id",
+    accessorKey: "term.ordinal",
     header: "Term",
-    cell: ({ row }) => <span>{row.original.term_id}</span>,
+    cell: ({ row }) => <span>{row.original.term.ordinal}</span>,
   },
   {
     accessorKey: "generation_version",
@@ -45,7 +46,11 @@ export const timetableColumns: ColumnDef<Timetable>[] = [
     cell: ({ row }) => (
       <ActionCell
         actions={[
-          { label: "View Timetable", icon: ActionIcons.View, onClick: () => console.log("View", row.original.id) },
+          {
+            label: "View Timetable",
+            icon: ActionIcons.View,
+            href: `${getBasePathByRole(role)}/timetables/${row.original.id}`,
+          },
           { label: "Edit", icon: ActionIcons.Edit, onClick: () => console.log("Edit", row.original.id) },
           {
             label: "Archive",

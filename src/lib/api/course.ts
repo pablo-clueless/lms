@@ -10,6 +10,8 @@ type UpdateCourse = {
 
 interface CourseQueries {
   class_id?: string;
+  term_id?: string;
+  tutor_id?: string;
 }
 
 const keys = {

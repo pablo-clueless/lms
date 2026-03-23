@@ -20,7 +20,7 @@ type UpdateUser = {
 const keys = {
   all: ["users"] as const,
   invite: () => [...keys.all, "invite-user"],
-  list: () => [...keys.all, "get-users"],
+  list: (params?: PaginationParams & UserQueries) => [...keys.all, "get-users", params],
   get: (id: string) => [...keys.all, "get-user", id],
   getMe: () => [...keys.all, "get-me"],
   update: () => [...keys.all, "update-user"],
@@ -45,7 +45,7 @@ const userApi = {
 
 export function useGetUsers(params: PaginationParams & UserQueries) {
   return useQuery({
-    queryKey: keys.list(),
+    queryKey: keys.list(params),
     queryFn: () => userApi.list(params),
   });
 }
@@ -56,7 +56,7 @@ export function useInviteUser() {
     mutationKey: keys.invite(),
     mutationFn: userApi.invite,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: keys.list() });
+      queryClient.invalidateQueries({ queryKey: [...keys.all, "get-users"] });
     },
   });
 }
@@ -81,7 +81,7 @@ export function useUpdateUser() {
     mutationKey: keys.update(),
     mutationFn: userApi.update,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: keys.list() });
+      queryClient.invalidateQueries({ queryKey: [...keys.all, "get-users"] });
     },
   });
 }
@@ -103,7 +103,7 @@ export function useDeactivateUser() {
     mutationKey: keys.deactivate(),
     mutationFn: userApi.deactivate,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: keys.list() });
+      queryClient.invalidateQueries({ queryKey: [...keys.all, "get-users"] });
     },
   });
 }

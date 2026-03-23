@@ -4,6 +4,8 @@ import { RefreshIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
 import { DataTable, Breadcrumb, Loader } from "@/components/shared";
+import { CreateEmail } from "@/components/admin/create-email";
+import { CreateNotification } from "@/components/admin/create-notification";
 import { useGetEmails } from "@/lib/api/communication";
 import { emailColumns } from "@/config/columns";
 import { Button } from "@/components/ui/button";
@@ -33,6 +35,8 @@ const Page = () => {
             />
             {isFetching ? "Refreshing..." : "Refresh"}
           </Button>
+          <CreateNotification />
+          <CreateEmail />
         </div>
       </div>
       <div className="w-full space-y-4">

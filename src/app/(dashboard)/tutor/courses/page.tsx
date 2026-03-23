@@ -7,20 +7,25 @@ import { DataTable, Breadcrumb, Loader } from "@/components/shared";
 import { useGetCourses } from "@/lib/api/course";
 import { courseColumns } from "@/config/columns";
 import { Button } from "@/components/ui/button";
+import { useUserStore } from "@/store/core";
 import { useHandler } from "@/hooks";
 import { cn } from "@/lib";
 
 const breadcrumbs = [{ label: "My Courses", href: "/tutor/courses" }];
 
 const initialParams = {
-  page: 0,
+  page: 1,
   limit: 20,
+  class_id: "",
+  term_id: "",
+  tutor_id: "",
 };
 
 const Page = () => {
   const { values } = useHandler(initialParams);
+  const { user } = useUserStore();
 
-  const { data, isFetching, isPending, refetch } = useGetCourses(values);
+  const { data, isFetching, isPending, refetch } = useGetCourses({ ...values, tutor_id: user?.id });
 
   if (isPending) return <Loader />;
 

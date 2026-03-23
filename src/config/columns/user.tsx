@@ -1,9 +1,9 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { StatusBadge, DateCell, UserAvatarCell, ActionCell, ActionIcons } from "./shared";
-import type { User } from "@/types";
+import type { Role, User } from "@/types";
+import { getBasePathByRole } from "@/lib";
 
-// Base user columns that can be reused across admin, tutor, and student views
 export const userColumns: ColumnDef<User>[] = [
   {
     id: "user",
@@ -43,7 +43,6 @@ export const userColumns: ColumnDef<User>[] = [
   },
 ];
 
-// Admin-specific columns
 export const adminColumns: ColumnDef<User>[] = [
   {
     id: "user",
@@ -96,7 +95,6 @@ export const adminColumns: ColumnDef<User>[] = [
   },
 ];
 
-// Tutor-specific columns (can include tutor-related info if extended)
 export const tutorColumns: ColumnDef<User>[] = [
   {
     id: "user",
@@ -149,8 +147,7 @@ export const tutorColumns: ColumnDef<User>[] = [
   },
 ];
 
-// Student-specific columns
-export const studentColumns: ColumnDef<User>[] = [
+export const studentColumns = (role: Role): ColumnDef<User>[] => [
   {
     id: "user",
     header: "Student",
@@ -188,7 +185,11 @@ export const studentColumns: ColumnDef<User>[] = [
     cell: ({ row }) => (
       <ActionCell
         actions={[
-          { label: "View Profile", icon: ActionIcons.View, onClick: () => console.log("View", row.original.id) },
+          {
+            label: "View Profile",
+            icon: ActionIcons.View,
+            href: `/${getBasePathByRole(role)}/students/${row.original.id}`,
+          },
           { label: "Edit", icon: ActionIcons.Edit, onClick: () => console.log("Edit", row.original.id) },
           {
             label: "Suspend",

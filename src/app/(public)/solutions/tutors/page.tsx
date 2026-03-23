@@ -37,14 +37,16 @@ const features = [
 
 const Page = () => {
   return (
-    <main>
+    <main className="bg-background">
       <section className="py-20 lg:py-32">
         <div className="container mx-auto">
           <div className="mx-auto max-w-3xl text-center">
             <span className="bg-primary/10 text-primary mb-4 inline-block rounded-full px-4 py-1.5 text-sm font-medium">
               For Tutors
             </span>
-            <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl">Focus on Teaching, Not Admin</h1>
+            <h1 className="text-foreground mb-6 text-4xl font-bold tracking-tight sm:text-5xl">
+              Focus on Teaching, Not Admin
+            </h1>
             <p className="text-muted-foreground mb-8 text-lg">
               ArcLMS provides tutors with intuitive tools to create content, assess students, and track progress — so
               you can focus on what matters most: teaching.
@@ -57,11 +59,11 @@ const Page = () => {
       </section>
       <section className="bg-muted/30 border-y py-20">
         <div className="container mx-auto">
-          <h2 className="mb-12 text-center text-2xl font-bold">Tutor Features</h2>
+          <h2 className="text-foreground mb-12 text-center text-2xl font-bold">Tutor Features</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, index) => (
               <div key={index} className="bg-card rounded-xl border p-6">
-                <h3 className="mb-2 font-semibold">{feature.title}</h3>
+                <h3 className="text-foreground mb-2 font-semibold">{feature.title}</h3>
                 <p className="text-muted-foreground text-sm">{feature.description}</p>
               </div>
             ))}
@@ -70,7 +72,7 @@ const Page = () => {
       </section>
       <section className="py-20">
         <div className="container mx-auto text-center">
-          <h2 className="mb-4 text-2xl font-bold">Ready to Enhance Your Teaching?</h2>
+          <h2 className="text-foreground mb-4 text-2xl font-bold">Ready to Enhance Your Teaching?</h2>
           <p className="text-muted-foreground mx-auto mb-8 max-w-xl">
             Join thousands of tutors using ArcLMS to deliver better learning experiences.
           </p>

@@ -8,7 +8,7 @@ interface PagePlaceholderProps {
 
 export const PagePlaceholder = ({ title, description }: PagePlaceholderProps) => {
   return (
-    <div className="flex h-full flex-col items-center justify-center p-8">
+    <div className="flex h-full min-h-150 flex-col items-center justify-center p-8">
       <div className="bg-muted mb-6 flex h-20 w-20 items-center justify-center rounded-full">
         <HugeiconsIcon icon={ConstructionIcon} className="text-muted-foreground size-10" />
       </div>

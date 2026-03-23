@@ -228,13 +228,9 @@
   left: 0;
   height: 1px;
   width: 0;
-  background: #000;
+  background: var(--background);
   transform-origin: left;
   transition: all 500ms;
-}
-
-.link.dark::before {
-  background: #fff;
 }
 
 .link:hover::before {

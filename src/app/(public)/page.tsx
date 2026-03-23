@@ -189,7 +189,7 @@ const FeatureCard = ({
 
   return (
     <motion.div
-      className="bg-card absolute inset-0 flex flex-col justify-center space-y-6 p-8 sm:p-12"
+      className="absolute inset-0 flex flex-col justify-center space-y-6 p-8 sm:p-12"
       style={{ opacity, y, scale }}
     >
       <div className="bg-foreground grid size-14 place-items-center rounded-xl">
@@ -199,22 +199,11 @@ const FeatureCard = ({
         <div className="text-muted-foreground text-sm font-medium tracking-widest uppercase">
           {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
         </div>
-        <h4 className="text-2xl font-semibold tracking-tight sm:text-3xl">{feature.title}</h4>
+        <h4 className="text-foreground text-2xl font-semibold tracking-tight sm:text-3xl">{feature.title}</h4>
         <p className="text-muted-foreground text-base leading-relaxed">{feature.description}</p>
       </div>
     </motion.div>
   );
-};
-
-const FeatureDot = ({
-  index,
-  activeIndex,
-}: {
-  index: number;
-  activeIndex: ReturnType<typeof useTransform<number, number>>;
-}) => {
-  const opacity = useTransform(activeIndex, (v) => (Math.round(v) === index ? 1 : 0.2));
-  return <motion.div className="bg-foreground size-1.5 rounded-full" style={{ opacity }} />;
 };
 
 const FeaturesSection = () => {
@@ -224,12 +213,6 @@ const FeaturesSection = () => {
     target: containerRef,
     offset: ["start start", "end end"],
   });
-
-  const activeIndex = useTransform(scrollYProgress, (v) =>
-    Math.min(Math.floor(v * FEATURES.length), FEATURES.length - 1),
-  );
-
-  const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
     <section
@@ -244,7 +227,9 @@ const FeaturesSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="mb-3 text-3xl font-bold sm:text-4xl">Everything You Need to Run Your School</h2>
+          <h2 className="text-foreground mb-3 text-3xl font-bold sm:text-4xl">
+            Everything You Need to Run Your School
+          </h2>
           <p className="text-muted-foreground mx-auto max-w-xl">
             A comprehensive suite of tools designed specifically for Nigerian schools.
           </p>
@@ -260,16 +245,6 @@ const FeaturesSection = () => {
             />
           ))}
         </div>
-        <div className="mt-10 w-full max-w-2xl space-y-2">
-          <div className="bg-border h-0.5 w-full overflow-hidden rounded-full">
-            <motion.div className="bg-foreground h-full rounded-full" style={{ width: progressWidth }} />
-          </div>
-          <div className="flex justify-between">
-            {FEATURES.map((_, i) => (
-              <FeatureDot key={i} index={i} activeIndex={activeIndex} />
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   );
@@ -283,7 +258,7 @@ const Page = () => {
   };
 
   return (
-    <main>
+    <main className="bg-background">
       <section className="relative py-20 lg:py-32">
         <div className="container mx-auto">
           <motion.div
@@ -296,7 +271,7 @@ const Page = () => {
               <HugeiconsIcon className="size-5" icon={School01Icon} />
               Built for Nigerian Schools
             </div>
-            <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="text-foreground mb-6 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
               The Complete Learning Management System for Primary & Secondary Schools
             </h1>
             <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg">
@@ -344,7 +319,7 @@ const Page = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Built for Every Role</h2>
+            <h2 className="text-foreground mb-4 text-3xl font-bold sm:text-4xl">Built for Every Role</h2>
             <p className="text-muted-foreground mx-auto max-w-2xl">
               Whether you&apos;re an administrator, tutor, or student, ArcLMS provides the tools you need to succeed.
             </p>
@@ -360,7 +335,7 @@ const Page = () => {
                 <div className="bg-primary text-primary-foreground mb-4 flex h-14 w-14 items-center justify-center rounded-xl">
                   <HugeiconsIcon icon={role.icon} size={28} />
                 </div>
-                <h3 className="mb-2 text-xl font-semibold">{role.title}</h3>
+                <h3 className="text-foreground mb-2 text-xl font-semibold">{role.title}</h3>
                 <p className="text-muted-foreground mb-6">{role.description}</p>
                 <ul className="space-y-3">
                   {role.features.map((feature, featureIndex) => (
@@ -370,7 +345,7 @@ const Page = () => {
                         size={18}
                         className="mt-0.5 shrink-0 text-green-600"
                       />
-                      <span>{feature}</span>
+                      <span className="text-foreground">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -405,7 +380,7 @@ const Page = () => {
               <div className="mb-6">
                 <p className="text-muted-foreground mb-2 text-sm font-medium">Per Student</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-bold">&#8358;500</span>
+                  <h4 className="text-foreground text-5xl font-bold">&#8358;500</h4>
                   <span className="text-muted-foreground">/ term</span>
                 </div>
               </div>
@@ -419,7 +394,7 @@ const Page = () => {
                 ].map((item) => (
                   <div key={item} className="flex items-center gap-3">
                     <HugeiconsIcon icon={CheckmarkCircle02Icon} size={20} className="text-green-600" />
-                    <span>{item}</span>
+                    <span className="text-muted-foreground">{item}</span>
                   </div>
                 ))}
               </div>
@@ -443,7 +418,9 @@ const Page = () => {
               transition={{ duration: 0.5 }}
             >
               <div>
-                <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Enterprise-Grade Security & Compliance</h2>
+                <h2 className="text-foreground mb-4 text-3xl font-bold sm:text-4xl">
+                  Enterprise-Grade Security & Compliance
+                </h2>
                 <p className="text-muted-foreground mb-8">
                   Your data is protected with industry-leading security measures. We take privacy and compliance
                   seriously.
@@ -454,7 +431,6 @@ const Page = () => {
                   {COMPLIANCES.map((comp, index) => {
                     const position = (index - activeComplianceIndex + COMPLIANCES.length) % COMPLIANCES.length;
                     const isActive = position === 0;
-
                     return (
                       <motion.div
                         key={comp.label}
@@ -474,7 +450,7 @@ const Page = () => {
                           <HugeiconsIcon icon={comp.icon} size={28} />
                         </div>
                         <div>
-                          <h3 className="mb-1 text-lg font-semibold">{comp.label}</h3>
+                          <h3 className="text-foreground mb-1 text-lg font-semibold">{comp.label}</h3>
                           <p className="text-muted-foreground">{comp.description}</p>
                         </div>
                       </motion.div>

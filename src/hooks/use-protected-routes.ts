@@ -15,7 +15,7 @@ interface UseProtectedRouteProps {
 
 export const useProtectedRoutes = ({ permissions, redirectTo, roles }: UseProtectedRouteProps) => {
   const toastId = useRef<string | null>(null);
-  const { user } = useUserStore();
+  const { user, isHydrated } = useUserStore();
   const router = useRouter();
 
   const showErrorToast = useCallback((title: string, description: string, id: string) => {
@@ -26,6 +26,8 @@ export const useProtectedRoutes = ({ permissions, redirectTo, roles }: UseProtec
   }, []);
 
   const hasAccess = useMemo(() => {
+    // Don't determine access until hydrated
+    if (!isHydrated) return false;
     if (!user) return false;
 
     const hasRoleAccess = user.role && roles?.includes(user.role);
@@ -37,9 +39,12 @@ export const useProtectedRoutes = ({ permissions, redirectTo, roles }: UseProtec
     const hasAllPermissions = permissions?.some((p) => p === "*:*");
     const hasPermissionAccess = permissions?.some((p) => permissionSet.has(p));
     return Boolean(hasRoleAccess || hasAllPermissions || hasPermissionAccess);
-  }, [user, roles, permissions]);
+  }, [user, roles, permissions, isHydrated]);
 
   const checkAccess = useCallback(() => {
+    // Don't check access until hydrated
+    if (!isHydrated) return false;
+
     if (!user) {
       showErrorToast("Authentication Required", "Please log in to access this page", "auth-required");
       router.replace(redirectTo || "/signin");
@@ -53,14 +58,17 @@ export const useProtectedRoutes = ({ permissions, redirectTo, roles }: UseProtec
     }
 
     return true;
-  }, [user, hasAccess, redirectTo, router, showErrorToast]);
+  }, [user, hasAccess, redirectTo, router, showErrorToast, isHydrated]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") checkAccess();
+    // Only check access after hydration is complete
+    if (typeof window !== "undefined" && isHydrated) {
+      checkAccess();
+    }
     return () => {
       toastId.current = null;
     };
-  }, [checkAccess]);
+  }, [checkAccess, isHydrated]);
 
   return { hasAccess, checkAccess, user };
 };

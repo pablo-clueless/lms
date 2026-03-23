@@ -3,24 +3,19 @@
 import { RefreshIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
-import { DataTable, Breadcrumb, Loader } from "@/components/shared";
-import { useGetClasses } from "@/lib/api/class";
-import { classColumns } from "@/config/columns";
+import { Breadcrumb, Loader } from "@/components/shared";
+import { useGetClass } from "@/lib/api/class";
 import { Button } from "@/components/ui/button";
-import { useHandler } from "@/hooks";
+import { useUserStore } from "@/store/core";
 import { cn } from "@/lib";
 
 const breadcrumbs = [{ label: "My Class", href: "/student/class" }];
 
-const initialParams = {
-  page: 0,
-  limit: 20,
-};
-
 const Page = () => {
-  const { values } = useHandler(initialParams);
+  const { user } = useUserStore();
+  console.log(user?.id);
 
-  const { data, isFetching, isPending, refetch } = useGetClasses(values);
+  const { isFetching, isPending, refetch } = useGetClass("");
 
   if (isPending) return <Loader />;
 
@@ -45,9 +40,7 @@ const Page = () => {
           </Button>
         </div>
       </div>
-      <div className="w-full space-y-4">
-        <DataTable columns={classColumns} data={data?.classes || []} />
-      </div>
+      <div className="w-full space-y-4"></div>
     </div>
   );
 };

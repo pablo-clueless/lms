@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Footer, Navbar } from "@/components/shared";
+import { Footer, Navbar, ThemeSelector } from "@/components/shared";
 
 interface Props {
   children: React.ReactNode;
@@ -12,6 +12,7 @@ const MainLayout = ({ children }: Props) => {
       <Navbar />
       {children}
       <Footer />
+      <ThemeSelector />
     </>
   );
 };

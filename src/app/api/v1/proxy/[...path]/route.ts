@@ -30,7 +30,6 @@ async function handleRequest(request: NextRequest, path: string[], method: strin
     const urlWithParams = searchParams ? `${url}?${searchParams}` : url;
 
     const response = await fetch(urlWithParams, options);
-    console.log({ path, method, response });
     const text = await response.text();
     const data = text ? JSON.parse(text) : {};
 

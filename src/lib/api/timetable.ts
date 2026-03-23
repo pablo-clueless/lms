@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateTimeTable, Timetable, QueryParams } from "@/types";
+import type { CreateTimeTableDto, Timetable, QueryParams } from "@/types";
 import { apiClient } from "../api-client";
 
 interface TimetableQueries {
@@ -45,7 +45,7 @@ interface ListSwapRequestResponse {
 const timetableApi = {
   list: (params?: TimetableQueries) => apiClient.get<ListTimetableResponse>("/timetables", params as QueryParams),
   get: (id: string) => apiClient.get<Timetable>(`/timetables/${id}`),
-  generate: (body: CreateTimeTable) => apiClient.post<Timetable>("/timetables/generate", body),
+  generate: (body: CreateTimeTableDto) => apiClient.post<Timetable>("/timetables/generate", body),
   publish: (id: string) => apiClient.post<Timetable>(`/timetables/${id}/publish`),
   listSwapRequests: () => apiClient.get<ListSwapRequestResponse>("/timetables/swap-requests"),
   createSwapRequest: (body: CreateSwapRequestDto) => apiClient.post<SwapRequest>("/timetables/swap-requests", body),

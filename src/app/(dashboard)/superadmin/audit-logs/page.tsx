@@ -13,7 +13,7 @@ import { cn } from "@/lib";
 const breadcrumbs = [{ label: "Audit Logs", href: "/superadmin/audit-logs" }];
 
 const initialParams = {
-  page: 0,
+  page: 1,
   limit: 20,
   action: "",
   resource_type: "",
@@ -53,7 +53,7 @@ const Page = () => {
           onPageChange={(page) => handleChange("page", page)}
           page={values.page}
           pageSize={values.limit}
-          total={data?.pagination?.count || 0}
+          total={data?.pagination?.total || 0}
         />
       </div>
     </div>

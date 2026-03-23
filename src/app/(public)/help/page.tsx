@@ -67,10 +67,10 @@ const popularArticles = [
 
 const Page = () => {
   return (
-    <main>
+    <main className="bg-background">
       <section className="bg-muted/30 py-20">
         <div className="container mx-auto text-center">
-          <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl">Help Center</h1>
+          <h1 className="text-foreground mb-6 text-4xl font-bold tracking-tight sm:text-5xl">Help Center</h1>
           <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg">
             Find answers, guides, and resources to help you get the most out of ArcLMS.
           </p>
@@ -81,7 +81,7 @@ const Page = () => {
       </section>
       <section className="py-20">
         <div className="container mx-auto">
-          <h2 className="mb-8 text-2xl font-bold">Browse by Category</h2>
+          <h2 className="text-foreground mb-8 text-2xl font-bold">Browse by Category</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {categories.map((category, index) => (
               <Link
@@ -92,7 +92,7 @@ const Page = () => {
                 <div className="bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground mb-4 flex h-12 w-12 items-center justify-center rounded-lg transition-colors">
                   <HugeiconsIcon icon={category.icon} className="size-6" />
                 </div>
-                <h3 className="mb-1 font-semibold">{category.title}</h3>
+                <h3 className="text-foreground mb-1 font-semibold">{category.title}</h3>
                 <p className="text-muted-foreground mb-2 text-sm">{category.description}</p>
                 <span className="text-primary text-xs">{category.articles} articles</span>
               </Link>
@@ -104,7 +104,7 @@ const Page = () => {
         <div className="container mx-auto">
           <div className="grid gap-12 lg:grid-cols-2">
             <div>
-              <h2 className="mb-6 text-2xl font-bold">Popular Articles</h2>
+              <h2 className="text-foreground mb-6 text-2xl font-bold">Popular Articles</h2>
               <ul className="space-y-3">
                 {popularArticles.map((article, index) => (
                   <li key={index}>
@@ -119,7 +119,7 @@ const Page = () => {
               </ul>
             </div>
             <div className="bg-card flex flex-col justify-center rounded-2xl p-8 text-center">
-              <h3 className="mb-2 text-xl font-semibold">Can&apos;t find what you need?</h3>
+              <h3 className="text-foreground mb-2 text-xl font-semibold">Can&apos;t find what you need?</h3>
               <p className="text-muted-foreground mb-6">Our support team is here to help you with any questions.</p>
               <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <Button asChild>

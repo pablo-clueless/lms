@@ -13,7 +13,7 @@ import { cn } from "@/lib";
 const breadcrumbs = [{ label: "Courses", href: "/student/courses" }];
 
 const initialParams = {
-  page: 0,
+  page: 1,
   limit: 20,
 };
 

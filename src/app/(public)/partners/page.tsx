@@ -29,13 +29,15 @@ const partnerTypes = [
 
 const Page = () => {
   return (
-    <main>
+    <main className="bg-background">
       <section className="py-20 lg:py-32">
         <div className="container mx-auto text-center">
           <span className="bg-primary/10 text-primary mb-4 inline-block rounded-full px-4 py-1.5 text-sm font-medium">
             Partners
           </span>
-          <h1 className="mx-auto mb-6 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">Partner With Us</h1>
+          <h1 className="text-foreground mx-auto mb-6 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
+            Partner With Us
+          </h1>
           <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg">
             Join our partner ecosystem and help bring quality education technology to Nigerian schools. We offer various
             partnership models to suit your business.
@@ -47,11 +49,11 @@ const Page = () => {
       </section>
       <section className="bg-muted/30 border-y py-20">
         <div className="container mx-auto">
-          <h2 className="mb-12 text-center text-2xl font-bold">Partnership Opportunities</h2>
+          <h2 className="text-foreground mb-12 text-center text-2xl font-bold">Partnership Opportunities</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {partnerTypes.map((type, index) => (
               <div key={index} className="bg-card rounded-xl border p-6">
-                <h3 className="mb-2 text-lg font-semibold">{type.title}</h3>
+                <h3 className="text-foreground mb-2 text-lg font-semibold">{type.title}</h3>
                 <p className="text-muted-foreground text-sm">{type.description}</p>
               </div>
             ))}
@@ -61,7 +63,7 @@ const Page = () => {
       <section className="py-20">
         <div className="container mx-auto">
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="mb-4 text-2xl font-bold">Partner Benefits</h2>
+            <h2 className="text-foreground mb-4 text-2xl font-bold">Partner Benefits</h2>
             <p className="text-muted-foreground mb-12">
               Our partners enjoy exclusive benefits designed to help you succeed.
             </p>
@@ -77,7 +79,7 @@ const Page = () => {
             ].map((benefit, index) => (
               <div key={index} className="flex items-center gap-3 rounded-lg border p-4">
                 <div className="bg-primary h-2 w-2 rounded-full" />
-                <span>{benefit}</span>
+                <span className="text-foreground">{benefit}</span>
               </div>
             ))}
           </div>

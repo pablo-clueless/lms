@@ -53,14 +53,14 @@ const methodColors: Record<string, string> = {
 
 const Page = () => {
   return (
-    <main>
+    <main className="bg-background">
       <section className="border-b py-20">
         <div className="container mx-auto">
           <div className="mx-auto max-w-2xl text-center">
             <span className="bg-primary/10 text-primary mb-4 inline-block rounded-full px-4 py-1.5 text-sm font-medium">
               API Reference
             </span>
-            <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl">ArcLMS REST API</h1>
+            <h1 className="text-foreground mb-6 text-4xl font-bold tracking-tight sm:text-5xl">ArcLMS REST API</h1>
             <p className="text-muted-foreground mb-8 text-lg">
               Integrate ArcLMS with your existing systems. Our RESTful API provides programmatic access to all platform
               features.
@@ -75,7 +75,7 @@ const Page = () => {
       <section className="border-b py-8">
         <div className="container mx-auto">
           <div className="flex flex-col items-center gap-4 sm:flex-row">
-            <span className="text-sm font-medium">Base URL:</span>
+            <span className="text-foreground text-sm font-medium">Base URL:</span>
             <code className="bg-muted rounded-lg px-4 py-2 text-sm">https://api.arclms.com/v1</code>
           </div>
         </div>
@@ -85,7 +85,7 @@ const Page = () => {
           <div className="space-y-12">
             {endpoints.map((section, index) => (
               <div key={index}>
-                <h2 className="mb-4 text-xl font-bold">{section.category}</h2>
+                <h2 className="text-foreground mb-4 text-xl font-bold">{section.category}</h2>
                 <div className="overflow-hidden rounded-xl border">
                   {section.items.map((endpoint, endpointIndex) => (
                     <div
@@ -107,7 +107,7 @@ const Page = () => {
       </section>
       <section className="bg-muted/30 border-t py-16">
         <div className="container mx-auto text-center">
-          <h2 className="mb-4 text-2xl font-bold">Need Help Integrating?</h2>
+          <h2 className="text-foreground mb-4 text-2xl font-bold">Need Help Integrating?</h2>
           <p className="text-muted-foreground mx-auto mb-8 max-w-xl">
             Our developer support team can help you build your integration.
           </p>

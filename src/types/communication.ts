@@ -88,3 +88,15 @@ export interface CreateEmailDto {
   target_course_id?: string;
   specific_user_ids?: string[];
 }
+
+export interface CreateNotificationDto {
+  title: string;
+  body: string;
+  recipient_scope: RecipientScope;
+  target_class_id?: string;
+  target_course_id?: string;
+  specific_user_ids?: string[];
+  channels: NotificationChannel[];
+  priority: NotificationPriority;
+  action_url?: string;
+}

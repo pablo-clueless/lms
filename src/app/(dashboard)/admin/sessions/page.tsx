@@ -1,6 +1,10 @@
 "use client";
 
+import { RefreshIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+
 import { DataTable, Breadcrumb, Loader, Pagination } from "@/components/shared";
+import { CreateSession } from "@/components/admin/create-session";
 import { useGetSessions } from "@/lib/api/session";
 import { sessionColumns } from "@/config/columns";
 import { Button } from "@/components/ui/button";
@@ -10,7 +14,7 @@ import { cn } from "@/lib";
 const breadcrumbs = [{ label: "Sessions", href: "/admin/sessions" }];
 
 const initialParams = {
-  page: 0,
+  page: 1,
   limit: 20,
   status: "",
 };
@@ -18,7 +22,7 @@ const initialParams = {
 const Page = () => {
   const { handleChange, values } = useHandler(initialParams);
 
-  const { data, isPending } = useGetSessions(values);
+  const { data, isFetching, isPending, refetch } = useGetSessions(values);
 
   if (isPending) return <Loader />;
 
@@ -31,9 +35,15 @@ const Page = () => {
           <p className="text-sm font-medium text-gray-600">Manage academic sessions and terms</p>
         </div>
         <div className="flex items-center gap-x-4">
-          <Button className={cn("")} size="sm" variant="outline">
-            Refresh
+          <Button disabled={isFetching} onClick={() => refetch()} variant="outline" size="sm">
+            <HugeiconsIcon
+              icon={RefreshIcon}
+              data-icon="inline-start"
+              className={cn("size-4", isFetching && "animate-spin")}
+            />
+            {isFetching ? "Refreshing..." : "Refresh"}
           </Button>
+          <CreateSession />
         </div>
       </div>
       <div className="w-full space-y-4">
@@ -42,7 +52,7 @@ const Page = () => {
           onPageChange={(page) => handleChange("page", page)}
           page={values.page}
           pageSize={values.limit}
-          total={data?.pagination.count || 0}
+          total={data?.pagination.total || 0}
         />
       </div>
     </div>

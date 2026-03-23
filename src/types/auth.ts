@@ -5,7 +5,7 @@ export interface RegisterDto {
   password: string;
   first_name: string;
   last_name: string;
-  middle_name: string;
+  middle_name?: string;
   invitation_token: string;
 }
 

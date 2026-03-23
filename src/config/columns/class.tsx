@@ -1,9 +1,10 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { StatusBadge, DateCell, ActionCell, ActionIcons } from "./shared";
-import type { Class } from "@/types";
+import type { Class, Role } from "@/types";
+import { getBasePathByRole } from "@/lib";
 
-export const classColumns: ColumnDef<Class>[] = [
+export const classColumns = (role: Role): ColumnDef<Class>[] => [
   {
     accessorKey: "name",
     header: "Class Name",
@@ -42,7 +43,11 @@ export const classColumns: ColumnDef<Class>[] = [
     cell: ({ row }) => (
       <ActionCell
         actions={[
-          { label: "View Details", icon: ActionIcons.View, onClick: () => console.log("View", row.original.id) },
+          {
+            label: "View Details",
+            icon: ActionIcons.View,
+            href: `${getBasePathByRole(role)}/classes/${row.original.id}`,
+          },
           { label: "Edit", icon: ActionIcons.Edit, onClick: () => console.log("Edit", row.original.id) },
           {
             label: "Delete",

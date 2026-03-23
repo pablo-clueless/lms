@@ -99,7 +99,7 @@ export interface User {
   email: string;
   first_name: string;
   last_name: string;
-  middle_name: string;
+  middle_name?: string;
   profile_photo: string;
   phone: string;
   status: UserStatus;
@@ -124,14 +124,14 @@ export interface InviteUserDto {
   role: Role;
   first_name: string;
   last_name: string;
-  middle_name: string;
+  middle_name?: string;
   phone: string;
 }
 
 export interface UpdateMeDto {
   first_name: string;
   last_name: string;
-  middle_name: string;
+  middle_name?: string;
   phone: string;
   profile_photo: string;
   notification_preferences: NotificationPreferences[];
@@ -148,7 +148,9 @@ export interface UpdateUserDto {
 }
 
 export interface UserQueries {
+  class_id?: string;
   role?: Role | (string & {});
   search?: string;
+  session_id?: string;
   status?: UserStatus | (string & {});
 }

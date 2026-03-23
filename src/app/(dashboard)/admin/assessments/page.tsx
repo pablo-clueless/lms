@@ -9,7 +9,7 @@ import { cn } from "@/lib";
 const breadcrumbs = [{ label: "Assessments", href: "/admin/assessments" }];
 
 const initialParams = {
-  page: 0,
+  page: 1,
   limit: 20,
   status: "",
 };

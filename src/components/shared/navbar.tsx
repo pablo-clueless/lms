@@ -43,7 +43,7 @@ export const Navbar = () => {
         <div className={cn("container mx-auto", scrolled && "px-2")}>
           <div className={cn("flex items-center justify-between", scrolled ? "h-12" : "h-16")}>
             <Link href="/" className="">
-              <h4 className="text-xl font-bold">ArcLMS</h4>
+              <h4 className="text-foreground text-xl font-bold">ArcLMS</h4>
             </Link>
             <div className="hidden items-center gap-8 md:flex">
               {navLinks.map((link) => (
