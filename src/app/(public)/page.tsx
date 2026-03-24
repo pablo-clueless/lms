@@ -289,8 +289,8 @@ const Page = () => {
           </motion.div>
         </div>
         <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-          <div className="bg-foreground/30 absolute top-10 -right-20 h-125 w-125 rounded-full blur-3xl" />
-          <div className="bg-foreground/30 absolute bottom-5 -left-20 h-125 w-125 rounded-full blur-3xl" />
+          <div className="bg-foreground/30 absolute top-10 -right-20 size-125 rounded-full blur-3xl" />
+          <div className="bg-foreground/30 absolute bottom-5 -left-20 size-125 rounded-full blur-3xl" />
         </div>
       </section>
       <section className="border-border bg-muted/30 border-y py-12">
@@ -501,8 +501,8 @@ const Page = () => {
               </div>
             </div>
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
-              <div className="absolute -top-20 -right-20 h-[300px] w-[300px] rounded-full bg-white/10" />
-              <div className="absolute -bottom-20 -left-20 h-[300px] w-[300px] rounded-full bg-white/10" />
+              <div className="bg-background/10 absolute -top-20 -right-20 h-[300px] w-[300px] rounded-full" />
+              <div className="bg-background/10 absolute -bottom-20 -left-20 h-[300px] w-[300px] rounded-full" />
             </div>
           </motion.div>
         </div>
