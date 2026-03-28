@@ -1,5 +1,7 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
+import { useMemo } from "react";
 import {
   Moon01Icon,
   Notification02Icon,
@@ -7,8 +9,6 @@ import {
   PanelLeftIcon,
   Sun01Icon,
 } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { useMemo } from "react";
 
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useGetNotifications } from "@/lib/api/notification";
@@ -46,14 +46,14 @@ export const Header = () => {
             className={cn("size-4 transition-all duration-500", isCollapsed && "rotate-180")}
           />
         </button>
-        <h3 className="text-2xl font-bold">ArcLMS</h3>
+        <h3 className="text-foreground text-2xl font-bold">ArcLMS</h3>
       </div>
       <div className="flex items-center gap-x-4">
         <Input type="search" placeholder="Search..." wrapperClassName="w-75" />
         <Popover>
           <PopoverTrigger asChild disabled={isPending}>
             <button className="relative grid size-8 place-items-center rounded-md border">
-              {unread_count >= 0 && (
+              {unread_count > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 grid size-4 place-items-center rounded-full bg-red-500 text-[10px] text-white">
                   {unread_count > 9 ? "9+" : unread_count}
                 </span>
@@ -61,7 +61,7 @@ export const Header = () => {
               <HugeiconsIcon icon={Notification02Icon} className="size-4" />
             </button>
           </PopoverTrigger>
-          <PopoverContent align="end" className="">
+          <PopoverContent align="end" className="w-75">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium">Notifications</p>
             </div>
