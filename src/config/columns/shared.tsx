@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib";
+import { cn, fromSnakeCase } from "@/lib";
 
 interface StatusBadgeProps {
   status: string;
@@ -51,7 +51,7 @@ const statusVariants: Record<string, string> = {
 
 export const StatusBadge = ({ status }: StatusBadgeProps) => {
   const variant = statusVariants[status] || "bg-gray-100 text-gray-800";
-  const displayStatus = status.replace(/_/g, " ");
+  const displayStatus = fromSnakeCase(status);
 
   return (
     <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize", variant)}>
@@ -103,7 +103,7 @@ export const ActionCell = ({ actions }: ActionCellProps) => {
               key={index}
               href={action.href}
               className={cn(
-                "flex w-full items-center gap-x-2 rounded-md px-2.5 py-2 text-xs hover:bg-gray-100",
+                "flex w-full items-center gap-x-2 rounded-md px-2.5 py-2 text-xs hover:bg-gray-200",
                 action.variant === "danger" && "text-red-600 hover:bg-red-50",
               )}
             >
@@ -115,7 +115,7 @@ export const ActionCell = ({ actions }: ActionCellProps) => {
               key={index}
               onClick={action.onClick}
               className={cn(
-                "flex w-full items-center gap-x-2 rounded-md px-2.5 py-2 text-xs hover:bg-gray-100",
+                "flex w-full items-center gap-x-2 rounded-md px-2.5 py-2 text-xs hover:bg-gray-200",
                 action.variant === "danger" && "text-red-600 hover:bg-red-50",
               )}
             >

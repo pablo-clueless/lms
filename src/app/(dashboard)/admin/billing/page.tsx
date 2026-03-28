@@ -21,7 +21,7 @@ const Page = () => {
       <Breadcrumb items={breadcrumbs} />
       <div className="flex w-full items-center justify-between">
         <div className="w-fit space-y-1">
-          <h3 className="text-3xl">Billing</h3>
+          <h3 className="text-foreground text-3xl">Billing</h3>
           <p className="text-sm font-medium text-gray-600">View and manage invoices</p>
         </div>
         <div className="flex items-center gap-x-4">

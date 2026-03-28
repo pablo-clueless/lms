@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "../api-client";
 import type {
   ConfigType,
+  ConfigValue,
   CreateSystemConfigDto,
   Pagination,
   QueryParams,
@@ -12,7 +13,7 @@ import type {
 
 interface BulkUpdateConfigDto {
   key: string;
-  value: string;
+  value: ConfigValue;
 }
 
 type UpdateSystemConfig = {

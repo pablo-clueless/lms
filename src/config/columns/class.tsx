@@ -1,8 +1,8 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { StatusBadge, DateCell, ActionCell, ActionIcons } from "./shared";
+import { fromSnakeCase, getBasePathByRole } from "@/lib";
 import type { Class, Role } from "@/types";
-import { getBasePathByRole } from "@/lib";
 
 export const classColumns = (role: Role): ColumnDef<Class>[] => [
   {
@@ -18,9 +18,7 @@ export const classColumns = (role: Role): ColumnDef<Class>[] => [
   {
     accessorKey: "level",
     header: "Level",
-    cell: ({ row }) => (
-      <span className="capitalize">{row.original.level?.toLowerCase().replace("_", " ") || "N/A"}</span>
-    ),
+    cell: ({ row }) => <span className="capitalize">{fromSnakeCase(row.original.level?.toLowerCase()) || "N/A"}</span>,
   },
   {
     accessorKey: "capacity",

@@ -1,37 +1,9 @@
-import { Delete02Icon, MoreVertical, ViewIcon } from "@hugeicons/core-free-icons";
 import type { ColumnDef } from "@tanstack/react-table";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { format } from "date-fns";
-import Link from "next/link";
 
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
+import { ActionCell, ActionIcons } from "./shared";
 import type { Session } from "@/types";
-
-const ActionCell = ({ session }: { session: Session }) => {
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button size="icon" variant="outline">
-          <HugeiconsIcon className="size-4" icon={MoreVertical} />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent align="end" className="w-56">
-        <Link
-          className="flex w-full items-start gap-x-2 rounded-md px-3 py-2 text-xs hover:bg-gray-200"
-          href={`/admin/sessions/${session.id}`}
-        >
-          <HugeiconsIcon className="size-4" icon={ViewIcon} />
-          <span>View Details</span>
-        </Link>
-        <button className="flex w-full items-start gap-x-2 rounded-md px-3 py-2 text-xs hover:bg-gray-200">
-          <HugeiconsIcon className="size-4" icon={Delete02Icon} />
-          <span>Delete</span>
-        </button>
-      </PopoverContent>
-    </Popover>
-  );
-};
+import { Archive02Icon } from "@hugeicons/core-free-icons";
 
 export const columns: ColumnDef<Session>[] = [
   {
@@ -63,6 +35,14 @@ export const columns: ColumnDef<Session>[] = [
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => <ActionCell session={row.original} />,
+    cell: ({ row }) => (
+      <ActionCell
+        actions={[
+          { label: "View Details", icon: ActionIcons.View, href: `/admin/sessions/${row.original.id}` },
+          { label: "Edit", icon: ActionIcons.Edit, onClick: () => console.log("Edit", row.original.id) },
+          { label: "Archive", icon: Archive02Icon, onClick: () => console.log("Archive", row.original.id) },
+        ]}
+      />
+    ),
   },
 ];

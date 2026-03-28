@@ -2,6 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { StatusBadge, DateTimeCell, ActionCell, ActionIcons } from "./shared";
 import type { Email, Notification } from "@/types";
+import { fromSnakeCase } from "@/lib";
 
 // Email columns
 export const emailColumns: ColumnDef<Email>[] = [
@@ -13,9 +14,7 @@ export const emailColumns: ColumnDef<Email>[] = [
   {
     accessorKey: "recipient_scope",
     header: "Recipients",
-    cell: ({ row }) => (
-      <span className="capitalize">{row.original.recipient_scope.toLowerCase().replace(/_/g, " ")}</span>
-    ),
+    cell: ({ row }) => <span className="capitalize">{fromSnakeCase(row.original.recipient_scope)}</span>,
   },
   {
     accessorKey: "total_recipients",
@@ -77,7 +76,7 @@ export const notificationColumns: ColumnDef<Notification>[] = [
     header: "Event Type",
     cell: ({ row }) => (
       <span className="rounded bg-gray-100 px-2 py-0.5 text-xs">
-        {row.original.event_type.toLowerCase().replace(/_/g, " ")}
+        {fromSnakeCase(row.original.event_type.toLowerCase())}
       </span>
     ),
   },

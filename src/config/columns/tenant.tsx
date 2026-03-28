@@ -48,7 +48,7 @@ export const tenantColumns: ColumnDef<Tenant>[] = [
     cell: ({ row }) => (
       <ActionCell
         actions={[
-          { label: "View Details", icon: ActionIcons.View, onClick: () => console.log("View", row.original.id) },
+          { label: "View Details", icon: ActionIcons.View, href: `/superadmin/tenants/${row.original.id}` },
           { label: "Edit", icon: ActionIcons.Edit, onClick: () => console.log("Edit", row.original.id) },
           {
             label: "Suspend",

@@ -2,15 +2,14 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { StatusBadge, DateTimeCell, ActionCell, ActionIcons } from "./shared";
 import type { AuditLog } from "@/types";
+import { fromSnakeCase } from "@/lib";
 
 export const auditLogColumns: ColumnDef<AuditLog>[] = [
   {
     accessorKey: "action",
     header: "Action",
     cell: ({ row }) => (
-      <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium">
-        {row.original.action.replace(/_/g, " ")}
-      </span>
+      <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium">{fromSnakeCase(row.original.action)}</span>
     ),
   },
   {

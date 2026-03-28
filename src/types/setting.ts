@@ -8,10 +8,11 @@ export type ConfigType =
   | "rate_limit"
   | "defaults";
 
+export type ConfigValue = string | number | boolean | Array<string>;
 export interface SystemConfig {
   id: string;
   key: string;
-  value: string;
+  value: ConfigValue;
   description: string;
   category: ConfigType;
   is_sensitive: boolean;

@@ -8,11 +8,26 @@ export type ApplicationStatus =
   | "WITHDRAWN"
   | "EXPELLED";
 
+export type NotificationEventType =
+  | "QUIZ_PUBLISHED"
+  | "ASSIGNMENT_PUBLISHED"
+  | "ASSIGNMENT_DEADLINE_APPROACHING"
+  | "EXAMINATION_SCHEDULED"
+  | "EXAMINATION_WINDOW_OPEN"
+  | "EXAMINATION_WINDOW_CLOSE"
+  | "GRADE_PUBLISHED"
+  | "TIMETABLE_PUBLISHED"
+  | "TIMETABLE_UPDATED"
+  | "MEETING_SCHEDULED"
+  | "MEETING_CANCELLED"
+  | "MEETING_STARTING"
+  | "INVOICE_GENERATED"
+  | "PAYMENT_OVERDUE"
+  | "CUSTOM";
+
 export type TutorStatus = "PENDING" | "SUSPENDED" | "ACTIVE" | "ON_LEAVE";
-
 export type UserStatus = "ACTIVE" | "INACTIVE";
-
-export type Role = "SUPER_ADMIN" | "ADMIN" | "TUTOR" | "STUDENT";
+export type Role = "SUPER_ADMIN" | "ADMIN" | "TUTOR" | "STUDENT" | "PARENT";
 
 export interface Profile {
   id: string;
@@ -113,7 +128,7 @@ export interface User {
 }
 
 export interface NotificationPreferences {
-  event_type: string;
+  event_type: NotificationEventType;
   in_app_enabled: boolean;
   push_enabled: boolean;
   email_enabled: boolean;
@@ -129,12 +144,12 @@ export interface InviteUserDto {
 }
 
 export interface UpdateMeDto {
-  first_name: string;
-  last_name: string;
+  first_name?: string;
+  last_name?: string;
   middle_name?: string;
-  phone: string;
-  profile_photo: string;
-  notification_preferences: NotificationPreferences[];
+  phone?: string;
+  profile_photo?: string;
+  notification_preferences?: NotificationPreferences[];
 }
 
 export interface UpdateUserDto {

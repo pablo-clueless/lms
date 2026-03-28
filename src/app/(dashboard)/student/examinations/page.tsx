@@ -21,7 +21,7 @@ const Page = () => {
       <Breadcrumb items={breadcrumbs} />
       <div className="flex w-full items-center justify-between">
         <div className="w-fit space-y-1">
-          <h3 className="text-3xl">Examinations</h3>
+          <h3 className="text-foreground text-3xl">Examinations</h3>
           <p className="text-sm font-medium text-gray-600">
             Access examinations during the scheduled window and view results
           </p>
