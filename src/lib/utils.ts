@@ -55,14 +55,15 @@ export function getBasePathByRole(role: Role) {
   }
 }
 
-export function formatCurrency(amount: number, currency = "NGN"): string {
+export function formatCurrency(amount?: number, currency = "NGN"): string {
+  const normalized = amount || 0;
   return new Intl.NumberFormat("en-US", {
     currency,
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
     notation: "compact",
     style: "currency",
-  }).format(amount);
+  }).format(normalized);
 }
 
 export function formatDate(dateString?: string | null): string {

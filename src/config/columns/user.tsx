@@ -41,6 +41,33 @@ export const userColumns: ColumnDef<User>[] = [
     header: "Date Joined",
     cell: ({ row }) => <DateCell date={row.original.created_at} />,
   },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      return (
+        <ActionCell
+          actions={[
+            {
+              label: "View",
+              icon: ActionIcons.View,
+              href: `${getBasePathByRole(row.original.role)}/users/${row.original.id}`,
+            },
+            {
+              label: "Edit",
+              icon: ActionIcons.Edit,
+              href: `${getBasePathByRole(row.original.role)}/users/${row.original.id}/edit`,
+            },
+            {
+              label: "Delete",
+              icon: ActionIcons.Delete,
+              onClick: () => console.log("Delete", row.original.id),
+              variant: "danger",
+            },
+          ]}
+        />
+      );
+    },
+  },
 ];
 
 export const adminColumns: ColumnDef<User>[] = [

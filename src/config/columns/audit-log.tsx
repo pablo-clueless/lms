@@ -51,9 +51,7 @@ export const auditLogColumns: ColumnDef<AuditLog>[] = [
     header: "Actions",
     cell: ({ row }) => (
       <ActionCell
-        actions={[
-          { label: "View Details", icon: ActionIcons.View, onClick: () => console.log("View", row.original.id) },
-        ]}
+        actions={[{ label: "View Details", icon: ActionIcons.View, href: `/superadmin/audit-logs/${row.original.id}` }]}
       />
     ),
   },

@@ -1,7 +1,8 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { StatusBadge, DateCell, CurrencyCell, ActionCell, ActionIcons } from "./shared";
-import type { Invoice, Subscription, BillingAdjustment } from "@/types";
+import type { Invoice, Subscription, BillingAdjustment, InvoiceLineItem } from "@/types";
+import { formatCurrency } from "@/lib";
 
 // Invoice columns
 export const invoiceColumns: ColumnDef<Invoice>[] = [
@@ -13,7 +14,7 @@ export const invoiceColumns: ColumnDef<Invoice>[] = [
   {
     accessorKey: "total_amount",
     header: "Amount",
-    cell: ({ row }) => <CurrencyCell amount={row.original.total_amount} currency={row.original.currency} />,
+    cell: ({ row }) => <CurrencyCell amount={row.original.total_amount / 100} currency={row.original.currency} />,
   },
   {
     accessorKey: "student_count",
@@ -46,7 +47,7 @@ export const invoiceColumns: ColumnDef<Invoice>[] = [
     cell: ({ row }) => (
       <ActionCell
         actions={[
-          { label: "View Invoice", icon: ActionIcons.View, onClick: () => console.log("View", row.original.id) },
+          { label: "View Invoice", icon: ActionIcons.View, href: `/superadmin/billing/${row.original.id}` },
           { label: "Download PDF", icon: ActionIcons.View, onClick: () => console.log("Download", row.original.id) },
         ]}
       />
@@ -89,8 +90,8 @@ export const subscriptionColumns: ColumnDef<Subscription>[] = [
     cell: ({ row }) => (
       <ActionCell
         actions={[
-          { label: "View Details", icon: ActionIcons.View, onClick: () => console.log("View", row.original.id) },
-          { label: "Edit", icon: ActionIcons.Edit, onClick: () => console.log("Edit", row.original.id) },
+          { label: "View Details", icon: ActionIcons.View, href: `/superadmin/subscriptions/${row.original.id}` },
+          { label: "Edit", icon: ActionIcons.Edit, href: `/superadmin/subscriptions/${row.original.id}/edit` },
           {
             label: "Cancel",
             icon: ActionIcons.Delete,
@@ -129,5 +130,26 @@ export const billingAdjustmentColumns: ColumnDef<BillingAdjustment>[] = [
     accessorKey: "created_at",
     header: "Date",
     cell: ({ row }) => <DateCell date={row.original.created_at} />,
+  },
+];
+
+export const lineItemColumns: ColumnDef<InvoiceLineItem>[] = [
+  {
+    accessorKey: "description",
+    header: "Description",
+  },
+  {
+    accessorKey: "quantity",
+    header: "Quantity",
+  },
+  {
+    accessorKey: "unit_price",
+    header: "Unit Price",
+    cell: ({ row }) => <span>{formatCurrency(row.original.unit_price)}</span>,
+  },
+  {
+    accessorKey: "amount",
+    header: "Amount",
+    cell: ({ row }) => <span>{formatCurrency(row.original.amount)}</span>,
   },
 ];

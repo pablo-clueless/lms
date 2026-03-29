@@ -1,5 +1,8 @@
 "use client";
 
+import { RefreshIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+
 import { DataTable, Breadcrumb, Loader, Pagination } from "@/components/shared";
 import { useGetSuperAdmins } from "@/lib/api/superadmin";
 import { Button } from "@/components/ui/button";
@@ -19,7 +22,7 @@ const initialParams = {
 const Page = () => {
   const { handleChange, values } = useHandler(initialParams);
 
-  const { data, isPending } = useGetSuperAdmins(values);
+  const { data, isFetching, isPending, refetch } = useGetSuperAdmins(values);
 
   if (isPending) return <Loader />;
 
@@ -32,8 +35,13 @@ const Page = () => {
           <p className="text-sm font-medium text-gray-600">Manage super administrator accounts</p>
         </div>
         <div className="flex items-center gap-x-4">
-          <Button className={cn("")} size="sm" variant="outline">
-            Refresh
+          <Button disabled={isFetching} onClick={() => refetch()} variant="outline" size="sm">
+            <HugeiconsIcon
+              icon={RefreshIcon}
+              data-icon="inline-start"
+              className={cn("size-4", isFetching && "animate-spin")}
+            />
+            {isFetching ? "Refreshing..." : "Refresh"}
           </Button>
         </div>
       </div>

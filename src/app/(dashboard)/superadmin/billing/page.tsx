@@ -1,20 +1,47 @@
 "use client";
 
-import { RefreshIcon } from "@hugeicons/core-free-icons";
+import { RefreshIcon, Invoice02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useState } from "react";
+import { toast } from "sonner";
 
+import { useGenerateInvoices, useGetInvoices, useGetBillingMetrics } from "@/lib/api/billing";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataTable, Breadcrumb, Loader } from "@/components/shared";
-import { useGetInvoices, useGetBillingMetrics } from "@/lib/api/billing";
 import { invoiceColumns } from "@/config/columns";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const breadcrumbs = [{ label: "Billing", href: "/superadmin/billing" }];
 
 const Page = () => {
+  const [generateDialogOpen, setGenerateDialogOpen] = useState(false);
+
   const { data, isFetching, isPending, refetch } = useGetInvoices();
   const { data: metrics } = useGetBillingMetrics();
+  const { mutate: generateInvoices, isPending: isGenerating } = useGenerateInvoices();
+
+  const handleGenerateInvoices = () => {
+    generateInvoices(undefined, {
+      onSuccess: (result) => {
+        setGenerateDialogOpen(false);
+        toast.success(
+          `Generated ${result.invoices_created} invoice(s) for ${result.total_tenants} tenant(s). ${result.skipped} skipped, ${result.failed} failed.`,
+        );
+      },
+      onError: () => {
+        toast.error("Failed to generate invoices. Please try again.");
+      },
+    });
+  };
 
   if (isPending) return <Loader />;
 
@@ -37,6 +64,29 @@ const Page = () => {
             />
             {isFetching ? "Refreshing..." : "Refresh"}
           </Button>
+          <Dialog open={generateDialogOpen} onOpenChange={setGenerateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm">
+                <HugeiconsIcon icon={Invoice02Icon} data-icon="inline-start" className="size-4" />
+                Generate Invoices
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogTitle>Generate Invoices</DialogTitle>
+              <DialogDescription>
+                This will generate invoices for all active tenants based on their current subscription plans. Tenants
+                with existing unpaid invoices for this billing period will be skipped.
+              </DialogDescription>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setGenerateDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleGenerateInvoices} disabled={isGenerating}>
+                  {isGenerating ? "Generating..." : "Generate Invoices"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
       <div className="grid grid-cols-3 gap-4">

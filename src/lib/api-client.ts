@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { removeNullOrUndefined } from "@/lib";
 import type { RefreshResponse } from "@/types/auth";
 
-const baseURL = "/api/v1/proxy";
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
 let isRefreshing = false;
 let failedQueue: Array<{
   resolve: (token: string) => void;
@@ -149,7 +149,6 @@ client.interceptors.response.use(
       processQueue(refreshError, null);
       isRefreshing = false;
 
-      // Only sign out if refresh explicitly failed (not for network errors)
       const isNetworkError = (refreshError as AxiosError)?.code === "ERR_NETWORK";
       if (!isNetworkError) {
         toast.error("Session expired. Please log in again.");
@@ -172,6 +171,7 @@ function buildUrl(path: string, params?: Record<string, unknown>): string {
 
 export const apiClient = {
   get: <T>(path: string, params?: Record<string, unknown>) => client.get<T>(buildUrl(path, params)).then((r) => r.data),
+  getBlob: (path: string) => client.get<Blob>(path, { responseType: "blob" }).then((r) => r.data),
   post: <T>(path: string, body?: unknown) => client.post<T>(path, body).then((r) => r.data),
   put: <T>(path: string, body?: unknown) => client.put<T>(path, body).then((r) => r.data),
   patch: <T>(path: string, body?: unknown) => client.patch<T>(path, body).then((r) => r.data),

@@ -68,3 +68,30 @@ export interface BillingAdjustment {
   applied_by: string;
   created_at: Date;
 }
+
+export interface GenerateInvoice {
+  tenant_id: string;
+  tenant_name: string;
+  invoice: {
+    id: string;
+    tenant_id: string;
+    subscription_id: string;
+    term_id: string;
+    invoice_number: string;
+    status: string;
+    currency: string;
+    line_items: InvoiceLineItem[];
+    subtotal_amount: number;
+    tax_amount: number;
+    discount_amount: number;
+    total_amount: number;
+    student_count: number;
+    due_date: Date;
+    issued_date: Date;
+    billing_email: string;
+    created_at: Date;
+    updated_at: Date;
+  };
+  student_count: number;
+  skipped: boolean;
+}
