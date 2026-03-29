@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataTable, Breadcrumb, Loader } from "@/components/shared";
 import { invoiceColumns } from "@/config/columns";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib";
+import { cn, formatCurrency } from "@/lib";
 import {
   Dialog,
   DialogContent,
@@ -95,23 +95,23 @@ const Page = () => {
             <CardTitle className="text-sm font-medium text-gray-600">Total Revenue</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">₦{metrics?.total_revenue?.toLocaleString() || 0}</p>
+            <h2 className="text-2xl font-bold">{formatCurrency((metrics?.total_revenue || 0) / 100)}</h2>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Pending Amount</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-600">Monthly Recurring Revenue</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">₦{metrics?.pending_amount?.toLocaleString() || 0}</p>
+            <h2 className="text-2xl font-bold">{formatCurrency((metrics?.mrr || 0) / 100)}</h2>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Overdue Amount</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-600">Late Payments</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-red-600">₦{metrics?.overdue_amount?.toLocaleString() || 0}</p>
+            <h2 className="text-2xl font-bold text-red-600">{metrics?.late_payments}</h2>
           </CardContent>
         </Card>
       </div>

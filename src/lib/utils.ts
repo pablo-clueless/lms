@@ -56,12 +56,15 @@ export function getBasePathByRole(role: Role) {
 }
 
 export function formatCurrency(amount?: number, currency = "NGN"): string {
+  const limit = 1_000_000_000_000;
   const normalized = amount || 0;
-  return new Intl.NumberFormat("en-US", {
+  const notation = normalized > limit ? "compact" : "standard";
+  return new Intl.NumberFormat("en-NG", {
     currency,
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
-    notation: "compact",
+    notation,
+    currencyDisplay: "symbol",
     style: "currency",
   }).format(normalized);
 }

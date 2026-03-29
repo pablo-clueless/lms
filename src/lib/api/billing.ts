@@ -14,8 +14,12 @@ interface PayInvoiceDto {
 
 interface BillingMetrics {
   total_revenue: number;
-  pending_amount: number;
-  overdue_amount: number;
+  mrr: number;
+  upcoming_payments: number;
+  late_payments: number;
+  upcoming_count: number;
+  late_count: number;
+  recent_invoices: Invoice[];
 }
 
 const keys = {
