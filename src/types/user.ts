@@ -1,3 +1,5 @@
+import type { NotificationEventType } from "./communication";
+
 export type ApplicationStatus =
   | "REVIEWING"
   | "ADMITTED"
@@ -7,23 +9,6 @@ export type ApplicationStatus =
   | "SUSPENDED"
   | "WITHDRAWN"
   | "EXPELLED";
-
-export type NotificationEventType =
-  | "QUIZ_PUBLISHED"
-  | "ASSIGNMENT_PUBLISHED"
-  | "ASSIGNMENT_DEADLINE_APPROACHING"
-  | "EXAMINATION_SCHEDULED"
-  | "EXAMINATION_WINDOW_OPEN"
-  | "EXAMINATION_WINDOW_CLOSE"
-  | "GRADE_PUBLISHED"
-  | "TIMETABLE_PUBLISHED"
-  | "TIMETABLE_UPDATED"
-  | "MEETING_SCHEDULED"
-  | "MEETING_CANCELLED"
-  | "MEETING_STARTING"
-  | "INVOICE_GENERATED"
-  | "PAYMENT_OVERDUE"
-  | "CUSTOM";
 
 export type Role = "SUPER_ADMIN" | "ADMIN" | "TUTOR" | "STUDENT" | "PARENT";
 export type TutorStatus = "PENDING" | "SUSPENDED" | "ACTIVE" | "ON_LEAVE";
