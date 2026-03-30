@@ -10,6 +10,7 @@ const roleRoutes: Record<Role, string> = {
   ADMIN: "/admin",
   TUTOR: "/tutor",
   STUDENT: "/student",
+  PARENT: "/parent",
 };
 
 export const useRbac = () => {
