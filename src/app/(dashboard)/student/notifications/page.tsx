@@ -44,7 +44,7 @@ const Page = () => {
         </div>
       </div>
       <div className="w-full space-y-4">
-        <DataTable columns={notificationColumns} data={data?.notifications || []} />
+        <DataTable columns={notificationColumns} data={data?.data || []} />
       </div>
     </div>
   );

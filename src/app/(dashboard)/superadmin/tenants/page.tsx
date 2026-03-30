@@ -2,6 +2,7 @@
 
 import { RefreshIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import Link from "next/link";
 
 import { DataTable, Breadcrumb, Loader, Pagination } from "@/components/shared";
 import { tenantColumns } from "@/config/columns";
@@ -34,6 +35,9 @@ const Page = () => {
           <p className="text-sm font-medium text-gray-600">Manage schools and organizations on the platform</p>
         </div>
         <div className="flex items-center gap-x-4">
+          <Button asChild size="sm">
+            <Link href="/superadmin/tenants/create">Create Tenant</Link>
+          </Button>
           <Button disabled={isFetching} onClick={() => refetch()} variant="outline" size="sm">
             <HugeiconsIcon
               icon={RefreshIcon}

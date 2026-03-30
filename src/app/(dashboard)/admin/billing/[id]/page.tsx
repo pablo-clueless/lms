@@ -3,7 +3,6 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useParams } from "next/navigation";
 import { format } from "date-fns";
-import { useState } from "react";
 import { toast } from "sonner";
 import {
   RefreshIcon,
@@ -11,28 +10,20 @@ import {
   Invoice02Icon,
   Mail01Icon,
   MoneyReceiveSquareIcon,
-  CheckmarkCircle02Icon,
   FileDownloadIcon,
+  CreditCardIcon,
 } from "@hugeicons/core-free-icons";
 
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useDownloadInvoice, useGetInvoice, usePayInvoice } from "@/lib/api/billing";
+import { useDownloadInvoice, useGetInvoice } from "@/lib/api/billing";
 import { Breadcrumb, Loader } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/config/columns";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { cn, formatCurrency } from "@/lib";
 import { useDownload } from "@/hooks";
 
 const Page = () => {
   const id = useParams().id as string;
-  const [payDialogOpen, setPayDialogOpen] = useState(false);
-  const [paymentReference, setPaymentReference] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("");
 
-  const { mutate: payInvoice, isPending: isPaying } = usePayInvoice();
   const { data, isFetching, isPending, refetch } = useGetInvoice(id);
   const { refetch: fetchPdf, isFetching: isDownloading } = useDownloadInvoice(id);
   const { download } = useDownload({
@@ -46,9 +37,14 @@ const Page = () => {
     }
   };
 
+  const handlePayNow = () => {
+    // TODO: Implement payment gateway integration
+    toast.info("Redirecting to payment gateway...");
+  };
+
   const breadcrumbs = [
-    { label: "Billing", href: "/superadmin/billing" },
-    { label: data?.invoice_number || "Invoice", href: `/superadmin/billing/${id}` },
+    { label: "Billing", href: "/admin/billing" },
+    { label: data?.invoice_number || "Invoice", href: `/admin/billing/${id}` },
   ];
 
   const formatDate = (date: Date | string | undefined) => {
@@ -61,32 +57,9 @@ const Page = () => {
     return format(new Date(date), "dd/MM/yyyy HH:mm");
   };
 
-  const handlePayInvoice = () => {
-    if (!paymentReference || !paymentMethod) {
-      toast.error("Please fill in all fields");
-      return;
-    }
-
-    payInvoice(
-      { id, body: { payment_reference: paymentReference, payment_method: paymentMethod } },
-      {
-        onSuccess: () => {
-          setPayDialogOpen(false);
-          setPaymentReference("");
-          setPaymentMethod("");
-          toast.success("Invoice marked as paid");
-          refetch();
-        },
-        onError: () => {
-          toast.error("Failed to mark invoice as paid");
-        },
-      },
-    );
-  };
-
   if (isPending && !data) return <Loader />;
 
-  const canMarkAsPaid = data?.status === "PENDING" || data?.status === "OVERDUE";
+  const canPay = data?.status === "PENDING" || data?.status === "OVERDUE";
 
   return (
     <div className="space-y-6 p-6">
@@ -114,10 +87,10 @@ const Page = () => {
           </div>
         </div>
         <div className="flex items-center gap-x-4">
-          {canMarkAsPaid && (
-            <Button size="sm" onClick={() => setPayDialogOpen(true)}>
-              <HugeiconsIcon icon={CheckmarkCircle02Icon} data-icon="inline-start" className="size-4" />
-              Mark as Paid
+          {canPay && (
+            <Button size="sm" onClick={handlePayNow}>
+              <HugeiconsIcon icon={CreditCardIcon} data-icon="inline-start" className="size-4" />
+              Pay Now
             </Button>
           )}
           <Button disabled={isDownloading} onClick={handleDownloadInvoice} variant="outline" size="sm">
@@ -299,69 +272,7 @@ const Page = () => {
             <p className="text-muted-foreground text-sm">{data.notes}</p>
           </div>
         )}
-        <div className="space-y-4 rounded-lg border bg-gray-50 p-4 md:col-span-2">
-          <h4 className="text-muted-foreground font-semibold">Record Information</h4>
-          <div className="flex flex-wrap gap-8 text-sm">
-            <div>
-              <span className="text-muted-foreground">Invoice ID: </span>
-              <span className="font-mono text-xs">{data?.id}</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Tenant ID: </span>
-              <span className="font-mono text-xs">{data?.tenant_id}</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Subscription ID: </span>
-              <span className="font-mono text-xs">{data?.subscription_id}</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Term ID: </span>
-              <span className="font-mono text-xs">{data?.term_id}</span>
-            </div>
-          </div>
-        </div>
       </div>
-      <Dialog open={payDialogOpen} onOpenChange={setPayDialogOpen}>
-        <DialogContent>
-          <DialogTitle>Mark Invoice as Paid</DialogTitle>
-          <DialogDescription>
-            Enter the payment details to mark invoice {data?.invoice_number} as paid.
-          </DialogDescription>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="payment_method">Payment Method</Label>
-              <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select payment method" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="BANK_TRANSFER">Bank Transfer</SelectItem>
-                  <SelectItem value="CARD">Card</SelectItem>
-                  <SelectItem value="USSD">USSD</SelectItem>
-                  <SelectItem value="MANUAL">Manual</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="payment_reference">Payment Reference</Label>
-              <Input
-                id="payment_reference"
-                value={paymentReference}
-                onChange={(e) => setPaymentReference(e.target.value)}
-                placeholder="Enter payment reference"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setPayDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handlePayInvoice} disabled={isPaying}>
-              {isPaying ? "Processing..." : "Confirm Payment"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

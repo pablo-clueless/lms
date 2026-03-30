@@ -61,7 +61,7 @@ const Page = () => {
       <div className="flex w-full items-center justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <h3 className="text-2xl font-semibold">{classData?.name || "Timetable"}</h3>
+            <h3 className="text-foreground text-2xl font-semibold">{classData?.name || "Timetable"}</h3>
             <StatusBadge status={timetable?.status || "DRAFT"} />
           </div>
           <p className="text-sm text-gray-600">

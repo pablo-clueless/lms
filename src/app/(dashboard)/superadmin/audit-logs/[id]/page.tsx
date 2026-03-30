@@ -43,7 +43,7 @@ const Page = () => {
           </div>
           <div className="space-y-1">
             <div className="flex items-center gap-3">
-              <h3 className="text-2xl font-semibold">{fromSnakeCase(data?.action)}</h3>
+              <h3 className="text-foreground text-2xl font-semibold">{fromSnakeCase(data?.action)}</h3>
               {data?.is_sensitive && (
                 <span className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
                   Sensitive

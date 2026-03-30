@@ -36,7 +36,7 @@ const Page = () => {
         </div>
       </div>
       <div className="w-full space-y-4">
-        <DataTable columns={invoiceColumns} data={data?.data || []} />
+        <DataTable columns={invoiceColumns("ADMIN")} data={data?.data || []} />
       </div>
     </div>
   );

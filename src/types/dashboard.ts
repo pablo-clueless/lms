@@ -1,3 +1,5 @@
+import type { Course } from "./course";
+import type { StudentEnrollment } from "./enrollment";
 import type { Session } from "./session";
 import type { Tenant } from "./tenant";
 
@@ -74,118 +76,22 @@ export interface AdminDashboardResponse {
 }
 
 export interface TutorDashboardResponse {
-  active_students: number;
-  grading_queue: {
-    pending_assignments: number;
-    pending_quizzes: number;
-    pending_exams: number;
-    total: number;
-    oldest_pending_days: number;
+  dashboard: {
+    total_courses: number;
+    courses: Course[];
+    total_students: number;
+    active_session: Session;
   };
-  at_risk_students: {
-    student_id: string;
-    student_name: string;
-    last_active_date: string;
-    days_inactive: number;
-    course_progress: number;
-    course_name: string;
-  }[];
-  score_distribution: {
-    average_score: number;
-    highest_score: number;
-    lowest_score: number;
-    pass_rate: number;
-    grade_distribution: {
-      additionalProp1: number;
-      additionalProp2: number;
-      additionalProp3: number;
-    };
-  };
-  discussion_activity: {
-    new_posts: number;
-    pending_responses: number;
-    unread_messages: number;
-  };
-  course_ratings: {
-    course_id: string;
-    course_name: string;
-    average_rating: number;
-    total_reviews: number;
-    recent_trend: "up" | "down";
-  }[];
-  upcoming_events: {
-    type: string;
-    title: string;
-    due_date: string;
-    course_name: string;
-    link: string;
-  }[];
-  my_courses: {
-    course_id: string;
-    course_name: string;
-    student_count: number;
-    completion_rate: number;
-    pending_grading: number;
-  }[];
+  role: "TUTOR";
 }
 
 export interface StudentDashboardResponse {
-  course_progress: {
-    course_id: string;
-    course_name: string;
-    progress: number;
-    completed_modules: number;
-    total_modules: number;
-    last_accessed_at: string;
-    status: string;
-  }[];
-  upcoming_deadlines: {
-    type: string;
-    title: string;
-    course_name: string;
-    due_date: string;
-    days_left: number;
-    priority: string;
-    link: string;
-  }[];
-  learning_stats: {
-    total_hours: number;
-    this_week_hours: number;
-    last_week_hours: number;
-    avg_daily_minutes: number;
-    longest_streak_days: number;
-    current_streak_days: number;
+  dashboard: {
+    total_enrollments: number;
+    enrollments: StudentEnrollment[];
+    total_courses: number;
+    courses: Course[];
+    active_session: Session;
   };
-  recent_grades: {
-    type: string;
-    title: string;
-    course_name: string;
-    score: number;
-    max_score: number;
-    grade: string;
-    graded_at: string;
-    feedback: string;
-  }[];
-  certificates: {
-    total: number;
-    recent: {
-      certificate_id: string;
-      course_name: string;
-      issued_at: string;
-      download_url: string;
-    }[];
-  };
-  continue_learning: {
-    course_id: string;
-    course_name: string;
-    module_id: string;
-    module_name: string;
-    progress: number;
-    thumbnail_url: string;
-    link: string;
-  };
-  unread_notifications: number;
-  overall_progress: number;
-  average_score: number;
-  rank: number;
+  role: "STUDENT";
 }

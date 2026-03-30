@@ -4,6 +4,8 @@ import type { CreateEmailDto, Email, Pagination, QueryParams } from "@/types";
 import { apiClient } from "../api-client";
 
 interface EmailQueries {
+  limit?: number;
+  page?: number;
   status?: "DRAFT" | "SCHEDULED" | "SENDING" | "SENT" | "FAILED" | "CANCELLED";
 }
 

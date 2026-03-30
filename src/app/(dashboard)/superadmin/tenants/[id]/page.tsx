@@ -76,7 +76,7 @@ const Page = () => {
             <AvatarFallback className="text-lg">{getInitials(data?.name || "")}</AvatarFallback>
           </Avatar>
           <div className="space-y-1">
-            <h3 className="text-2xl font-semibold">{data?.name}</h3>
+            <h3 className="text-foreground text-2xl font-semibold">{data?.name}</h3>
             <div className="flex items-center gap-3 text-sm text-gray-600">
               <span className="flex items-center gap-1">
                 <HugeiconsIcon icon={Mail01Icon} className="size-4" />

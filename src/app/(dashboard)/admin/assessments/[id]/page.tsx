@@ -21,7 +21,7 @@ const Page = () => {
       <Breadcrumb items={breadcrumbs} />
       <div className="flex w-full items-center justify-between">
         <div className="space-y-1">
-          <h3 className="text-2xl font-semibold">Assessment Details</h3>
+          <h3 className="text-foreground text-2xl font-semibold">Assessment Details</h3>
           <p className="text-sm text-gray-600">Assessment ID: {id}</p>
         </div>
         <div className="flex items-center gap-x-4">

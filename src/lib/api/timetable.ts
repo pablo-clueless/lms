@@ -28,6 +28,7 @@ const keys = {
   all: ["timetables"] as const,
   list: () => [...keys.all, "get-timetables"],
   get: (id: string) => [...keys.all, "get-timetable", id],
+  class: (classId: string, termId?: string) => [...keys.all, "class", classId, termId],
   generate: () => [...keys.all, "generate-timetable"],
   publish: () => [...keys.all, "publish-timetable"],
   swapRequests: () => [...keys.all, "swap-requests"],
@@ -45,6 +46,8 @@ interface ListSwapRequestResponse {
 const timetableApi = {
   list: (params?: TimetableQueries) => apiClient.get<ListTimetableResponse>("/timetables", params as QueryParams),
   get: (id: string) => apiClient.get<Timetable>(`/timetables/${id}`),
+  class: (classId: string, termId?: string) =>
+    apiClient.get<Timetable>(`/timetables/class/${classId}`, { term_id: termId }),
   generate: (body: CreateTimeTableDto) => apiClient.post<Timetable>("/timetables/generate", body),
   publish: (id: string) => apiClient.post<Timetable>(`/timetables/${id}/publish`),
   listSwapRequests: () => apiClient.get<ListSwapRequestResponse>("/timetables/swap-requests"),
@@ -63,6 +66,14 @@ export function useGetTimetable(id: string) {
     queryKey: keys.get(id),
     queryFn: () => timetableApi.get(id),
     enabled: !!id,
+  });
+}
+
+export function useGetTimetableForClass(class_id: string, term_id?: string) {
+  return useQuery({
+    queryKey: keys.class(class_id, term_id),
+    queryFn: () => timetableApi.class(class_id, term_id),
+    enabled: !!class_id,
   });
 }
 

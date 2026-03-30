@@ -43,7 +43,7 @@ export interface Tenant {
 
 export interface CreateTenantDto {
   name: string;
-  school_type: "PRIMARY" | "SECONDARY" | (string & {});
+  school_type: "PRIMARY" | "SECONDARY" | "COMBINED" | (string & {});
   contact_email: string;
   address: string;
   logo: string;

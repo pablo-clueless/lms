@@ -3,9 +3,9 @@
 import { RefreshIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
+import { CreateNotification } from "@/components/admin/create-notification";
 import { DataTable, Breadcrumb, Loader } from "@/components/shared";
 import { CreateEmail } from "@/components/admin/create-email";
-import { CreateNotification } from "@/components/admin/create-notification";
 import { useGetEmails } from "@/lib/api/communication";
 import { emailColumns } from "@/config/columns";
 import { Button } from "@/components/ui/button";

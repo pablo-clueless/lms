@@ -98,7 +98,7 @@ const Page = () => {
       <div className="flex w-full items-center justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <h3 className="text-2xl font-semibold">{email?.subject}</h3>
+            <h3 className="text-foreground text-2xl font-semibold">{email?.subject}</h3>
             <StatusBadge status={email?.status || "DRAFT"} />
           </div>
           <p className="text-sm text-gray-600">Created {formatDate(email?.created_at)}</p>

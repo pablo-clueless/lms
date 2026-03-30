@@ -25,9 +25,9 @@ export type NotificationEventType =
   | "PAYMENT_OVERDUE"
   | "CUSTOM";
 
+export type Role = "SUPER_ADMIN" | "ADMIN" | "TUTOR" | "STUDENT" | "PARENT";
 export type TutorStatus = "PENDING" | "SUSPENDED" | "ACTIVE" | "ON_LEAVE";
 export type UserStatus = "ACTIVE" | "INACTIVE";
-export type Role = "SUPER_ADMIN" | "ADMIN" | "TUTOR" | "STUDENT" | "PARENT";
 
 export interface Profile {
   id: string;

@@ -87,6 +87,7 @@ export interface CreateEmailDto {
   target_class_id?: string;
   target_course_id?: string;
   specific_user_ids?: string[];
+  send_immediately?: boolean;
 }
 
 export interface CreateNotificationDto {

@@ -16,6 +16,7 @@ const keys = {
   create: () => [...keys.all, "create"],
   markRead: () => [...keys.all, "mark-read"],
   markAllRead: () => [...keys.all, "mark-all-read"],
+  delete: () => [...keys.all, "delete"],
 };
 
 interface ListNotificationResponse {
@@ -44,6 +45,7 @@ const notificationApi = {
   create: (body: CreateNotificationDto) => apiClient.post<CreateNotificationResponse>("/notifications/broadcast", body),
   markAsRead: (id: string) => apiClient.post<MarkReadResponse>(`/notifications/${id}/read`),
   markAllAsRead: () => apiClient.post<MarkReadResponse>("/notifications/mark-all-read"),
+  delete: (id: string) => apiClient.delete<{ message: string }>(`/notifications/${id}`),
 };
 
 export function useGetNotifications(params?: NotificationQueries) {
@@ -88,6 +90,18 @@ export function useMarkAllNotificationsAsRead() {
   return useMutation({
     mutationKey: keys.markAllRead(),
     mutationFn: notificationApi.markAllAsRead,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: keys.list() });
+      queryClient.invalidateQueries({ queryKey: keys.unreadCount() });
+    },
+  });
+}
+
+export function useDeleteNotification() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: keys.delete(),
+    mutationFn: notificationApi.delete,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: keys.list() });
       queryClient.invalidateQueries({ queryKey: keys.unreadCount() });

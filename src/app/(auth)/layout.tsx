@@ -7,14 +7,14 @@ interface Props {
 
 const AuthLayout = ({ children }: Props) => {
   return (
-    <div className="">
+    <div className="h-screen w-screen">
       <div className="container mx-auto flex h-20 items-center justify-between py-6">
         <Link href="/">
           <h1 className="text-2xl font-bold text-neutral-800">ArcLMS</h1>
         </Link>
         <div className=""></div>
       </div>
-      <div className="bg-auth container mx-auto grid h-[calc(100vh-146px)] place-items-center bg-cover bg-center bg-no-repeat">
+      <div className="bg-auth container mx-auto grid h-[calc(100%-150px)] place-items-center bg-cover bg-center bg-no-repeat">
         {children}
       </div>
       <div className="container mx-auto flex h-[68px] items-center justify-between py-6">

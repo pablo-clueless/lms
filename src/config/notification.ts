@@ -1,4 +1,45 @@
-import type { NotificationPreferences, Role } from "@/types";
+import type { IconSvgElement } from "@hugeicons/react";
+import {
+  AddInvoiceIcon,
+  Appointment01Icon,
+  AssignmentsIcon,
+  Calendar03Icon,
+  CalendarAdd01Icon,
+  CalendarRemove01Icon,
+  CalendarSyncIcon,
+  CheckListIcon,
+  CreditCardNotAcceptIcon,
+  Quiz03Icon,
+  Setting06Icon,
+  TimeQuarterPassIcon,
+} from "@hugeicons/core-free-icons";
+
+import type { NotificationEventType, NotificationPreferences, NotificationPriority, Role } from "@/types";
+
+export const NOTIFICATION_COLORS: Record<NotificationPriority, string> = {
+  LOW: "bg-gray-100 text-gray-600",
+  NORMAL: "bg-blue-100 text-blue-600",
+  HIGH: "bg-orange-100 text-orange-600",
+  URGENT: "bg-re-100 text-red-600",
+};
+
+export const NOTIFICATION_ICONS: Record<NotificationEventType, IconSvgElement> = {
+  ASSIGNMENT_DEADLINE_APPROACHING: TimeQuarterPassIcon,
+  ASSIGNMENT_PUBLISHED: AssignmentsIcon,
+  CUSTOM: Setting06Icon,
+  EXAMINATION_SCHEDULED: CalendarAdd01Icon,
+  EXAMINATION_WINDOW_CLOSE: CalendarRemove01Icon,
+  EXAMINATION_WINDOW_OPEN: Appointment01Icon,
+  GRADE_PUBLISHED: CheckListIcon,
+  INVOICE_GENERATED: AddInvoiceIcon,
+  MEETING_CANCELLED: CalendarRemove01Icon,
+  MEETING_SCHEDULED: CalendarAdd01Icon,
+  MEETING_STARTING: Appointment01Icon,
+  PAYMENT_OVERDUE: CreditCardNotAcceptIcon,
+  QUIZ_PUBLISHED: Quiz03Icon,
+  TIMETABLE_PUBLISHED: Calendar03Icon,
+  TIMETABLE_UPDATED: CalendarSyncIcon,
+};
 
 export const NOTIFICATION_PREFERENCES: NotificationPreferences[] = [
   { email_enabled: false, event_type: "ASSIGNMENT_DEADLINE_APPROACHING", in_app_enabled: false, push_enabled: false },

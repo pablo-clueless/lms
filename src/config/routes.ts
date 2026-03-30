@@ -110,6 +110,39 @@ const STUDENT_ROUTES: RouteConfig[] = [
   },
 ];
 
+const PARENT_ROUTES: RouteConfig[] = [
+  {
+    name: "Dashboard",
+    href: "/parent",
+    icon: DashboardSquare03Icon,
+    permissions: [],
+  },
+  {
+    name: "Wards",
+    href: "/parent/wards",
+    icon: DashboardSquare03Icon,
+    permissions: [],
+  },
+  {
+    name: "Reports",
+    href: "/parent/reports",
+    icon: ChartLineData01Icon,
+    permissions: [],
+  },
+  {
+    name: "Billing",
+    href: "/parent/billing",
+    icon: MoneyReceiveSquareIcon,
+    permissions: [],
+  },
+  {
+    name: "Settings",
+    href: "/tutor/settings",
+    icon: Setting07Icon,
+    permissions: ["sessions:read"],
+  },
+];
+
 const TUTOR_ROUTES: RouteConfig[] = [
   {
     name: "Dashboard",
@@ -127,12 +160,6 @@ const TUTOR_ROUTES: RouteConfig[] = [
     name: "Courses",
     href: "/tutor/courses",
     icon: Book02Icon,
-    permissions: [],
-  },
-  {
-    name: "Timetable",
-    href: "/tutor/timetable",
-    icon: Clock01Icon,
     permissions: [],
   },
   {
@@ -351,6 +378,8 @@ export const getRoleRoutes = (role: Role) => {
       return TUTOR_ROUTES;
     case "STUDENT":
       return STUDENT_ROUTES;
+    case "PARENT":
+      return PARENT_ROUTES;
     default:
       return [];
   }

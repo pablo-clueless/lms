@@ -15,7 +15,7 @@ const authApi = {
   login: (body: SigninDto) => apiClient.post<SigninResponse>("/public/auth/login", body),
   register: (body: RegisterDto) => apiClient.post<User>("/public/auth/register", body),
   forgot_password: (body: { email: string }) => apiClient.post<null>("/public/auth/password-reset", body),
-  reset_password: () => apiClient.post<null>("/public/auth/"),
+  reset_password: () => apiClient.post<null>("/public/auth/reset-password"),
 };
 
 export function useLogin() {

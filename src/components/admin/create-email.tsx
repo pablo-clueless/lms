@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { useComposeEmail } from "@/lib/api/communication";
 import { useGetClasses } from "@/lib/api/class";
 import type { CreateEmailDto } from "@/types";
+import { Checkbox } from "../ui/checkbox";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -42,6 +43,7 @@ const initialValues: CreateEmailDto = {
   target_class_id: undefined,
   target_course_id: undefined,
   specific_user_ids: undefined,
+  send_immediately: false,
 };
 
 export const CreateEmail = () => {
@@ -112,7 +114,6 @@ export const CreateEmail = () => {
               <p className="text-destructive text-sm">{formik.errors.recipient_scope}</p>
             )}
           </div>
-
           {showClassSelector && (
             <div className="space-y-1.5">
               <label className="text-sm font-medium">
@@ -138,7 +139,6 @@ export const CreateEmail = () => {
               )}
             </div>
           )}
-
           <Input
             label="Subject"
             name="subject"
@@ -149,7 +149,6 @@ export const CreateEmail = () => {
             error={formik.touched.subject ? formik.errors.subject : undefined}
             required
           />
-
           <div className="space-y-1.5">
             <label className="text-sm font-medium">
               Message <span className="text-destructive">*</span>
@@ -166,7 +165,15 @@ export const CreateEmail = () => {
               <p className="text-destructive text-sm">{formik.errors.body}</p>
             )}
           </div>
-
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-x-4">
+              <Checkbox
+                checked={formik.values.send_immediately}
+                onCheckedChange={(value: boolean) => formik.setFieldValue("send_immediately", value)}
+              />
+              <label className="text-sm font-medium">Send Immediately</label>
+            </div>
+          </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel

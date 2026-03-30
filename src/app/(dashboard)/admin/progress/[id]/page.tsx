@@ -68,7 +68,7 @@ const Page = () => {
       <div className="flex w-full items-center justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <h3 className="text-2xl font-semibold">
+            <h3 className="text-foreground text-2xl font-semibold">
               {student?.first_name} {student?.last_name}
             </h3>
             <StatusBadge status={progress?.status || "IN_PROGRESS"} />

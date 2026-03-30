@@ -1,11 +1,11 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
+import type { Invoice, Subscription, BillingAdjustment, InvoiceLineItem, Role } from "@/types";
 import { StatusBadge, DateCell, CurrencyCell, ActionCell, ActionIcons } from "./shared";
-import type { Invoice, Subscription, BillingAdjustment, InvoiceLineItem } from "@/types";
-import { formatCurrency } from "@/lib";
+import { formatCurrency, getBasePathByRole } from "@/lib";
 
 // Invoice columns
-export const invoiceColumns: ColumnDef<Invoice>[] = [
+export const invoiceColumns = (role: Role): ColumnDef<Invoice>[] => [
   {
     accessorKey: "invoice_number",
     header: "Invoice #",
@@ -47,7 +47,11 @@ export const invoiceColumns: ColumnDef<Invoice>[] = [
     cell: ({ row }) => (
       <ActionCell
         actions={[
-          { label: "View Invoice", icon: ActionIcons.View, href: `/superadmin/billing/${row.original.id}` },
+          {
+            label: "View Invoice",
+            icon: ActionIcons.View,
+            href: `${getBasePathByRole(role)}/billing/${row.original.id}`,
+          },
           { label: "Download PDF", icon: ActionIcons.View, onClick: () => console.log("Download", row.original.id) },
         ]}
       />

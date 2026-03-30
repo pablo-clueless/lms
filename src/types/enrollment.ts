@@ -19,3 +19,15 @@ export interface Enrollment {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface StudentEnrollment {
+  id: string;
+  tenant_id: string;
+  student_id: string;
+  class_id: string;
+  session_id: string;
+  status: EnrollmentStatus;
+  enrollment_date: Date;
+  created_at: Date;
+  updated_at: Date;
+}
