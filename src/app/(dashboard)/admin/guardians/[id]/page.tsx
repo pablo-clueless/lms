@@ -2,35 +2,30 @@
 
 import { RefreshIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useParams } from "next/navigation";
 
-import { DataTable, Breadcrumb, Loader } from "@/components/shared";
-import { useGetCourses } from "@/lib/api/course";
-import { courseColumns } from "@/config/columns";
+import { Breadcrumb, Loader } from "@/components/shared";
 import { Button } from "@/components/ui/button";
-import { useHandler } from "@/hooks";
+import { useGetUser } from "@/lib/api/user";
 import { cn } from "@/lib";
 
-const breadcrumbs = [{ label: "Courses", href: "/student/courses" }];
-
-const initialParams = {
-  page: 1,
-  limit: 20,
-};
+const breadcrumbs = [{ label: "Guardians", href: "/admin/guardians" }];
 
 const Page = () => {
-  const { values } = useHandler(initialParams);
+  const id = useParams().id as string;
 
-  const { data, isFetching, isPending, refetch } = useGetCourses(values);
+  const { data, isFetching, isPending, refetch } = useGetUser(id);
 
-  if (isPending) return <Loader />;
+  if (isPending && !data) return <Loader />;
+  console.log(data);
 
   return (
     <div className="space-y-6 p-6">
       <Breadcrumb items={breadcrumbs} />
       <div className="flex w-full items-center justify-between">
         <div className="w-fit space-y-1">
-          <h3 className="text-foreground text-3xl">Courses</h3>
-          <p className="text-sm font-medium text-gray-600">Access your enrolled courses and course materials</p>
+          <h3 className="text-foreground text-3xl">Guardian</h3>
+          <p className="text-sm font-medium text-gray-600">Manage guardian of student</p>
         </div>
         <div className="flex items-center gap-x-4">
           <Button disabled={isFetching} onClick={() => refetch()} variant="outline" size="sm">
@@ -43,9 +38,7 @@ const Page = () => {
           </Button>
         </div>
       </div>
-      <div className="w-full space-y-4">
-        <DataTable columns={courseColumns("STUDENT")} data={data?.courses || []} />
-      </div>
+      <div className="w-full space-y-4"></div>
     </div>
   );
 };

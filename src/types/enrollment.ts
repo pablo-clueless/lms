@@ -1,3 +1,6 @@
+import type { Class } from "./class";
+import type { Session } from "./session";
+
 export type EnrollmentStatus = "ACTIVE" | "TRANSFERRED" | "WITHDRAWN" | "SUSPENDED";
 
 export interface Enrollment {
@@ -21,13 +24,7 @@ export interface Enrollment {
 }
 
 export interface StudentEnrollment {
-  id: string;
-  tenant_id: string;
-  student_id: string;
-  class_id: string;
-  session_id: string;
-  status: EnrollmentStatus;
-  enrollment_date: Date;
-  created_at: Date;
-  updated_at: Date;
+  class: Class;
+  session: Session;
+  enrollment: Enrollment;
 }

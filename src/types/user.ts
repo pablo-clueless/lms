@@ -10,6 +10,7 @@ export type ApplicationStatus =
   | "WITHDRAWN"
   | "EXPELLED";
 
+export type GuardianRelationship = "FATHER" | "MOTHER" | "GUARDIAN" | "OTHER";
 export type Role = "SUPER_ADMIN" | "ADMIN" | "TUTOR" | "STUDENT" | "PARENT";
 export type TutorStatus = "PENDING" | "SUSPENDED" | "ACTIVE" | "ON_LEAVE";
 export type UserStatus = "ACTIVE" | "INACTIVE";
@@ -92,6 +93,19 @@ export interface Student {
   updated_at: string;
 }
 
+export interface Guardian {
+  id: string;
+  tenant_id: string;
+  guardian_id: string;
+  student_id: string;
+  relationship: GuardianRelationship;
+  is_primary: boolean;
+  status: UserStatus;
+  notes: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export interface User {
   id: string;
   tenant_id?: string;
@@ -153,4 +167,11 @@ export interface UserQueries {
   search?: string;
   session_id?: string;
   status?: UserStatus | (string & {});
+}
+
+export interface AddGuardionDto {
+  is_primary: boolean;
+  notes: string;
+  relationship: GuardianRelationship;
+  student_id: string;
 }

@@ -215,7 +215,7 @@ export const studentColumns = (role: Role): ColumnDef<User>[] => [
           {
             label: "View Profile",
             icon: ActionIcons.View,
-            href: `/${getBasePathByRole(role)}/students/${row.original.id}`,
+            href: `${getBasePathByRole(role)}/students/${row.original.id}`,
           },
           { label: "Edit", icon: ActionIcons.Edit, onClick: () => console.log("Edit", row.original.id) },
           {

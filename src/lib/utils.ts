@@ -50,6 +50,8 @@ export function getBasePathByRole(role: Role) {
       return "/superadmin";
     case "TUTOR":
       return "/tutor";
+    case "PARENT":
+      return "/parent";
     default:
       return "/";
   }

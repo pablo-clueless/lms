@@ -47,7 +47,7 @@ const Page = () => {
         </div>
       </div>
       <div className="w-full space-y-4">
-        <DataTable columns={courseColumns} data={data?.courses || []} />
+        <DataTable columns={courseColumns("ADMIN")} data={data?.courses || []} />
         <Pagination
           onPageChange={(page) => handleChange("page", page)}
           page={values.page}

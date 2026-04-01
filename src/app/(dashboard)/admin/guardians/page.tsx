@@ -3,24 +3,25 @@
 import { RefreshIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
-import { DataTable, Breadcrumb, Loader } from "@/components/shared";
-import { useGetCourses } from "@/lib/api/course";
-import { courseColumns } from "@/config/columns";
+import { DataTable, Breadcrumb, Loader, Pagination } from "@/components/shared";
+import { useGetGuardians } from "@/lib/api/guardian";
 import { Button } from "@/components/ui/button";
+import { userColumns } from "@/config/columns";
 import { useHandler } from "@/hooks";
 import { cn } from "@/lib";
 
-const breadcrumbs = [{ label: "Courses", href: "/student/courses" }];
+const breadcrumbs = [{ label: "Guardians", href: "/admin/guardians" }];
 
 const initialParams = {
   page: 1,
   limit: 20,
+  status: "",
 };
 
 const Page = () => {
-  const { values } = useHandler(initialParams);
+  const { handleChange, values } = useHandler(initialParams);
 
-  const { data, isFetching, isPending, refetch } = useGetCourses(values);
+  const { data, isFetching, isPending, refetch } = useGetGuardians(values);
 
   if (isPending) return <Loader />;
 
@@ -29,8 +30,8 @@ const Page = () => {
       <Breadcrumb items={breadcrumbs} />
       <div className="flex w-full items-center justify-between">
         <div className="w-fit space-y-1">
-          <h3 className="text-foreground text-3xl">Courses</h3>
-          <p className="text-sm font-medium text-gray-600">Access your enrolled courses and course materials</p>
+          <h3 className="text-foreground text-3xl">Guardians</h3>
+          <p className="text-sm font-medium text-gray-600">Manage guardians of students</p>
         </div>
         <div className="flex items-center gap-x-4">
           <Button disabled={isFetching} onClick={() => refetch()} variant="outline" size="sm">
@@ -44,7 +45,13 @@ const Page = () => {
         </div>
       </div>
       <div className="w-full space-y-4">
-        <DataTable columns={courseColumns("STUDENT")} data={data?.courses || []} />
+        <DataTable columns={userColumns} data={[]} />
+        <Pagination
+          onPageChange={(page) => handleChange("page", page)}
+          page={values.page}
+          pageSize={values.limit}
+          total={data?.pagination?.total || 0}
+        />
       </div>
     </div>
   );

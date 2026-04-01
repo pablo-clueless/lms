@@ -1,6 +1,7 @@
 "use client";
 
 import { HugeiconsIcon } from "@hugeicons/react";
+import { format } from "date-fns";
 import Link from "next/link";
 import {
   RefreshIcon,
@@ -181,7 +182,7 @@ const Page = () => {
                 <div>
                   <h5 className="text-foreground font-medium">Class Enrollment</h5>
                   <p className="text-muted-foreground text-xs">
-                    Enrolled on {formatDate(enrollment.enrollment_date as unknown as string)}
+                    Enrolled on {format(enrollment.enrollment_date, "mmm dd, yyyy")}
                   </p>
                 </div>
               </div>

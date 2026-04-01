@@ -153,7 +153,7 @@ const Page = () => {
             <Loader />
           ) : (
             <div className="space-y-4">
-              <DataTable columns={courseColumns} data={coursesData?.courses || []} />
+              <DataTable columns={courseColumns("ADMIN")} data={coursesData?.courses || []} />
               <Pagination
                 onPageChange={(page) => handleCourseChange("page", page)}
                 page={courseValues.page}

@@ -1,6 +1,6 @@
-import type { Course } from "./course";
-import type { StudentEnrollment } from "./enrollment";
+import type { Enrollment } from "./enrollment";
 import type { Session } from "./session";
+import type { Course } from "./course";
 import type { Tenant } from "./tenant";
 
 export interface SuperAdminDashboardResponse {
@@ -88,7 +88,7 @@ export interface TutorDashboardResponse {
 export interface StudentDashboardResponse {
   dashboard: {
     total_enrollments: number;
-    enrollments: StudentEnrollment[];
+    enrollments: Enrollment[];
     total_courses: number;
     courses: Course[];
     active_session: Session;

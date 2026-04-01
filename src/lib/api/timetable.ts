@@ -26,13 +26,14 @@ interface CreateSwapRequestDto {
 
 const keys = {
   all: ["timetables"] as const,
-  list: () => [...keys.all, "get-timetables"],
-  get: (id: string) => [...keys.all, "get-timetable", id],
-  class: (classId: string, termId?: string) => [...keys.all, "class", classId, termId],
-  generate: () => [...keys.all, "generate-timetable"],
-  publish: () => [...keys.all, "publish-timetable"],
-  swapRequests: () => [...keys.all, "swap-requests"],
-  createSwap: () => [...keys.all, "create-swap"],
+  list: () => [...keys.all, "get-timetables"] as const,
+  get: (id: string) => [...keys.all, "get-timetable", id] as const,
+  class: (classId: string, termId?: string) => [...keys.all, "class", classId, termId] as const,
+  generate: () => [...keys.all, "generate-timetable"] as const,
+  publish: () => [...keys.all, "publish-timetable"] as const,
+  swapRequests: () => [...keys.all, "swap-requests"] as const,
+  createSwap: () => [...keys.all, "create-swap"] as const,
+  archive: (id: string) => [...keys.all, "archive", id] as const,
 };
 
 interface ListTimetableResponse {
@@ -52,6 +53,7 @@ const timetableApi = {
   publish: (id: string) => apiClient.post<Timetable>(`/timetables/${id}/publish`),
   listSwapRequests: () => apiClient.get<ListSwapRequestResponse>("/timetables/swap-requests"),
   createSwapRequest: (body: CreateSwapRequestDto) => apiClient.post<SwapRequest>("/timetables/swap-requests", body),
+  archive: (id: string) => apiClient.post<Timetable>(`/timetables/${id}/archive`),
 };
 
 export function useGetTimetables(params?: TimetableQueries) {
@@ -113,6 +115,17 @@ export function useCreateSwapRequest() {
     mutationFn: timetableApi.createSwapRequest,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: keys.swapRequests() });
+    },
+  });
+}
+
+export function useArchiveTimetable() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: keys.archive(""),
+    mutationFn: timetableApi.archive,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: keys.list() });
     },
   });
 }

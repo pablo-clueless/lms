@@ -3,6 +3,7 @@ export { invoiceColumns, subscriptionColumns, billingAdjustmentColumns } from ".
 export { userColumns, adminColumns, tutorColumns, studentColumns } from "./user";
 export { examinationColumns, examinationSubmissionColumns } from "./examination";
 export { emailColumns, notificationColumns } from "./communication";
+export { studentInboxColumns } from "./student-inbox";
 export { progressColumns, reportCardColumns } from "./progress";
 export { columns as sessionColumns } from "./session";
 export { enrollmentColumns } from "./enrollment";

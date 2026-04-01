@@ -101,3 +101,19 @@ export interface CreateNotificationDto {
   priority: NotificationPriority;
   action_url?: string;
 }
+
+// Student Inbox Types
+export interface StudentInboxEmail {
+  id: string;
+  subject: string;
+  body: string;
+  html_body?: string;
+  sender_id: string;
+  sender_name: string;
+  sender_email: string;
+  sender_avatar?: string;
+  is_read: boolean;
+  read_at?: Date;
+  received_at: Date;
+  attachment_urls?: string[];
+}

@@ -1,3 +1,4 @@
+export type CourseContentType = "TEXT" | "VIDEO" | "IMAGE" | "AUDIO" | "DOCUMENT" | "LINK";
 export type CourseStatus = "ACTIVE" | "INACTIVE" | "DRAFT";
 
 export interface GradeWeighting {
@@ -22,6 +23,7 @@ export interface Course {
   syllabus?: string;
   created_at: Date;
   updated_at: Date;
+  course_contents: CourseContent[];
 }
 
 export interface CreateCourseDto {
@@ -32,4 +34,19 @@ export interface CreateCourseDto {
   tutor_id: string;
   credits: number;
   periods_per_week: number;
+}
+
+export interface CourseContent {
+  id: string;
+  course_id: string;
+  title: string;
+  content_type: CourseContentType;
+  content: string;
+  description?: string;
+  order_index: number;
+  duration?: number;
+  file_size?: number;
+  mime_type?: string;
+  created_at: Date;
+  updated_at: Date;
 }

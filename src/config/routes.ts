@@ -49,18 +49,6 @@ const STUDENT_ROUTES: RouteConfig[] = [
     permissions: [],
   },
   {
-    name: "Courses",
-    href: "/student/courses",
-    icon: Book02Icon,
-    permissions: [],
-  },
-  {
-    name: "Timetable",
-    href: "/student/timetable",
-    icon: Clock01Icon,
-    permissions: [],
-  },
-  {
     name: "Assignments",
     href: "/student/assignments",
     icon: Task01Icon,
@@ -91,15 +79,15 @@ const STUDENT_ROUTES: RouteConfig[] = [
     permissions: [],
   },
   {
-    name: "Notifications",
-    href: "/student/notifications",
-    icon: Notification03Icon,
+    name: "Inbox",
+    href: "/student/inbox",
+    icon: Mail01Icon,
     permissions: [],
   },
   {
-    name: "Settings",
-    href: "/student/settings",
-    icon: Setting07Icon,
+    name: "Notifications",
+    href: "/student/notifications",
+    icon: Notification03Icon,
     permissions: [],
   },
   {
@@ -215,12 +203,6 @@ const TUTOR_ROUTES: RouteConfig[] = [
     href: "/tutor/notifications",
     icon: Notification03Icon,
     permissions: [],
-  },
-  {
-    name: "Settings",
-    href: "/tutor/settings",
-    icon: Setting07Icon,
-    permissions: ["sessions:read"],
   },
   {
     name: "Profile",

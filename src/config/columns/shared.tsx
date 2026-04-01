@@ -79,6 +79,7 @@ export const DateTimeCell = ({ date, fallback = "N/A" }: DateCellProps) => {
 interface ActionItem {
   label: string;
   icon: IconSvgElement;
+  hidden?: boolean;
   href?: string;
   onClick?: () => void;
   variant?: "default" | "danger";
@@ -105,6 +106,7 @@ export const ActionCell = ({ actions }: ActionCellProps) => {
               className={cn(
                 "flex w-full items-center gap-x-2 rounded-md px-2.5 py-2 text-xs hover:bg-gray-200",
                 action.variant === "danger" && "text-red-600 hover:bg-red-50",
+                action.hidden && "hidden",
               )}
             >
               <HugeiconsIcon className="size-4" icon={action.icon} />
@@ -117,6 +119,7 @@ export const ActionCell = ({ actions }: ActionCellProps) => {
               className={cn(
                 "flex w-full items-center gap-x-2 rounded-md px-2.5 py-2 text-xs hover:bg-gray-200",
                 action.variant === "danger" && "text-red-600 hover:bg-red-50",
+                action.hidden && "hidden",
               )}
             >
               <HugeiconsIcon className="size-4" icon={action.icon} />

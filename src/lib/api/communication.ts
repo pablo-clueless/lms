@@ -6,7 +6,7 @@ import { apiClient } from "../api-client";
 interface EmailQueries {
   limit?: number;
   page?: number;
-  status?: "DRAFT" | "SCHEDULED" | "SENDING" | "SENT" | "FAILED" | "CANCELLED";
+  status?: "DRAFT" | "SCHEDULED" | "SENDING" | "SENT" | "FAILED" | "CANCELLED" | (string & {});
 }
 
 interface ScheduleEmailDto {
@@ -24,7 +24,7 @@ const keys = {
 };
 
 interface ListEmailResponse {
-  emails: Email[];
+  data: Email[];
   pagination: Pagination;
 }
 

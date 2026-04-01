@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { Enrollment, Pagination, PaginationParams, QueryParams } from "@/types";
+import type { Enrollment, Pagination, PaginationParams, QueryParams, StudentEnrollment } from "@/types";
 import { apiClient } from "../api-client";
 
 export interface CreateEnrollmentDto {
@@ -30,6 +30,7 @@ const keys = {
   all: ["enrollments"] as const,
   list: () => [...keys.all, "get-enrollments"],
   get: (id: string) => [...keys.all, "get-enrollment", id],
+  getStudent: (id: string) => [...keys.all, "get-enrollment", id],
   enroll: () => [...keys.all, "enroll-student"],
   create: () => [...keys.all, "create-student"],
   transfer: () => [...keys.all, "transfer-student"],
@@ -44,6 +45,7 @@ const enrollmentApi = {
   list: (params?: PaginationParams & EnrollmentQueries) =>
     apiClient.get<ListEnrollmentResponse>("/enrollments", params as QueryParams),
   get: (id: string) => apiClient.get<Enrollment>(`/enrollments/${id}`),
+  getStudent: (id: string) => apiClient.get<StudentEnrollment>(`/enrollments/student/${id}`),
   enroll: (body: EnrollStudentDto) => apiClient.post<Enrollment>("/enrollments", body),
   create: (body: CreateEnrollmentDto) => apiClient.post<Enrollment>("/enrollments/create-student", body),
   transfer: (id: string, body: TransferStudentDto) => apiClient.post<Enrollment>(`/enrollments/${id}/transfer`, body),
@@ -60,6 +62,14 @@ export function useGetEnrollment(id: string) {
   return useQuery({
     queryKey: keys.get(id),
     queryFn: () => enrollmentApi.get(id),
+    enabled: !!id,
+  });
+}
+
+export function useGetStudentEnrollment(id: string) {
+  return useQuery({
+    queryKey: keys.getStudent(id),
+    queryFn: () => enrollmentApi.getStudent(id),
     enabled: !!id,
   });
 }

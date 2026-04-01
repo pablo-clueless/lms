@@ -1,16 +1,18 @@
 import { cn } from "@/lib/utils";
 
 interface Props {
+  className?: string;
   isFullScreen?: boolean;
   message?: string;
 }
 
-export const Loader = ({ isFullScreen = false, message = "Loading..." }: Props) => {
+export const Loader = ({ className, isFullScreen = false, message = "Loading..." }: Props) => {
   return (
     <div
       className={cn(
         "flex items-center justify-center",
         isFullScreen ? "fixed inset-0 top-0 left-0 h-screen w-screen" : "h-full w-full",
+        className,
       )}
     >
       <div className="flex flex-col items-center gap-y-10">
