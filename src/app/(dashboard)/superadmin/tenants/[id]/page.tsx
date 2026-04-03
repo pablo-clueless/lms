@@ -8,9 +8,11 @@ import { RefreshIcon, Mail01Icon, Location01Icon, Calendar03Icon, Settings01Icon
 import { useGetTenant, useSuspendTenant, useReactivateTenant } from "@/lib/api/tenant";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Breadcrumb, Loader, TabPanel } from "@/components/shared";
-import { StatusBadge } from "@/config/columns";
+import { useGetInvoices } from "@/lib/api/billing";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/config/columns";
 import { getInitials, cn } from "@/lib";
+import { useHandler } from "@/hooks";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -23,15 +25,24 @@ import {
 
 const tabs = ["overview", "configuration", "billing"];
 
+const initialParams = {
+  limit: 10,
+  page: 1,
+  tenant_id: "",
+};
+
 const Page = () => {
-  const [currentTab, setCurrentTab] = useState(tabs[0]);
-  const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
-  const [reactivateDialogOpen, setReactivateDialogOpen] = useState(false);
   const id = useParams().id as string;
+
+  const [reactivateDialogOpen, setReactivateDialogOpen] = useState(false);
+  const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
+  const [currentTab, setCurrentTab] = useState(tabs[0]);
+  const { values } = useHandler({ ...initialParams, tenant_id: id });
 
   const { data, isFetching, isPending, refetch } = useGetTenant(id);
   const { mutate: suspendTenant, isPending: isSuspending } = useSuspendTenant();
   const { mutate: reactivateTenant, isPending: isReactivating } = useReactivateTenant();
+  const {} = useGetInvoices(values);
 
   const breadcrumbs = [
     { label: "Tenants", href: "/superadmin/tenants" },

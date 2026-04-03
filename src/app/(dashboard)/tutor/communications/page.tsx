@@ -36,7 +36,7 @@ const Page = () => {
         </div>
       </div>
       <div className="w-full space-y-4">
-        <DataTable columns={emailColumns} data={data?.emails || []} />
+        <DataTable columns={emailColumns} data={data?.data || []} />
       </div>
     </div>
   );

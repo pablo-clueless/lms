@@ -4,7 +4,10 @@ import type { Invoice, Subscription, QueryParams, GenerateInvoice } from "@/type
 import { apiClient } from "../api-client";
 
 interface InvoiceQueries {
+  limit?: number;
+  page?: number;
   status?: "DRAFT" | "PENDING" | "PAID" | "OVERDUE" | "VOID" | "DISPUTED";
+  tenant_id?: string;
 }
 
 interface PayInvoiceDto {
