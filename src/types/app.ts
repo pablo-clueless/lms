@@ -23,6 +23,7 @@ export interface PaginationParams {
   limit?: number;
   page?: number;
   status?: string;
+  tutor_id?: string;
 }
 
 export interface PaginatedResponse<T extends object> {

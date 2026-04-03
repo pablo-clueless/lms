@@ -76,13 +76,13 @@ export const DateTimeCell = ({ date, fallback = "N/A" }: DateCellProps) => {
   return <span>{format(new Date(date), "dd/MM/yyyy HH:mm")}</span>;
 };
 
-interface ActionItem {
+export interface ActionItem {
   label: string;
   icon: IconSvgElement;
   hidden?: boolean;
   href?: string;
   onClick?: () => void;
-  variant?: "default" | "danger";
+  variant?: "default" | "danger" | (string & {});
 }
 
 interface ActionCellProps {

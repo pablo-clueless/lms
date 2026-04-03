@@ -1,7 +1,7 @@
-export type AssessmentType = "QUIZ" | "ASSIGNMENT";
-export type AssessmentStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 export type QuestionType = "MULTIPLE_CHOICE" | "MULTIPLE_ANSWER" | "boolean_FALSE" | "SHORT_ANSWER" | "ESSAY";
 export type SubmissionStatus = "NOT_STARTED" | "IN_PROGRESS" | "SUBMITTED" | "LATE" | "GRADED";
+export type AssessmentType = "QUIZ" | "ASSIGNMENT";
+export type AssessmentStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
 export interface Question {
   id: string;
@@ -40,20 +40,19 @@ export interface Assignment {
   id: string;
   tenant_id: string;
   course_id: string;
+  class_id: string;
   created_by_tutor_id: string;
   title: string;
-  instructions: string;
-  questions: Question[];
-  total_marks: number;
-  due_date: Date;
-  availability_start: Date;
-  availability_end: Date;
+  description: string;
+  max_marks: number;
+  submission_deadline: Date;
+  allow_late_submission: false;
+  allowed_file_formats: string[];
+  max_file_size: number;
   status: AssessmentStatus;
-  allow_late_submission: boolean;
-  late_penalty_percentage?: number;
+  questions: Question[];
   created_at: Date;
   updated_at: Date;
-  published_at?: Date;
 }
 
 export interface QuizSubmission {
@@ -120,15 +119,60 @@ export interface CreateAssessmentDto {
 }
 
 export interface QuestionDto {
-  type: QuestionType;
-  text: string;
-  options: OptionDto[];
-  correct_answer: string;
-  points: number;
+  attachment_urls: string[];
+  correct_answers: string[];
   explanation: string;
+  id: string;
+  marks: number;
+  options: string[];
+  order_index: number;
+  text: string;
+  type: QuestionType;
 }
 
-export interface OptionDto {
-  text: string;
+export interface CreateAssignmentDto {
+  allow_late_submission: boolean;
+  allowed_file_formats: string[];
+  attachment_urls: string[];
+  course_id: string;
+  class_id: string;
+  description: string;
+  hard_cutoff_date: string;
+  max_file_size: number;
+  max_marks: number;
+  questions: QuestionDto[];
+  submission_deadline: string;
+  title: string;
+}
+
+export interface CreateQuizDto {
+  allow_retake: boolean;
+  availability_end: string;
+  availability_start: string;
+  course_id: string;
+  class_id: string;
+  instructions: string;
+  passing_percentage: number;
+  questions: QuestionDto[];
+  show_before_window: boolean;
+  time_limit: number;
+  title: string;
+}
+
+export interface SubmitQuizDto {
+  answers: QuizAnswerDto[];
+}
+
+export interface QuizAnswerDto {
+  answer_text: string;
+  feedback: string;
   is_correct: boolean;
+  marks_earned: number;
+  question_id: string;
+  selected_options: string[];
+}
+
+export interface SubmitAssignmentDto {
+  answer_text: string;
+  file_urls: string[];
 }

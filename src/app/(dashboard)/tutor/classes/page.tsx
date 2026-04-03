@@ -7,6 +7,7 @@ import { DataTable, Breadcrumb, Loader } from "@/components/shared";
 import { useGetClasses } from "@/lib/api/class";
 import { classColumns } from "@/config/columns";
 import { Button } from "@/components/ui/button";
+import { useUserStore } from "@/store/core";
 import { useHandler } from "@/hooks";
 import { cn } from "@/lib";
 
@@ -15,10 +16,12 @@ const breadcrumbs = [{ label: "My Classes", href: "/tutor/classes" }];
 const initialParams = {
   page: 1,
   limit: 20,
+  tutor_id: "",
 };
 
 const Page = () => {
-  const { values } = useHandler(initialParams);
+  const { user } = useUserStore();
+  const { values } = useHandler({ ...initialParams, tutor_id: String(user?.id) });
 
   const { data, isFetching, isPending, refetch } = useGetClasses(values);
 

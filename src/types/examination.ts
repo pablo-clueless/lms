@@ -79,14 +79,12 @@ export interface ExaminationSubmission {
 
 export interface CreateExaminationDto {
   course_id: string;
-  title: string;
-  description: string;
+  duration: number;
   instructions: string;
   questions: QuestionDto[];
-  time_limit_minutes: number;
-  passing_score: number;
-  shuffle_questions: boolean;
-  shuffle_options: boolean;
-  enable_proctoring: boolean;
-  allow_backtrack: boolean;
+  term_id: string;
+  title: string;
+  total_marks: number;
+  window_end: string;
+  window_start: string;
 }

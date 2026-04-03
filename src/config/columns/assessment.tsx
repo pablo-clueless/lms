@@ -1,10 +1,22 @@
+import { Upload05Icon } from "@hugeicons/core-free-icons";
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { StatusBadge, DateTimeCell, ActionCell, ActionIcons } from "./shared";
-import type { Quiz, Assignment, QuizSubmission, AssignmentSubmission } from "@/types";
+import type { Quiz, Assignment, QuizSubmission, AssignmentSubmission, Role } from "@/types";
+import { getBasePathByRole } from "@/lib";
+
+interface QuizColumnsOptions {
+  onPublish?: (quiz: Quiz) => void;
+  onDelete?: (quiz: Quiz) => void;
+}
+
+interface AssignmentColumnsOptions {
+  onPublish?: (assignment: Assignment) => void;
+  onDelete?: (assignment: Assignment) => void;
+}
 
 // Quiz columns
-export const quizColumns: ColumnDef<Quiz>[] = [
+export const quizColumns = (role: Role, options?: QuizColumnsOptions): ColumnDef<Quiz>[] => [
   {
     accessorKey: "title",
     header: "Title",
@@ -46,14 +58,27 @@ export const quizColumns: ColumnDef<Quiz>[] = [
     cell: ({ row }) => (
       <ActionCell
         actions={[
-          { label: "View Details", icon: ActionIcons.View, onClick: () => console.log("View", row.original.id) },
-          { label: "Edit", icon: ActionIcons.Edit, onClick: () => console.log("Edit", row.original.id) },
           {
-            label: "Delete",
-            icon: ActionIcons.Delete,
-            onClick: () => console.log("Delete", row.original.id),
-            variant: "danger",
+            label: "View Details",
+            icon: ActionIcons.View,
+            href: `${getBasePathByRole(role)}/quizzes/${row.original.id}?course_id=${row.original.course_id}`,
           },
+          {
+            label: "Edit",
+            icon: ActionIcons.Edit,
+            href: `${getBasePathByRole(role)}/quizzes/${row.original.id}/edit?course_id=${row.original.course_id}`,
+          },
+          ...(row.original.status === "DRAFT" && options?.onPublish
+            ? [
+                { label: "Publish", icon: Upload05Icon, onClick: () => options.onPublish?.(row.original) },
+                {
+                  label: "Delete",
+                  icon: ActionIcons.Delete,
+                  onClick: () => options?.onDelete?.(row.original),
+                  variant: "danger",
+                },
+              ]
+            : []),
         ]}
       />
     ),
@@ -61,21 +86,21 @@ export const quizColumns: ColumnDef<Quiz>[] = [
 ];
 
 // Assignment columns
-export const assignmentColumns: ColumnDef<Assignment>[] = [
+export const assignmentColumns = (role: Role, options?: AssignmentColumnsOptions): ColumnDef<Assignment>[] => [
   {
     accessorKey: "title",
     header: "Title",
     cell: ({ row }) => <span className="font-medium">{row.original.title}</span>,
   },
   {
-    accessorKey: "total_marks",
-    header: "Total Marks",
-    cell: ({ row }) => <span>{row.original.total_marks}</span>,
+    accessorKey: "max_marks",
+    header: "Max Marks",
+    cell: ({ row }) => <span>{row.original.max_marks}</span>,
   },
   {
-    accessorKey: "due_date",
-    header: "Due Date",
-    cell: ({ row }) => <DateTimeCell date={row.original.due_date} />,
+    accessorKey: "submission_deadline",
+    header: "Submission Deadline",
+    cell: ({ row }) => <DateTimeCell date={row.original.submission_deadline} />,
   },
   {
     id: "questions",
@@ -102,14 +127,27 @@ export const assignmentColumns: ColumnDef<Assignment>[] = [
     cell: ({ row }) => (
       <ActionCell
         actions={[
-          { label: "View Details", icon: ActionIcons.View, onClick: () => console.log("View", row.original.id) },
-          { label: "Edit", icon: ActionIcons.Edit, onClick: () => console.log("Edit", row.original.id) },
           {
-            label: "Delete",
-            icon: ActionIcons.Delete,
-            onClick: () => console.log("Delete", row.original.id),
-            variant: "danger",
+            label: "View Details",
+            icon: ActionIcons.View,
+            href: `${getBasePathByRole(role)}/assignments/${row.original.id}?course_id=${row.original.course_id}`,
           },
+          {
+            label: "Edit",
+            icon: ActionIcons.Edit,
+            href: `${getBasePathByRole(role)}/assignments/${row.original.id}/edit?course_id=${row.original.course_id}`,
+          },
+          ...(row.original.status === "DRAFT" && options?.onPublish
+            ? [
+                { label: "Publish", icon: Upload05Icon, onClick: () => options.onPublish?.(row.original) },
+                {
+                  label: "Delete",
+                  icon: ActionIcons.Delete,
+                  onClick: () => options?.onDelete?.(row.original),
+                  variant: "danger",
+                },
+              ]
+            : []),
         ]}
       />
     ),
@@ -148,6 +186,15 @@ export const quizSubmissionColumns: ColumnDef<QuizSubmission>[] = [
     header: "Graded At",
     cell: ({ row }) => <DateTimeCell date={row.original.graded_at} />,
   },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <ActionCell
+        actions={[{ label: "View", icon: ActionIcons.View, href: `/quizzes/submissions/${row.original.id}` }]}
+      />
+    ),
+  },
 ];
 
 // Assignment submission columns
@@ -185,5 +232,14 @@ export const assignmentSubmissionColumns: ColumnDef<AssignmentSubmission>[] = [
     accessorKey: "submitted_at",
     header: "Submitted At",
     cell: ({ row }) => <DateTimeCell date={row.original.submitted_at} />,
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <ActionCell
+        actions={[{ label: "View", icon: ActionIcons.View, href: `/assignments/submissions/${row.original.id}` }]}
+      />
+    ),
   },
 ];

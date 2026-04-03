@@ -1,64 +1,21 @@
 "use client";
 
 import { RefreshIcon, BookOpen01Icon, UserGroupIcon, File01Icon, Quiz01Icon } from "@hugeicons/core-free-icons";
-import type { ColumnDef } from "@tanstack/react-table";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
 import { DataTable, Breadcrumb, Loader, TabPanel } from "@/components/shared";
 import { useGetQuizzes, useGetAssignments } from "@/lib/api/assessment";
+import { assignmentColumns, quizColumns } from "@/config/columns";
 import { useGetCourse } from "@/lib/api/course";
 import { Button } from "@/components/ui/button";
-import type { Quiz, Assignment } from "@/types";
 import { StatusBadge } from "@/config/columns";
 import { useGetClass } from "@/lib/api/class";
 import { useGetUsers } from "@/lib/api/user";
 import { cn } from "@/lib";
 
 const tabs = ["overview", "quizzes", "assignments", "students"];
-
-const quizColumns: ColumnDef<Quiz>[] = [
-  {
-    accessorKey: "title",
-    header: "Title",
-  },
-  {
-    accessorKey: "time_limit",
-    header: "Duration",
-    cell: ({ row }) => `${row.original.time_limit || 0} mins`,
-  },
-  {
-    accessorKey: "total_marks",
-    header: "Total Marks",
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => <StatusBadge status={row.original.status || "DRAFT"} />,
-  },
-];
-
-const assignmentColumns: ColumnDef<Assignment>[] = [
-  {
-    accessorKey: "title",
-    header: "Title",
-  },
-  {
-    accessorKey: "due_date",
-    header: "Due Date",
-    cell: ({ row }) => (row.original.due_date ? new Date(row.original.due_date).toLocaleDateString() : "No deadline"),
-  },
-  {
-    accessorKey: "total_marks",
-    header: "Total Marks",
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => <StatusBadge status={row.original.status || "DRAFT"} />,
-  },
-];
 
 const Page = () => {
   const [currentTab, setCurrentTab] = useState(tabs[0]);
@@ -229,7 +186,7 @@ const Page = () => {
           ) : (
             <div className="space-y-4">
               {quizzesData?.data && quizzesData.data.length > 0 ? (
-                <DataTable columns={quizColumns} data={quizzesData.data} />
+                <DataTable columns={quizColumns("ADMIN")} data={quizzesData.data} />
               ) : (
                 <div className="rounded-lg border p-8 text-center">
                   <p className="text-muted-foreground">No quizzes created for this course yet</p>
@@ -245,7 +202,7 @@ const Page = () => {
           ) : (
             <div className="space-y-4">
               {assignmentsData?.data && assignmentsData.data.length > 0 ? (
-                <DataTable columns={assignmentColumns} data={assignmentsData.data} />
+                <DataTable columns={assignmentColumns("ADMIN")} data={assignmentsData.data} />
               ) : (
                 <div className="rounded-lg border p-8 text-center">
                   <p className="text-muted-foreground">No assignments created for this course yet</p>
