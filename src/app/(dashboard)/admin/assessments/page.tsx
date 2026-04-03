@@ -32,7 +32,7 @@ const Page = () => {
         </div>
       </div>
       <div className="w-full space-y-4">
-        <DataTable columns={quizColumns} data={[]} />
+        <DataTable columns={quizColumns("ADMIN")} data={[]} />
       </div>
     </div>
   );
