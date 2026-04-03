@@ -20,8 +20,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useGetSuperAdminDashboard } from "@/lib/api/dashboard";
 import { cn, formatCurrency, formatNumber } from "@/lib";
 import { Button } from "@/components/ui/button";
-import { Loader } from "@/components/shared";
+import { DataTable, Loader } from "@/components/shared";
 import { useUserStore } from "@/store/core";
+import { invoiceColumns } from "@/config/columns";
 
 const chartConfig = {
   count: { label: "Users", color: "var(--chart-2)" },
@@ -129,15 +130,34 @@ const Page = () => {
         />
       </div>
       {dashboard?.billing_metrics !== null && (
-        <div className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <StatCard
-            title="Monthly Recurring Revenue"
-            value={formatCurrency(0)}
-            icon={MoneyBag02Icon}
-            trend={{ value: 15, isPositive: true }}
-          />
-          <StatCard title="Total Revenue" value={formatCurrency(0)} icon={MoneyBag02Icon} />
-          <StatCard title="Upcoming Renewals" value={0} icon={MoneyBag02Icon} subtitle="In the next 30 days" />
+        <div className="space-y-6">
+          <div className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <StatCard
+              title="Monthly Recurring Revenue"
+              value={formatCurrency((dashboard?.billing_metrics.mrr || 0) / 100)}
+              icon={MoneyBag02Icon}
+              trend={{ value: 15, isPositive: true }}
+            />
+            <StatCard
+              title="Total Revenue"
+              value={formatCurrency((dashboard?.billing_metrics.total_revenue || 0) / 100)}
+              icon={MoneyBag02Icon}
+            />
+            <StatCard
+              title="Upcoming Renewals"
+              value={dashboard?.billing_metrics.upcoming_count || 0}
+              icon={MoneyBag02Icon}
+              subtitle="In the next 30 days"
+            />
+          </div>
+          {!!dashboard?.billing_metrics.recent_invoices.length && (
+            <div>
+              <DataTable
+                columns={invoiceColumns("SUPER_ADMIN")}
+                data={dashboard.billing_metrics.recent_invoices || []}
+              />
+            </div>
+          )}
         </div>
       )}
       <div className="bg-card w-full rounded-xl border p-6">

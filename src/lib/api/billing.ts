@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { Invoice, Subscription, QueryParams, GenerateInvoice } from "@/types";
+import type { Invoice, Subscription, QueryParams, GenerateInvoice, Pagination } from "@/types";
 import { apiClient } from "../api-client";
 
 interface InvoiceQueries {
@@ -47,6 +47,7 @@ interface GenerateInvoiceResponse {
 
 interface ListInvoiceResponse {
   data: Invoice[];
+  pagination: Pagination;
 }
 
 interface ListSubscriptionResponse {

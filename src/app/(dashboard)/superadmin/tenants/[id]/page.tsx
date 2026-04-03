@@ -5,12 +5,12 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { RefreshIcon, Mail01Icon, Location01Icon, Calendar03Icon, Settings01Icon } from "@hugeicons/core-free-icons";
 
+import { Breadcrumb, DataTable, Loader, Pagination, TabPanel } from "@/components/shared";
 import { useGetTenant, useSuspendTenant, useReactivateTenant } from "@/lib/api/tenant";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Breadcrumb, Loader, TabPanel } from "@/components/shared";
 import { useGetInvoices } from "@/lib/api/billing";
 import { Button } from "@/components/ui/button";
-import { StatusBadge } from "@/config/columns";
+import { invoiceColumns, StatusBadge } from "@/config/columns";
 import { getInitials, cn } from "@/lib";
 import { useHandler } from "@/hooks";
 import { toast } from "sonner";
@@ -37,12 +37,12 @@ const Page = () => {
   const [reactivateDialogOpen, setReactivateDialogOpen] = useState(false);
   const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState(tabs[0]);
-  const { values } = useHandler({ ...initialParams, tenant_id: id });
+  const { handleChange, values } = useHandler({ ...initialParams, tenant_id: id });
 
   const { data, isFetching, isPending, refetch } = useGetTenant(id);
   const { mutate: suspendTenant, isPending: isSuspending } = useSuspendTenant();
   const { mutate: reactivateTenant, isPending: isReactivating } = useReactivateTenant();
-  const {} = useGetInvoices(values);
+  const { data: invoices, isPending: isFetchingInvoices } = useGetInvoices(values);
 
   const breadcrumbs = [
     { label: "Tenants", href: "/superadmin/tenants" },
@@ -159,7 +159,6 @@ const Page = () => {
           </Button>
         </div>
       </div>
-
       <div className="w-full space-y-4">
         <div className="border-b">
           <div className="flex items-center gap-1">
@@ -179,7 +178,6 @@ const Page = () => {
             ))}
           </div>
         </div>
-
         <TabPanel selected={currentTab} value="overview">
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-4 rounded-lg border p-4">
@@ -203,7 +201,6 @@ const Page = () => {
                 </div>
               </div>
             </div>
-
             <div className="space-y-4 rounded-lg border p-4">
               <h4 className="font-semibold">Address & Dates</h4>
               <div className="space-y-3 text-sm">
@@ -233,14 +230,12 @@ const Page = () => {
                 )}
               </div>
             </div>
-
             {data?.suspension_reason && (
               <div className="space-y-4 rounded-lg border border-red-200 bg-red-50 p-4 md:col-span-2">
                 <h4 className="font-semibold text-red-800">Suspension Reason</h4>
                 <p className="text-sm text-red-700">{data.suspension_reason}</p>
               </div>
             )}
-
             <div className="space-y-4 rounded-lg border p-4 md:col-span-2">
               <h4 className="font-semibold">Billing Contact</h4>
               <div className="grid gap-4 md:grid-cols-3">
@@ -260,7 +255,6 @@ const Page = () => {
             </div>
           </div>
         </TabPanel>
-
         <TabPanel selected={currentTab} value="configuration">
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-4 rounded-lg border p-4">
@@ -284,7 +278,6 @@ const Page = () => {
                 </div>
               </div>
             </div>
-
             <div className="space-y-4 rounded-lg border p-4">
               <h4 className="font-semibold">Grade Weighting</h4>
               <div className="space-y-3 text-sm">
@@ -298,7 +291,6 @@ const Page = () => {
                 </div>
               </div>
             </div>
-
             <div className="space-y-4 rounded-lg border p-4">
               <h4 className="font-semibold">Thresholds & Policies</h4>
               <div className="space-y-3 text-sm">
@@ -320,7 +312,6 @@ const Page = () => {
                 </div>
               </div>
             </div>
-
             <div className="space-y-4 rounded-lg border p-4">
               <h4 className="font-semibold">Supported Classes</h4>
               <div className="flex flex-wrap gap-2">
@@ -337,7 +328,6 @@ const Page = () => {
             </div>
           </div>
         </TabPanel>
-
         <TabPanel selected={currentTab} value="billing">
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-4 rounded-lg border p-4 md:col-span-2">
@@ -357,7 +347,6 @@ const Page = () => {
                 </div>
               </div>
             </div>
-
             <div className="space-y-4 rounded-lg border p-4 md:col-span-2">
               <h4 className="font-semibold">Billing Policies</h4>
               <div className="grid gap-4 md:grid-cols-2">
@@ -371,9 +360,24 @@ const Page = () => {
                 </div>
               </div>
             </div>
-
-            <div className="rounded-lg border p-8 text-center md:col-span-2">
-              <p className="text-muted-foreground">Invoice history and payment records will be displayed here</p>
+            <div className="col-span-2">
+              {isFetchingInvoices ? (
+                <Loader />
+              ) : !!invoices?.data.length ? (
+                <div className="space-y-4">
+                  <DataTable columns={invoiceColumns("SUPER_ADMIN")} data={invoices.data || []} />
+                  <Pagination
+                    onPageChange={(page) => handleChange("page", page)}
+                    page={values.page}
+                    pageSize={values.limit}
+                    total={invoices?.pagination.total || 0}
+                  />
+                </div>
+              ) : (
+                <div className="rounded-lg border p-8 text-center">
+                  <p className="text-muted-foreground">Invoice history and payment records will be displayed here</p>
+                </div>
+              )}
             </div>
           </div>
         </TabPanel>
