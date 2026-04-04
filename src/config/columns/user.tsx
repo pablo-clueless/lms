@@ -1,6 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { StatusBadge, DateCell, UserAvatarCell, ActionCell, ActionIcons } from "./shared";
+import type { GuardianWithDetails } from "@/lib/api/guardian";
 import type { Role, User } from "@/types";
 import { getBasePathByRole } from "@/lib";
 
@@ -223,6 +224,73 @@ export const studentColumns = (role: Role): ColumnDef<User>[] => [
             icon: ActionIcons.Delete,
             onClick: () => console.log("Suspend", row.original.id),
             variant: "danger",
+          },
+        ]}
+      />
+    ),
+  },
+];
+
+export const wardColumns: ColumnDef<GuardianWithDetails>[] = [
+  {
+    id: "student",
+    header: "Student",
+    cell: ({ row }) => {
+      const student = row.original.student_user;
+      if (!student) return <span className="text-muted-foreground">N/A</span>;
+      return (
+        <UserAvatarCell
+          name={`${student.first_name} ${student.last_name}`}
+          email={student.email}
+          avatar={student.profile_photo}
+        />
+      );
+    },
+  },
+  {
+    accessorKey: "relationship",
+    header: "Relationship",
+    cell: ({ row }) => <StatusBadge status={row.original.relationship} />,
+  },
+  {
+    accessorKey: "is_primary",
+    header: "Primary",
+    cell: ({ row }) => (
+      <span className={row.original.is_primary ? "font-medium text-green-600" : "text-muted-foreground"}>
+        {row.original.is_primary ? "Yes" : "No"}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => <StatusBadge status={row.original.status} />,
+  },
+  {
+    accessorKey: "created_at",
+    header: "Date Added",
+    cell: ({ row }) => <DateCell date={row.original.created_at} />,
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <ActionCell
+        actions={[
+          {
+            label: "View Profile",
+            icon: ActionIcons.View,
+            href: `/parent/wards/${row.original.student_id}`,
+          },
+          {
+            label: "View Progress",
+            icon: ActionIcons.View,
+            href: `/parent/wards/${row.original.student_id}/progress`,
+          },
+          {
+            label: "View Invoices",
+            icon: ActionIcons.View,
+            href: `/parent/wards/${row.original.student_id}/invoices`,
           },
         ]}
       />

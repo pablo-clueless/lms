@@ -50,3 +50,13 @@ export interface CourseContent {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface CreateContentDto {
+  content: string;
+  content_type: CourseContentType;
+  title: string;
+  description?: string;
+  duration?: number;
+  file_size?: number;
+  mime_type?: string;
+}

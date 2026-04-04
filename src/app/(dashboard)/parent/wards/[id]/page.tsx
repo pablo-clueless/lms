@@ -2,32 +2,40 @@
 
 import { RefreshIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useParams } from "next/navigation";
 
-import { useGetStudentProgress } from "@/lib/api/progress";
+import { useGetWardInvoices, useGetWardProgress } from "@/lib/api/guardian";
+import { useGetStudentEnrollment } from "@/lib/api/enrollment";
 import { Breadcrumb, Loader } from "@/components/shared";
 import { Button } from "@/components/ui/button";
-import { useUserStore } from "@/store/core";
+import { useGetUser } from "@/lib/api/user";
 import { cn } from "@/lib";
 
-const breadcrumbs = [{ label: "Progress", href: "/student/progress" }];
-
 const Page = () => {
-  const { user } = useUserStore();
+  const id = useParams().id as string;
 
-  const { data, isFetching, isPending, refetch } = useGetStudentProgress(String(user?.id));
+  const { data: user, isFetching, isPending, refetch } = useGetUser(id);
+  const {} = useGetStudentEnrollment(id);
+  const {} = useGetWardInvoices(id);
+  const {} = useGetWardProgress(id);
 
-  if (isPending && !data) return <Loader />;
-  console.log(data);
+  const name = `${user?.first_name} ${user?.last_name}`;
+
+  const breadcrumbs = [
+    { label: "Wards", href: "/parent/wards" },
+    { label: "", href: `/parent/wards/${id}` },
+  ];
+
+  if (isPending && !user) return <Loader />;
 
   return (
     <div className="space-y-6 p-6">
       <Breadcrumb items={breadcrumbs} />
-      <div className="w-fit space-y-1">
-        <h3 className="text-foreground text-3xl">My Progress</h3>
-        <p className="text-sm font-medium text-gray-600">View your progress in all courses. </p>
-      </div>
       <div className="flex w-full items-center justify-between">
-        <div className=""></div>
+        <div className="w-fit space-y-1">
+          <h3 className="text-foreground text-3xl">{name}</h3>
+          <p className="text-sm font-medium text-gray-600"></p>
+        </div>
         <div className="flex items-center gap-x-4">
           <Button disabled={isFetching} onClick={() => refetch()} variant="outline" size="sm">
             <HugeiconsIcon

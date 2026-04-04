@@ -4,6 +4,7 @@ import type {
   Course,
   CourseContent,
   CourseContentType,
+  CreateContentDto,
   CreateCourseDto,
   Pagination,
   PaginationParams,
@@ -26,26 +27,6 @@ interface ContentQueries {
   type?: CourseContentType;
 }
 
-export interface CreateContentDto {
-  title: string;
-  content_type: CourseContentType;
-  content: string;
-  description?: string;
-  duration?: number;
-  file_size?: number;
-  mime_type?: string;
-}
-
-export interface UpdateContentDto {
-  title?: string;
-  content_type?: CourseContentType;
-  content?: string;
-  description?: string;
-  duration?: number;
-  file_size?: number;
-  mime_type?: string;
-}
-
 export interface ReorderContentDto {
   content_ids: string[];
 }
@@ -58,7 +39,7 @@ type CreateContent = {
 type UpdateContent = {
   courseId: string;
   contentId: string;
-  body: UpdateContentDto;
+  body: Partial<CreateContentDto>;
 };
 
 type DeleteContent = {
@@ -215,7 +196,7 @@ export function useUpdateCourseContent(courseId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: keys.updateContent(),
-    mutationFn: ({ contentId, body }: { contentId: string; body: UpdateContentDto }) =>
+    mutationFn: ({ contentId, body }: { contentId: string; body: Partial<CreateContentDto> }) =>
       courseApi.updateContent({ courseId, contentId, body }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: keys.contents(courseId) });

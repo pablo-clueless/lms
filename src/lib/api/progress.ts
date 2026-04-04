@@ -11,9 +11,13 @@ const keys = {
   all: ["progress"] as const,
   get: (id: string) => [...keys.all, "get-progress", id],
   student: (studentId: string) => [...keys.all, "student", studentId],
-  computeGrades: () => [...keys.all, "compute-grades"],
+  computeGradesForCourse: () => [...keys.all, "compute-grades-course"],
+  computeGradesForClass: () => [...keys.all, "compute-grades-class"],
   reportCard: (studentId: string) => [...keys.all, "report-card", studentId],
   generateReportCard: () => [...keys.all, "generate-report-card"],
+  courseStatistics: (courseId: string) => [...keys.all, "course-statistics", courseId],
+  classStatistics: (classId: string) => [...keys.all, "class-statistics", classId],
+  flaggedStudents: () => [...keys.all, "flagged-students"],
 };
 
 interface ListProgressResponse {
@@ -28,11 +32,16 @@ interface ComputeGradesResponse {
 const progressApi = {
   get: (id: string) => apiClient.get<Progress>(`/progress/${id}`),
   getStudentProgress: (studentId: string) => apiClient.get<ListProgressResponse>(`/progress/students/${studentId}`),
-  computeGrades: (courseId: string) =>
+  computeGradesForCourse: (courseId: string) =>
     apiClient.post<ComputeGradesResponse>(`/progress/courses/${courseId}/compute-grades`),
+  computeGradesForClass: (classId: string) =>
+    apiClient.post<ComputeGradesResponse>(`/progress/classes/${classId}/compute-grades`),
   getReportCard: (studentId: string, params?: ReportCardQueries) =>
     apiClient.get<ReportCard>(`/progress/report-cards/students/${studentId}`, params as QueryParams),
   generateReportCard: (studentId: string) => apiClient.post<ReportCard>(`/progress/report-cards/students/${studentId}`),
+  getCourseStatistics: (courseId: string) => apiClient.get(`/progress/courses/${courseId}/statistics`),
+  getClassStatistics: (classId: string) => apiClient.get(`/progress/classes/${classId}/statistics`),
+  getFlaggedStudents: () => apiClient.get(`/progress/flagged`),
 };
 
 export function useGetProgress(id: string) {
@@ -51,11 +60,22 @@ export function useGetStudentProgress(studentId: string) {
   });
 }
 
-export function useComputeGrades() {
+export function useComputeGradesForCourse() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationKey: keys.computeGrades(),
-    mutationFn: progressApi.computeGrades,
+    mutationKey: keys.computeGradesForCourse(),
+    mutationFn: progressApi.computeGradesForCourse,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: keys.all });
+    },
+  });
+}
+
+export function useComputeGradesForClass() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: keys.computeGradesForClass(),
+    mutationFn: progressApi.computeGradesForClass,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: keys.all });
     },
@@ -78,5 +98,28 @@ export function useGenerateReportCard() {
     onSuccess: (_, studentId) => {
       queryClient.invalidateQueries({ queryKey: keys.reportCard(studentId) });
     },
+  });
+}
+
+export function useGetCourseStatistics(courseId: string) {
+  return useQuery({
+    queryKey: keys.courseStatistics(courseId),
+    queryFn: () => progressApi.getCourseStatistics(courseId),
+    enabled: !!courseId,
+  });
+}
+
+export function useGetClassStatistics(classId: string) {
+  return useQuery({
+    queryKey: keys.classStatistics(classId),
+    queryFn: () => progressApi.getClassStatistics(classId),
+    enabled: !!classId,
+  });
+}
+
+export function useGetFlaggedStudents() {
+  return useQuery({
+    queryKey: keys.flaggedStudents(),
+    queryFn: progressApi.getFlaggedStudents,
   });
 }

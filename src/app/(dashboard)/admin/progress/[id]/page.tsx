@@ -7,7 +7,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { Breadcrumb, Loader, TabPanel } from "@/components/shared";
-import { useGetProgress, useComputeGrades } from "@/lib/api/progress";
+import { useGetProgress, useComputeGradesForCourse } from "@/lib/api/progress";
 import { useGetCourse } from "@/lib/api/course";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/config/columns";
@@ -23,7 +23,7 @@ const Page = () => {
   const { data: progress, isFetching, isPending, refetch } = useGetProgress(id);
   const { data: student } = useGetUser(progress?.student_id || "");
   const { data: course } = useGetCourse(progress?.course_id || "");
-  const { mutate: computeGrades, isPending: isComputing } = useComputeGrades();
+  const { mutate: computeGrades, isPending: isComputing } = useComputeGradesForCourse();
 
   const breadcrumbs = [
     { label: "Progress", href: "/admin/progress" },

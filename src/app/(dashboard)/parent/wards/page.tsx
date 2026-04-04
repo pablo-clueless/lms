@@ -3,31 +3,29 @@
 import { RefreshIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
-import { useGetStudentProgress } from "@/lib/api/progress";
 import { Breadcrumb, Loader } from "@/components/shared";
+import { useGetMyWards } from "@/lib/api/guardian";
 import { Button } from "@/components/ui/button";
 import { useUserStore } from "@/store/core";
 import { cn } from "@/lib";
 
-const breadcrumbs = [{ label: "Progress", href: "/student/progress" }];
+const breadcrumbs = [{ label: "Wards", href: "/parent/wards" }];
 
 const Page = () => {
-  const { user } = useUserStore();
+  const {} = useUserStore();
 
-  const { data, isFetching, isPending, refetch } = useGetStudentProgress(String(user?.id));
+  const { data, isFetching, isPending, refetch } = useGetMyWards({ limit: 10, page: 1 });
 
   if (isPending && !data) return <Loader />;
-  console.log(data);
 
   return (
     <div className="space-y-6 p-6">
       <Breadcrumb items={breadcrumbs} />
-      <div className="w-fit space-y-1">
-        <h3 className="text-foreground text-3xl">My Progress</h3>
-        <p className="text-sm font-medium text-gray-600">View your progress in all courses. </p>
-      </div>
       <div className="flex w-full items-center justify-between">
-        <div className=""></div>
+        <div className="w-fit space-y-1">
+          <h3 className="text-foreground text-3xl">My Wards</h3>
+          <p className="text-sm font-medium text-gray-600"></p>
+        </div>
         <div className="flex items-center gap-x-4">
           <Button disabled={isFetching} onClick={() => refetch()} variant="outline" size="sm">
             <HugeiconsIcon
