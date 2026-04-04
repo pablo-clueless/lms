@@ -1,5 +1,6 @@
 export * from "./bread-crumb";
 export * from "./calendar";
+export * from "./email-inbox";
 export * from "./data-table";
 export * from "./date-picker";
 export * from "./footer";

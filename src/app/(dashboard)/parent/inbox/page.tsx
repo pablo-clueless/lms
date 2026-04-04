@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useHandler } from "@/hooks";
 import { cn } from "@/lib";
 
-const breadcrumbs = [{ label: "Inbox", href: "/student/inbox" }];
+const breadcrumbs = [{ label: "Inbox", href: "/parent/inbox" }];
 
 const initialParams = {
   limit: 50,

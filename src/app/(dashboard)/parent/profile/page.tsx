@@ -16,7 +16,7 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const breadcrumbs = [{ label: "Profile", href: "/tutor/profile" }];
+const breadcrumbs = [{ label: "Profile", href: "/parent/profile" }];
 
 const tabs = ["account", "notifications", "security"];
 
@@ -35,7 +35,7 @@ const Page = () => {
   });
 
   const notificationPreferences = useMemo(() => {
-    const preferences = notificationPreferencesByRole("TUTOR");
+    const preferences = notificationPreferencesByRole("STUDENT");
     if (!data?.notification_preferences?.length) return preferences;
     const allowedEventTypes = new Set(preferences.map((p) => p.event_type));
     return data.notification_preferences.filter((pref) => allowedEventTypes.has(pref.event_type));
