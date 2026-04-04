@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail01Icon, RefreshIcon, Attachment01Icon } from "@hugeicons/core-free-icons";
+import { Mail01Icon, RefreshIcon, Attachment01Icon, Cancel01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useMemo, useState } from "react";
 import { format } from "date-fns";
@@ -11,7 +11,7 @@ import { useGetEmails, useGetEmail } from "@/lib/api/communication";
 import { Button } from "@/components/ui/button";
 import { useHandler } from "@/hooks";
 import type { Email } from "@/types";
-import { cn } from "@/lib";
+import { cn, getInitials } from "@/lib";
 
 const breadcrumbs = [{ label: "Inbox", href: "/student/inbox" }];
 
@@ -55,7 +55,7 @@ const EmailListItem = ({ email, isSelected, onClick }: { email: Email; isSelecte
   );
 };
 
-const EmailDetail = ({ emailId }: { emailId: string }) => {
+const EmailDetail = ({ emailId, onClose }: { emailId: string; onClose: () => void }) => {
   const { data: email, isPending } = useGetEmail(emailId);
 
   if (isPending) {
@@ -74,17 +74,24 @@ const EmailDetail = ({ emailId }: { emailId: string }) => {
     );
   }
 
+  const sender = `${email.sender.first_name} ${email.sender.last_name}`;
+
   return (
     <div className="flex h-full flex-col">
       <div className="space-y-4 border-b p-6">
-        <h2 className="text-xl font-semibold">{email.subject || "No Subject"}</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">{email.subject || "No Subject"}</h2>
+          <Button onClick={onClose} size="icon-sm" variant="outline">
+            <HugeiconsIcon className="size-4" icon={Cancel01Icon} />
+          </Button>
+        </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Avatar className="size-10">
-              <AvatarFallback>{email.recipient_scope?.slice(0, 2).toUpperCase() || "EM"}</AvatarFallback>
+              <AvatarFallback>{getInitials(sender)}</AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-sm font-medium">System Administrator</p>
+              <p className="text-sm font-medium">{sender}</p>
               <p className="text-muted-foreground text-xs">To: {email.recipient_scope?.replace(/_/g, " ") || "You"}</p>
             </div>
           </div>
@@ -96,7 +103,7 @@ const EmailDetail = ({ emailId }: { emailId: string }) => {
       <div className="flex-1 overflow-y-auto p-6">
         {email.html_body ? (
           <div
-            className="prose prose-sm dark:prose-invert max-w-none"
+            className="prose prose-sm dark:prose-invert tiptap max-w-none"
             dangerouslySetInnerHTML={{ __html: email.html_body }}
           />
         ) : (
@@ -128,7 +135,7 @@ const EmailDetail = ({ emailId }: { emailId: string }) => {
 
 const Page = () => {
   const { values } = useHandler(initialParams);
-  const [selected, setSelected] = useState("");
+  const [emailId, setEmailId] = useState("");
 
   const { data, isFetching, isPending, refetch } = useGetEmails(values);
 
@@ -173,8 +180,8 @@ const Page = () => {
                 <EmailListItem
                   key={email.id}
                   email={email}
-                  isSelected={selected === email.id}
-                  onClick={() => setSelected(email.id)}
+                  isSelected={emailId === email.id}
+                  onClick={() => setEmailId(email.id)}
                 />
               ))
             ) : (
@@ -186,8 +193,8 @@ const Page = () => {
           </div>
         </div>
         <div className="col-span-4 flex flex-col overflow-hidden">
-          {selected ? (
-            <EmailDetail emailId={selected} />
+          {emailId ? (
+            <EmailDetail emailId={emailId} onClose={() => setEmailId("")} />
           ) : (
             <div className="grid h-full place-items-center">
               <div className="flex flex-col items-center">

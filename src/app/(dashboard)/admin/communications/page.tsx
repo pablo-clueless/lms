@@ -4,6 +4,7 @@ import { Mail01Icon, RefreshIcon, Attachment01Icon } from "@hugeicons/core-free-
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useMemo, useState } from "react";
 import { format } from "date-fns";
+import Link from "next/link";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Breadcrumb, Loader } from "@/components/shared";
@@ -13,7 +14,7 @@ import { useHandler } from "@/hooks";
 import type { Email } from "@/types";
 import { cn } from "@/lib";
 
-const breadcrumbs = [{ label: "Inbox", href: "/student/inbox" }];
+const breadcrumbs = [{ label: "Inbox", href: "/admin/communications" }];
 
 const initialParams = {
   limit: 50,
@@ -155,6 +156,9 @@ const Page = () => {
           <p className="text-sm font-medium text-gray-600">View emails from your tutors and administrators</p>
         </div>
         <div className="flex items-center gap-x-3">
+          <Button asChild size="sm">
+            <Link href="/admin/communications/create">New Email</Link>
+          </Button>
           <Button disabled={isFetching} onClick={() => refetch()} variant="outline" size="sm">
             <HugeiconsIcon
               icon={RefreshIcon}

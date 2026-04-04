@@ -1,3 +1,5 @@
+import type { User } from "./user";
+
 export type CommunicationType = "EMAIL" | "NOTIFICATION" | "SMS";
 export type CommunicationStatus = "DRAFT" | "SCHEDULED" | "SENDING" | "SENT" | "FAILED" | "CANCELLED";
 export type RecipientScope = "ALL_USERS" | "ALL_TUTORS" | "ALL_STUDENTS" | "CLASS" | "COURSE" | "SPECIFIC_USERS";
@@ -16,7 +18,7 @@ export interface DeliveryRecipient {
 export interface Email {
   id: string;
   tenant_id: string;
-  sender_id: string;
+  sender: User;
   subject: string;
   body: string;
   html_body?: string;

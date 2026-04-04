@@ -7,8 +7,8 @@ import { toast } from "sonner";
 import Link from "next/link";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DataTable, Breadcrumb, Loader } from "@/components/shared";
 import { useGetQuizzes, usePublishQuiz } from "@/lib/api/assessment";
+import { DataTable, Breadcrumb, Loader } from "@/components/shared";
 import { useGetCourses } from "@/lib/api/course";
 import { Button } from "@/components/ui/button";
 import { quizColumns } from "@/config/columns";

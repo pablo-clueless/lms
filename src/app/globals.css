@@ -242,7 +242,7 @@
 /* scroll area */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: var(--primary-500) var(--primary-100);
+  scrollbar-color: var(--background) var(--foreground);
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -251,14 +251,14 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: var(--primary-100);
+  background: var(--foreground);
   border-radius: 20px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--primary-500);
+  background: var(--background);
   border-radius: 6px;
-  border: 2px solid var(--primary-100);
+  border: 2px solid var(--foreground);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
@@ -266,7 +266,7 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-corner {
-  background: var(--primary-100);
+  background: var(--foreground);
   border-radius: 20px;
 }
 
@@ -278,4 +278,122 @@
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* tiptap editor */
+.ProseMirror {
+  @apply h-full;
+}
+
+.editor .tiptap *,
+.editor .tiptap h1,
+.editor .tiptap h2,
+.editor .tiptap h3,
+.editor .tiptap h4,
+.editor .tiptap h5,
+.editor .tiptap h6 {
+  font-family: var(--font-sans);
+}
+
+.editor .tiptap h1 {
+  @apply my-2 text-3xl font-bold;
+}
+
+.editor .tiptap h2 {
+  @apply my-1.5 text-2xl font-bold;
+}
+
+.editor .tiptap h3 {
+  @apply my-1.5 text-xl font-semibold;
+}
+
+.editor .tiptap h4 {
+  @apply my-1 text-lg font-medium;
+}
+
+.editor .tiptap h5 {
+  @apply my-1 text-base font-medium;
+}
+
+.editor .tiptap h6 {
+  @apply my-0.5 text-sm font-medium;
+}
+
+.editor .tiptap ol,
+.editor .tiptap ul {
+  @apply list-inside pl-4;
+}
+
+.editor .tiptap ol {
+  @apply list-decimal;
+}
+
+.editor .tiptap ol li {
+  @apply my-1 list-item items-center text-sm;
+}
+
+.editor .tiptap ul {
+  @apply list-disc;
+}
+
+.editor .tiptap ul li {
+  @apply my-1 flex items-center text-sm;
+}
+
+.editor .tiptap li p {
+  @apply m-0 inline;
+}
+
+.editor .tiptap i {
+  @apply italic;
+}
+
+.editor .tiptap a {
+  @apply text-blue-800 italic underline;
+}
+
+.editor .tiptap img {
+  width: 90%;
+  height: auto;
+  border-radius: 4px;
+  margin: 8px auto;
+  display: block;
+  border: 1px solid var(--color-neutral-300);
+  object-fit: cover;
+}
+
+.editor .tiptap table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 8px 0;
+}
+
+.editor .tiptap table th,
+.editor .tiptap table td {
+  border: 1px solid var(--color-neutral-300);
+  padding: 6px 10px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.editor .tiptap table th {
+  background-color: var(--secondary-100);
+  font-weight: 600;
+}
+
+.editor .tiptap table tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* grid alignment */
+.writing-vertical-lr {
+  writing-mode: vertical-lr;
+}
+
+.writing-vertical-rl {
+  writing-mode: vertical-rl;
+}
+
+.writing-horizontal-tb {
+  writing-mode: horizontal-tb;
 }
