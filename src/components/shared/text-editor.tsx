@@ -6,6 +6,7 @@ import { Color, TextStyle } from "@tiptap/extension-text-style";
 import { TableCell, TableKit } from "@tiptap/extension-table";
 import Placeholder from "@tiptap/extension-placeholder";
 import Superscript from "@tiptap/extension-superscript";
+import { TableIcon } from "@hugeicons/core-free-icons";
 import Blockquote from "@tiptap/extension-blockquote";
 import Strikethrough from "@tiptap/extension-strike";
 import TextAlign from "@tiptap/extension-text-align";
@@ -13,6 +14,7 @@ import Highlight from "@tiptap/extension-highlight";
 import Paragraph from "@tiptap/extension-paragraph";
 import Subscript from "@tiptap/extension-subscript";
 import Underline from "@tiptap/extension-underline";
+import { useEffect, useRef, useState } from "react";
 import Document from "@tiptap/extension-document";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Heading from "@tiptap/extension-heading";
@@ -22,7 +24,6 @@ import Image from "@tiptap/extension-image";
 import Bold from "@tiptap/extension-bold";
 import Text from "@tiptap/extension-text";
 import Link from "@tiptap/extension-link";
-import { useEffect, useRef, useState } from "react";
 
 import { EDITOR_BUTTON_GROUPS, TABLE_CONTEXT_ACTIONS } from "@/config/editor";
 import type { Maybe } from "@/types";
@@ -228,7 +229,6 @@ const TopBar = ({ editor }: { editor: Maybe<Editor> }) => {
           ))}
         </div>
       )}
-
       <div className="bg-border h-4 w-px" />
       <HeadingDropdown editor={editor} />
       <div className="bg-border h-4 w-px" />
@@ -252,13 +252,9 @@ const TopBar = ({ editor }: { editor: Maybe<Editor> }) => {
           ))}
         </div>
       )}
-
       <div className="bg-border h-4 w-px" />
-
       <AlignmentGroup editor={editor} />
-
       <div className="bg-border h-4 w-px" />
-
       {blocksGroup && (
         <div className="flex items-center gap-0.5">
           {blocksGroup.buttons.map((btn) => (
@@ -277,9 +273,7 @@ const TopBar = ({ editor }: { editor: Maybe<Editor> }) => {
           ))}
         </div>
       )}
-
       <div className="bg-border h-4 w-px" />
-
       {insertGroup && (
         <div className="flex items-center gap-0.5">
           {insertGroup.buttons.map((btn) => (
@@ -300,22 +294,14 @@ const TopBar = ({ editor }: { editor: Maybe<Editor> }) => {
           ))}
         </div>
       )}
-
       <div className="bg-border h-4 w-px" />
-
       <button
         className="text-foreground hover:bg-muted active:bg-accent flex h-7 w-7 items-center justify-center rounded transition-colors"
         onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
         title="Insert Table (right-click inside table for options)"
         type="button"
       >
-        <svg className="size-3.5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 16 16">
-          <rect height="12" rx="1.5" width="12" x="2" y="2" />
-          <line x1="2" x2="14" y1="6" y2="6" />
-          <line x1="2" x2="14" y1="10" y2="10" />
-          <line x1="6" x2="6" y1="2" y2="14" />
-          <line x1="10" x2="10" y1="2" y2="14" />
-        </svg>
+        <HugeiconsIcon className="size-4" icon={TableIcon} />
       </button>
     </div>
   );
