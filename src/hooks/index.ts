@@ -1,3 +1,4 @@
+export * from "./use-copy";
 export * from "./use-debounce";
 export * from "./use-download";
 export * from "./use-file-handler";

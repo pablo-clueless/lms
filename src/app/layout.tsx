@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib";
 
 const hedvig = Hedvig_Letters_Serif({ subsets: ["latin"], variable: "--font-serif" });
-const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });
+const figtree = Figtree({ subsets: ["latin"], style: ["italic", "normal"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "ArcLMS",
@@ -25,7 +25,7 @@ export default function RootLayout({
         <ErrorBoundary>
           <QueryProvider>{children}</QueryProvider>
         </ErrorBoundary>
-        <Toaster />
+        <Toaster position="top-right" />
       </body>
     </html>
   );

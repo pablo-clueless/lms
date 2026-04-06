@@ -2,29 +2,56 @@
 
 import { RefreshIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useMemo, useState } from "react";
+import Link from "next/link";
 
-import { DataTable, Breadcrumb, Loader } from "@/components/shared";
+import { Breadcrumb, EmailInboxLayout, Loader } from "@/components/shared";
 import { useGetEmails } from "@/lib/api/communication";
-import { emailColumns } from "@/config/columns";
 import { Button } from "@/components/ui/button";
+import { useHandler } from "@/hooks";
 import { cn } from "@/lib";
 
-const breadcrumbs = [{ label: "Communications", href: "/tutor/communications" }];
+const breadcrumbs = [{ label: "Inbox", href: "/tutor/communications" }];
+
+const initialParams = {
+  limit: 50,
+  page: 1,
+  status: "SENT" as const,
+};
 
 const Page = () => {
-  const { data, isFetching, isPending, refetch } = useGetEmails();
+  const { values } = useHandler(initialParams);
+  const [selected, setSelected] = useState("");
+
+  const { data, isFetching, isPending, refetch } = useGetEmails(values);
+
+  const emails = useMemo(() => {
+    if (!data) return [];
+    if (!data.data) return [];
+    return data.data;
+  }, [data]);
 
   if (isPending) return <Loader />;
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="flex h-full flex-col p-6">
       <Breadcrumb items={breadcrumbs} />
-      <div className="flex w-full items-center justify-between">
+      <div className="mt-6 flex w-full items-center justify-between">
         <div className="w-fit space-y-1">
-          <h3 className="text-foreground text-3xl">Communications</h3>
-          <p className="text-sm font-medium text-gray-600">Send emails and messages to students in your classes</p>
+          <div className="flex items-center gap-3">
+            <h3 className="text-foreground text-3xl">Inbox</h3>
+            {emails.length > 0 && (
+              <span className="text-muted-foreground rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium">
+                {emails.length}
+              </span>
+            )}
+          </div>
+          <p className="text-sm font-medium text-gray-600">View emails from your tutors and administrators</p>
         </div>
-        <div className="flex items-center gap-x-4">
+        <div className="flex items-center gap-x-3">
+          <Button asChild size="sm">
+            <Link href="/tutor/communications/create">New Email</Link>
+          </Button>
           <Button disabled={isFetching} onClick={() => refetch()} variant="outline" size="sm">
             <HugeiconsIcon
               icon={RefreshIcon}
@@ -35,8 +62,13 @@ const Page = () => {
           </Button>
         </div>
       </div>
-      <div className="w-full space-y-4">
-        <DataTable columns={emailColumns} data={data?.data || []} />
+      <div className="mt-6 flex min-h-0 flex-1 flex-col">
+        <EmailInboxLayout
+          emails={emails}
+          selectedId={selected}
+          onSelect={setSelected}
+          defaultSenderName="System Administrator"
+        />
       </div>
     </div>
   );

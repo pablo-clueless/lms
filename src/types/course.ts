@@ -1,3 +1,5 @@
+import type { User } from "./user";
+
 export type CourseContentType = "TEXT" | "VIDEO" | "IMAGE" | "AUDIO" | "DOCUMENT" | "LINK";
 export type CourseStatus = "ACTIVE" | "INACTIVE" | "DRAFT";
 
@@ -16,6 +18,7 @@ export interface Course {
   subject_code: string;
   description?: string;
   assigned_tutor_id: string;
+  assigned_tutor: User;
   status: CourseStatus;
   max_periods_per_week?: number;
   custom_grade_weighting?: GradeWeighting;

@@ -1,8 +1,28 @@
 import type { ColumnDef } from "@tanstack/react-table";
+import { CopyIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 import { StatusBadge, DateCell, ActionCell, ActionIcons } from "./shared";
-import type { Course, Role } from "@/types";
+import type { Course, Role, User } from "@/types";
 import { getBasePathByRole } from "@/lib";
+import { useCopy } from "@/hooks";
+
+const Tutor = ({ tutor }: { tutor: User }) => {
+  const { handleCopy } = useCopy(tutor.email);
+  const name = `${tutor.first_name} ${tutor.last_name}`;
+
+  return (
+    <div className="max-w-85">
+      <p className="text-foreground text-sm">{name}</p>
+      <div className="flex w-full items-center justify-between">
+        <p className="text-muted-foreground text-xs">{tutor.email}</p>
+        <button onClick={handleCopy}>
+          <HugeiconsIcon className="size-4" icon={CopyIcon} />
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export const courseColumns = (role: Role): ColumnDef<Course>[] => [
   {
@@ -16,6 +36,11 @@ export const courseColumns = (role: Role): ColumnDef<Course>[] => [
     cell: ({ row }) => (
       <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium">{row.original.subject_code}</span>
     ),
+  },
+  {
+    id: "tutor",
+    header: "Tutor",
+    cell: ({ row }) => <Tutor tutor={row.original.assigned_tutor} />,
   },
   {
     accessorKey: "max_periods_per_week",
@@ -73,6 +98,11 @@ export const studentCourseColumns: ColumnDef<Course>[] = [
     accessorKey: "max_periods_per_week",
     header: "Periods/Week",
     cell: ({ row }) => <span>{row.original.max_periods_per_week || "N/A"}</span>,
+  },
+  {
+    id: "tutor",
+    header: "Tutor",
+    cell: ({ row }) => <Tutor tutor={row.original.assigned_tutor} />,
   },
   {
     accessorKey: "status",

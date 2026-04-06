@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn, removeNullOrUndefined } from "@/lib";
 import { useGetCourses } from "@/lib/api/course";
-import { Breadcrumb } from "@/components/shared";
+import { Breadcrumb, ScrollArea } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useGetClasses } from "@/lib/api/class";
@@ -219,7 +219,7 @@ const Page = () => {
   const totalQuestionMarks = questions.reduce((sum, q) => sum + q.marks, 0);
 
   return (
-    <div className="h-full space-y-6 overflow-y-auto p-6">
+    <ScrollArea className="h-full space-y-6 p-6">
       <Breadcrumb items={breadcrumbs} />
       <div className="flex w-full items-center justify-between">
         <div className="w-fit space-y-1">
@@ -400,10 +400,6 @@ const Page = () => {
                   Add questions for this assignment. Total marks: {totalQuestionMarks} / {formik.values.max_marks}
                 </CardDescription>
               </div>
-              <Button type="button" variant="outline" size="sm" onClick={addQuestion}>
-                <HugeiconsIcon icon={Add01Icon} className="size-4" data-icon="inline-start" />
-                Add Question
-              </Button>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -559,16 +555,22 @@ const Page = () => {
             ))}
           </CardContent>
         </Card>
-        <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => router.back()}>
-            Cancel
+        <div className="flex w-full items-center justify-between">
+          <Button type="button" variant="outline" size="sm" onClick={addQuestion}>
+            <HugeiconsIcon icon={Add01Icon} className="size-4" data-icon="inline-start" />
+            Add Question
           </Button>
-          <Button type="submit" disabled={isCreating || !selectedCourseId}>
-            {isCreating ? "Creating..." : "Create Assignment"}
-          </Button>
+          <div className="flex justify-end gap-4">
+            <Button type="button" variant="outline" onClick={() => router.back()}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isCreating || !selectedCourseId}>
+              {isCreating ? "Creating..." : "Create Assignment"}
+            </Button>
+          </div>
         </div>
       </form>
-    </div>
+    </ScrollArea>
   );
 };
 
