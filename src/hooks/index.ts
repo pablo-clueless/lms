@@ -1,3 +1,4 @@
+export * from "./use-assessment";
 export * from "./use-copy";
 export * from "./use-debounce";
 export * from "./use-download";
@@ -5,6 +6,7 @@ export * from "./use-file-handler";
 export * from "./use-handler";
 export * from "./use-interval";
 export * from "./use-permissions";
+export * from "./use-proctoring";
 export * from "./use-protected-routes";
 export * from "./use-rbac";
 export * from "./use-websocket";

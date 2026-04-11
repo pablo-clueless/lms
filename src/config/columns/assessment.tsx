@@ -62,13 +62,18 @@ export const quizColumns = (role: Role, options?: QuizColumnsOptions): ColumnDef
             label: "View Details",
             icon: ActionIcons.View,
             href: `${getBasePathByRole(role)}/quizzes/${row.original.id}?course_id=${row.original.course_id}`,
+            hidden: role === "STUDENT" && row.original.status !== "PUBLISHED",
           },
-          {
-            label: "Edit",
-            icon: ActionIcons.Edit,
-            href: `${getBasePathByRole(role)}/quizzes/${row.original.id}/edit?course_id=${row.original.course_id}`,
-          },
-          ...(row.original.status === "DRAFT" && options?.onPublish
+          ...(role === "TUTOR"
+            ? [
+                {
+                  label: "Edit",
+                  icon: ActionIcons.Edit,
+                  href: `${getBasePathByRole(role)}/quizzes/${row.original.id}/edit?course_id=${row.original.course_id}`,
+                },
+              ]
+            : []),
+          ...(role === "TUTOR" && row.original.status === "DRAFT" && options?.onPublish
             ? [
                 { label: "Publish", icon: Upload05Icon, onClick: () => options.onPublish?.(row.original) },
                 {
@@ -131,13 +136,18 @@ export const assignmentColumns = (role: Role, options?: AssignmentColumnsOptions
             label: "View Details",
             icon: ActionIcons.View,
             href: `${getBasePathByRole(role)}/assignments/${row.original.id}?course_id=${row.original.course_id}`,
+            hidden: role === "STUDENT" && row.original.status !== "PUBLISHED",
           },
-          {
-            label: "Edit",
-            icon: ActionIcons.Edit,
-            href: `${getBasePathByRole(role)}/assignments/${row.original.id}/edit?course_id=${row.original.course_id}`,
-          },
-          ...(row.original.status === "DRAFT" && options?.onPublish
+          ...(role === "TUTOR"
+            ? [
+                {
+                  label: "Edit",
+                  icon: ActionIcons.Edit,
+                  href: `${getBasePathByRole(role)}/assignments/${row.original.id}/edit?course_id=${row.original.course_id}`,
+                },
+              ]
+            : []),
+          ...(role === "TUTOR" && row.original.status === "DRAFT" && options?.onPublish
             ? [
                 { label: "Publish", icon: Upload05Icon, onClick: () => options.onPublish?.(row.original) },
                 {

@@ -1,16 +1,16 @@
-import { ConstructionIcon } from "@hugeicons/core-free-icons";
+import { FileEmpty01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
-interface PagePlaceholderProps {
+interface Props {
   title: string;
   description?: string;
 }
 
-export const PagePlaceholder = ({ title, description }: PagePlaceholderProps) => {
+export const EmptyData = ({ title, description }: Props) => {
   return (
     <div className="flex h-full min-h-150 flex-col items-center justify-center p-8">
       <div className="bg-muted mb-6 flex h-20 w-20 items-center justify-center rounded-full">
-        <HugeiconsIcon icon={ConstructionIcon} className="text-muted-foreground size-10" />
+        <HugeiconsIcon icon={FileEmpty01Icon} className="text-muted-foreground size-10" />
       </div>
       <h1 className="text-foreground mb-2 text-2xl font-bold">{title}</h1>
       <p className="text-muted-foreground max-w-md text-center">

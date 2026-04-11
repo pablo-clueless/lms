@@ -1,6 +1,7 @@
 export * from "./bread-crumb";
 export * from "./calendar";
 export * from "./email-inbox";
+export * from "./empty-data";
 export * from "./data-table";
 export * from "./date-picker";
 export * from "./footer";
@@ -10,6 +11,7 @@ export * from "./navbar";
 export * from "./otp-input";
 export * from "./page-placeholder";
 export * from "./pagination";
+export * from "./question-card";
 export * from "./scroll-area";
 export * from "./sidebar";
 export * from "./status-badge";

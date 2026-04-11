@@ -32,7 +32,7 @@ const breadcrumbs = [
 const questionTypes: { value: QuestionType; label: string }[] = [
   { value: "MULTIPLE_CHOICE", label: "Multiple Choice" },
   { value: "MULTIPLE_ANSWER", label: "Multiple Answer" },
-  { value: "boolean_FALSE", label: "True/False" },
+  { value: "TRUE_FALSE", label: "True/False" },
   { value: "SHORT_ANSWER", label: "Short Answer" },
 ];
 
@@ -110,7 +110,7 @@ const Page = () => {
 
       const hasQuestionsWithoutAnswers = questions.some(
         (q) =>
-          (q.type === "MULTIPLE_CHOICE" || q.type === "MULTIPLE_ANSWER" || q.type === "boolean_FALSE") &&
+          (q.type === "MULTIPLE_CHOICE" || q.type === "MULTIPLE_ANSWER" || q.type === "TRUE_FALSE") &&
           q.correct_answers.length === 0,
       );
       if (hasQuestionsWithoutAnswers) {
@@ -518,7 +518,7 @@ const Page = () => {
                   </div>
                 )}
 
-                {question.type === "boolean_FALSE" && (
+                {question.type === "TRUE_FALSE" && (
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">Correct Answer</Label>
                     <div className="flex gap-4">

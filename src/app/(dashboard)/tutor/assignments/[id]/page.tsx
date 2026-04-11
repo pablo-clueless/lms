@@ -33,7 +33,7 @@ const questionTypeLabels: Record<string, string> = {
   SHORT_ANSWER: "Short Answer",
   MULTIPLE_CHOICE: "Multiple Choice",
   MULTIPLE_ANSWER: "Multiple Answer",
-  boolean_FALSE: "True/False",
+  TRUE_FALSE: "True/False",
 };
 
 const Page = () => {

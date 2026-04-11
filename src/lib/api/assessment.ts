@@ -28,10 +28,10 @@ const keys = {
   quizSubmission: (id: string) => [...keys.all, "quiz-submission", id] as const,
   assignmentSubmission: (id: string) => [...keys.all, "assignment-submission", id] as const,
   startQuiz: (course_id: string, id: string) => [...keys.all, "start-quiz", course_id, id] as const,
-  submitQuiz: (course_id: string, id: string) => [...keys.all, "submit-quiz", course_id, id] as const,
-  submitAssignment: (course_id: string, id: string) => [...keys.all, "submit-assignment", course_id, id] as const,
-  publishQuiz: (course_id: string, id: string) => [...keys.all, "publish-quiz", course_id, id] as const,
-  publishAssignment: (course_id: string, id: string) => [...keys.all, "publish-assignment", course_id, id] as const,
+  submitQuiz: () => [...keys.all, "submit-quiz"] as const,
+  submitAssignment: () => [...keys.all, "submit-assignment"] as const,
+  publishQuiz: () => [...keys.all, "publish-quiz"] as const,
+  publishAssignment: () => [...keys.all, "publish-assignment"] as const,
 };
 
 interface ListQueries {
@@ -60,6 +60,23 @@ interface ListAssignmentSubmissionResponse {
   pagination: Pagination;
 }
 
+interface SubmitQuiz {
+  course_id: string;
+  id: string;
+  body: SubmitQuizDto;
+}
+
+interface SubmitAssignment {
+  course_id: string;
+  id: string;
+  body: SubmitAssignmentDto;
+}
+
+interface PublishDto {
+  course_id: string;
+  id: string;
+}
+
 const assessmentApi = {
   listQuizzes: (courseId: string, params?: ListQueries) =>
     apiClient.get<ListQuizResponse>(`/courses/${courseId}/quizzes`, params as QueryParams),
@@ -83,12 +100,12 @@ const assessmentApi = {
   assignmentSubmission: (course_id: string, id: string) =>
     apiClient.get(`/courses/${course_id}/assignments/${id}/submissions`),
   startQuiz: (course_id: string, id: string) => apiClient.post(`/courses/${course_id}/quizzes/${id}/start`),
-  submitQuiz: (course_id: string, id: string, body: SubmitQuizDto) =>
+  submitQuiz: ({ body, course_id, id }: SubmitQuiz) =>
     apiClient.post(`/courses/${course_id}/quizzes/${id}/submit`, body),
-  submitAssignment: (course_id: string, id: string, body: SubmitAssignmentDto) =>
+  submitAssignment: ({ body, course_id, id }: SubmitAssignment) =>
     apiClient.post(`/courses/${course_id}/assignments/${id}/submit`, body),
-  publishQuiz: (course_id: string, id: string) => apiClient.post(`/courses/${course_id}/quizzes/${id}/publish`),
-  publishAssignment: (course_id: string, id: string) =>
+  publishQuiz: ({ course_id, id }: PublishDto) => apiClient.post(`/courses/${course_id}/quizzes/${id}/publish`),
+  publishAssignment: ({ course_id, id }: PublishDto) =>
     apiClient.post(`/courses/${course_id}/assignments/${id}/publish`),
 };
 
@@ -193,8 +210,8 @@ export function useStartQuiz(course_id: string, id: string) {
 export function useSubmitQuiz(course_id: string, id: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationKey: keys.submitQuiz(course_id, id),
-    mutationFn: (body: SubmitQuizDto) => assessmentApi.submitQuiz(course_id, id, body),
+    mutationKey: keys.submitQuiz(),
+    mutationFn: ({ body, course_id, id }: SubmitQuiz) => assessmentApi.submitQuiz({ body, course_id, id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: keys.quiz(course_id, id) });
       queryClient.invalidateQueries({ queryKey: keys.quizSubmissions(course_id, id) });
@@ -205,8 +222,8 @@ export function useSubmitQuiz(course_id: string, id: string) {
 export function useSubmitAssignment(course_id: string, id: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationKey: keys.submitAssignment(course_id, id),
-    mutationFn: (body: SubmitAssignmentDto) => assessmentApi.submitAssignment(course_id, id, body),
+    mutationKey: keys.submitAssignment(),
+    mutationFn: ({ body, course_id, id }: SubmitAssignment) => assessmentApi.submitAssignment({ body, course_id, id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: keys.assignment(course_id, id) });
       queryClient.invalidateQueries({ queryKey: keys.assignmentSubmissions(course_id, id) });
@@ -217,8 +234,8 @@ export function useSubmitAssignment(course_id: string, id: string) {
 export function usePublishQuiz(course_id: string, id: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationKey: keys.publishQuiz(course_id, id),
-    mutationFn: () => assessmentApi.publishQuiz(course_id, id),
+    mutationKey: keys.publishQuiz(),
+    mutationFn: (dto: PublishDto) => assessmentApi.publishQuiz(dto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: keys.quiz(course_id, id) });
       queryClient.invalidateQueries({ queryKey: keys.quizzes(course_id) });
@@ -229,8 +246,8 @@ export function usePublishQuiz(course_id: string, id: string) {
 export function usePublishAssignment(course_id: string, id: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationKey: keys.publishAssignment(course_id, id),
-    mutationFn: () => assessmentApi.publishAssignment(course_id, id),
+    mutationKey: keys.publishAssignment(),
+    mutationFn: (dto: PublishDto) => assessmentApi.publishAssignment(dto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: keys.assignment(course_id, id) });
       queryClient.invalidateQueries({ queryKey: keys.assignments(course_id) });

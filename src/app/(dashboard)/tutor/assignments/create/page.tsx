@@ -34,7 +34,7 @@ const questionTypes: { value: QuestionType; label: string }[] = [
   { value: "SHORT_ANSWER", label: "Short Answer" },
   { value: "MULTIPLE_CHOICE", label: "Multiple Choice" },
   { value: "MULTIPLE_ANSWER", label: "Multiple Answer" },
-  { value: "boolean_FALSE", label: "True/False" },
+  { value: "TRUE_FALSE", label: "True/False" },
 ];
 
 const fileFormats = [
@@ -524,7 +524,7 @@ const Page = () => {
                     </div>
                   </div>
                 )}
-                {question.type === "boolean_FALSE" && (
+                {question.type === "TRUE_FALSE" && (
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">Correct Answer</Label>
                     <div className="flex gap-4">

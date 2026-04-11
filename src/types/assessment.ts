@@ -1,4 +1,4 @@
-export type QuestionType = "MULTIPLE_CHOICE" | "MULTIPLE_ANSWER" | "boolean_FALSE" | "SHORT_ANSWER" | "ESSAY";
+export type QuestionType = "MULTIPLE_CHOICE" | "MULTIPLE_ANSWER" | "TRUE_FALSE" | "SHORT_ANSWER" | "ESSAY";
 export type SubmissionStatus = "NOT_STARTED" | "IN_PROGRESS" | "SUBMITTED" | "LATE" | "GRADED";
 export type AssessmentType = "QUIZ" | "ASSIGNMENT";
 export type AssessmentStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
@@ -160,10 +160,10 @@ export interface CreateQuizDto {
 }
 
 export interface SubmitQuizDto {
-  answers: QuizAnswerDto[];
+  answers: AnswerDto[];
 }
 
-export interface QuizAnswerDto {
+export interface AnswerDto {
   answer_text: string;
   feedback: string;
   is_correct: boolean;
@@ -173,6 +173,7 @@ export interface QuizAnswerDto {
 }
 
 export interface SubmitAssignmentDto {
-  answer_text: string;
+  answers: AnswerDto[];
   file_urls: string[];
+  answer_text: string;
 }

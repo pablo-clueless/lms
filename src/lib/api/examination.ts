@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateExaminationDto, Examination, ExaminationSubmission, Pagination, QueryParams } from "@/types";
+import type { CreateExaminationDto, Examination, ExaminationAnswer, ExaminationSubmission, Pagination, QueryParams } from "@/types";
 import { apiClient } from "../api-client";
 
 type UpdateExamination = {
@@ -38,6 +38,10 @@ interface ListSubmissionResponse {
   data: ExaminationSubmission[];
 }
 
+interface SubmitExaminationDto {
+  answers: ExaminationAnswer[];
+}
+
 const examinationApi = {
   list: (params?: ExaminationQueries) => apiClient.get<ListExaminationResponse>("/examinations", params as QueryParams),
   get: (id: string) => apiClient.get<Examination>(`/examinations/${id}`),
@@ -47,6 +51,8 @@ const examinationApi = {
   schedule: (id: string, body: ScheduleExaminationDto) =>
     apiClient.post<Examination>(`/examinations/${id}/schedule`, body),
   listSubmissions: (id: string) => apiClient.get<ListSubmissionResponse>(`/examinations/${id}/submissions`),
+  start: (id: string) => apiClient.post(`/examinations/${id}/start`),
+  submit: (id: string, body: SubmitExaminationDto) => apiClient.post(`/examinations/${id}/submit`, body),
 };
 
 export function useGetExaminations(params?: ExaminationQueries) {
@@ -115,3 +121,24 @@ export function useGetExaminationSubmissions(id: string) {
     enabled: !!id,
   });
 }
+
+export function useStartExamination() {
+  return useMutation({
+    mutationKey: [...keys.all, "start-examination"],
+    mutationFn: (id: string) => examinationApi.start(id),
+  });
+}
+
+export function useSubmitExamination() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: [...keys.all, "submit-examination"],
+    mutationFn: ({ id, body }: { id: string; body: SubmitExaminationDto }) => examinationApi.submit(id, body),
+    onSuccess: (_data, { id }) => {
+      queryClient.invalidateQueries({ queryKey: keys.get(id) });
+      queryClient.invalidateQueries({ queryKey: keys.submissions(id) });
+    },
+  });
+}
+
+export type { SubmitExaminationDto };
