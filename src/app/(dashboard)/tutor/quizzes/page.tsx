@@ -30,19 +30,22 @@ const Page = () => {
   const handlePublish = useCallback(
     (quiz: Quiz) => {
       setPublishingId(quiz.id);
-      publishQuiz(undefined, {
-        onSuccess: () => {
-          toast.success("Quiz published successfully");
-          refetch();
-          setPublishingId(null);
+      publishQuiz(
+        { course_id: selectedCourse, id: quiz.id },
+        {
+          onSuccess: () => {
+            toast.success("Quiz published successfully");
+            refetch();
+            setPublishingId(null);
+          },
+          onError: (error) => {
+            toast.error(error.message || "Failed to publish quiz");
+            setPublishingId(null);
+          },
         },
-        onError: (error) => {
-          toast.error(error.message || "Failed to publish quiz");
-          setPublishingId(null);
-        },
-      });
+      );
     },
-    [publishQuiz, refetch],
+    [publishQuiz, refetch, selectedCourse],
   );
 
   const columns = useMemo(() => quizColumns("TUTOR", { onPublish: handlePublish }), [handlePublish]);
