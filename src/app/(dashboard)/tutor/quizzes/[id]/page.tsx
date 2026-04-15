@@ -55,14 +55,17 @@ const Page = () => {
   const { mutate: publishQuiz, isPending: isPublishing } = usePublishQuiz(course_id, id);
 
   const handlePublish = () => {
-    publishQuiz(undefined, {
-      onSuccess: () => {
-        toast.success("Quiz published successfully");
+    publishQuiz(
+      { course_id, id },
+      {
+        onSuccess: () => {
+          toast.success("Quiz published successfully");
+        },
+        onError: (error) => {
+          toast.error(error.message || "Failed to publish quiz");
+        },
       },
-      onError: (error) => {
-        toast.error(error.message || "Failed to publish quiz");
-      },
-    });
+    );
   };
 
   const submissions = (submissionsData as { data: QuizSubmission[]; pagination: PaginationType } | undefined)?.data;

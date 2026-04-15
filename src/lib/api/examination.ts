@@ -1,6 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateExaminationDto, Examination, ExaminationAnswer, ExaminationSubmission, Pagination, QueryParams } from "@/types";
+import type {
+  CreateExaminationDto,
+  Examination,
+  ExaminationAnswer,
+  ExaminationSubmission,
+  Pagination,
+  QueryParams,
+} from "@/types";
 import { apiClient } from "../api-client";
 
 type UpdateExamination = {

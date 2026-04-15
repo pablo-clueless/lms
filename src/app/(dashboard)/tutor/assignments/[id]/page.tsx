@@ -58,14 +58,17 @@ const Page = () => {
   const { mutate: publishAssignment, isPending: isPublishing } = usePublishAssignment(course_id, id);
 
   const handlePublish = () => {
-    publishAssignment(undefined, {
-      onSuccess: () => {
-        toast.success("Assignment published successfully");
+    publishAssignment(
+      { course_id, id },
+      {
+        onSuccess: () => {
+          toast.success("Assignment published successfully");
+        },
+        onError: (error) => {
+          toast.error(error.message || "Failed to publish assignment");
+        },
       },
-      onError: (error) => {
-        toast.error(error.message || "Failed to publish assignment");
-      },
-    });
+    );
   };
 
   const submissions = (submissionsData as { data: AssignmentSubmission[]; pagination: PaginationType } | undefined)
